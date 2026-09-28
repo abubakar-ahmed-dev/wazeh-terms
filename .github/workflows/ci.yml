@@ -20,12 +20,12 @@ jobs:
           node-version: 22
           cache: npm
 
-      # npm install, not npm ci: the lockfile is authored on Windows, and npm
-      # prunes foreign-platform optional binaries (rollup/esbuild native
-      # packages) from it (npm/cli#4828). `npm install` restores the
-      # Linux-native optional deps while still honoring locked versions.
+      # npm ci is deterministic. The lockfile carries the Linux rollup native
+      # binary explicitly (root optionalDependencies) because npm prunes
+      # foreign-platform optional deps when the lockfile is authored on
+      # Windows (npm/cli#4828). Keep that entry in sync when rollup bumps.
       - name: Install workspaces
-        run: npm install --no-audit --no-fund
+        run: npm ci
 
       - name: Lint
         run: npm run lint
