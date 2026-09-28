@@ -20,8 +20,12 @@ jobs:
           node-version: 22
           cache: npm
 
+      # npm install, not npm ci: the lockfile is authored on Windows, and npm
+      # prunes foreign-platform optional binaries (rollup/esbuild native
+      # packages) from it (npm/cli#4828). `npm install` restores the
+      # Linux-native optional deps while still honoring locked versions.
       - name: Install workspaces
-        run: npm ci
+        run: npm install --no-audit --no-fund
 
       - name: Lint
         run: npm run lint
