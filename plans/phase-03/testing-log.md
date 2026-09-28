@@ -22,16 +22,14 @@ the live run uses the owner's git-ignored `api/.env` credentials.
 2. Phase 02 `ErrorEnvelopeSchema.stage` used `StageStatus` values (`completed`…), but `docs/API.md` §7 shows a stage **name** (`"review"`). Corrected to a `StageName` enum (`extraction/review/comparison/retrieval/applicability/explanation`).
 3. Provider failures previously discarded diagnostics; outcomes now carry a coarse `errorClass` (e.g. `ApiError:402`) — message bodies are never logged.
 
-## Live run (BLOCKED — owner action)
+## Live run status (provider capacity)
 
-`npm run live:sample -w api` against the real provider:
+Timeline (all times 2026-09-28/29, Asia/Karachi offset UTC+5):
 
-```
-{"result":"error","status":503,"code":"EXTRACTION_UNAVAILABLE","totalMs":670}
-{"probe":{"reason":"unavailable","errorClass":"ApiError:402"}}
-```
+1. First key: `ApiError:402` — AI Studio prepayment credits depleted (owner billing). Owner replaced the key.
+2. New key: billing accepted; direct probes confirm `gemini-3.5-flash` is a **valid** model id and the request path reaches Gemini.
+3. Current blocker: provider-side capacity — direct probes (plain text, real PDF, every config combination, plus `gemini-3.8-flash`) all return `503 UNAVAILABLE: "This model is currently experiencing high demand."` This is a Gemini service condition, not a code defect. An earlier `400 INVALID_ARGUMENT` probe was traced to a deliberately malformed 10-byte probe PDF, not the pipeline (real fixtures parse and pass admission).
+4. Pipeline verified up to the provider boundary: admission passes TC-002 fixtures (magic bytes, page count, pdf-lib parse), request shape accepted by the SDK, and the documented failure behavior fires correctly — fail-closed `503 EXTRACTION_UNAVAILABLE`, `retryable: true`, no content logged.
+5. Auto-retry: `npm run live:sample -w api` reruns periodically; this section updates with real latency + field-state counts on first success.
 
-- Model id `gemini-3.5-flash` was probed directly and is **valid** (no 404); the request reaches Gemini.
-- Failure is `402: prepayment credits are depleted` on the GCP-linked AI Studio project. This is an owner-side billing blocker, not a code defect.
-- The failure path itself behaved as documented: fail-closed `503 EXTRACTION_UNAVAILABLE`, retryable, no content leaked.
-- **Rerun needed** once the owner adds AI Studio credits (`https://ai.studio/projects` → billing/credits). Exit criterion "sample TC-002 extracts through live Gemini" stays **pending** until then; recorded here rather than claimed.
+Exit criterion "sample TC-002 extracts through live Gemini with recorded provider latency" remains **pending on provider capacity** — recorded, not claimed.
