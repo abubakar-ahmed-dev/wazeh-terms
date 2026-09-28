@@ -1,0 +1,32 @@
+{
+  "name": "@wazeh-terms/api",
+  "version": "0.1.0",
+  "private": true,
+  "description": "WazehTerms Express API — validation, signed extraction handoff, deterministic comparison, report assembly.",
+  "license": "UNLICENSED",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "tsx watch --clear-screen=false src/version.ts",
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^5.1.0",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.1",
+    "@types/node": "^22.15.0",
+    "eslint": "^9.25.0",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.0",
+    "typescript-eslint": "^8.30.0",
+    "vitest": "^5.0.2"
+  }
+}
