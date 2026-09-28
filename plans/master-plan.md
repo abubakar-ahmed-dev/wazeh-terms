@@ -15,7 +15,7 @@
 | D4 | **Web stack.** Vite + React + TypeScript in `web/`; Express serves the built frontend and API from one Cloud Run service (ADR-008). |
 | D5 | **Testing.** Vitest unit + API contract tests; Playwright coverage of the five-sample user journey; focused security tests and source-validation tests for their specific risks. |
 | D6 | **CI.** GitHub Actions for lint, typecheck, build, and tests on pushes and PRs. Deterministic; no live provider credentials in CI. |
-| D7 | **Git.** One coherent commit at the end of each completed phase; push after required validation passes; review status and diff before committing. |
+| D7 | **Git.** `main` is protected baseline; `dev` is the integration branch. Each phase runs on its own branch created from `dev` (`phase-NN-<slug>`) and merges back through a PR after required validation passes. Review status and diff before every commit. |
 | D8 | **Credentials.** Owner supplies the Gemini key; GCP project/billing; Sanity project with Context enabled on the org; remaining Sanity/official-source setup in parallel. Nonsecret IDs/URLs requested per phase (`needs-and-requirements.md`); secrets only via git-ignored local `.env` or platform secret bindings. Source-backed findings stay incomplete until KB + runtime MCP endpoint + official-source review + canonical rule checks demonstrably work; document-check-only milestones disclose the limitation. |
 
 ## 2. Target architecture (summary; authority = docs)

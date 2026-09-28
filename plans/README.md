@@ -28,11 +28,12 @@ Until a phase begins, its folder contains only a `README.md` stub describing sco
 
 ## Workflow per phase
 
-1. **Re-plan:** write `phase-NN/plan.md` after re-checking docs, git state, and code for changes since the last phase. Update `master-plan.md` if reality diverged.
-2. **Implement:** follow `plan.md` within the phase scope only.
-3. **Validate:** run the phase's checks; record real results in `testing-log.md`.
-4. **Log:** record what/where/why in `implementation-log.md`.
-5. **Commit:** one coherent commit at phase end, after reviewing `git status` and `git diff` and confirming validation passed. Push after the commit. Never commit secrets, `.env`, generated artifacts, or real personal documents.
+1. **Branch:** create `phase-NN-<slug>` from `dev` (e.g. `phase-01-foundation`). All phase work happens on that branch; never work directly on `main`.
+2. **Re-plan:** write `phase-NN/plan.md` after re-checking docs, git state, and code for changes since the last phase. Update `master-plan.md` if reality diverged.
+3. **Implement:** follow `plan.md` within the phase scope only.
+4. **Validate:** run the phase's checks; record real results in `testing-log.md`.
+5. **Log:** record what/where/why in `implementation-log.md`.
+6. **Merge:** review `git status`/`git diff`, open a PR into `dev`, merge after validation passes. One coherent commit (or a small set) per phase. Never commit secrets, `.env`, generated artifacts, or real personal documents.
 
 ## Standing rules (from root `CLAUDE.md` and owner decisions)
 
