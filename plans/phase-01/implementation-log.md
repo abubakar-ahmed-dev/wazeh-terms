@@ -20,6 +20,7 @@ Created the buildable monorepo skeleton — no product endpoints, no runtime beh
 - **vitest ^5.0.2 (not ^3):** initial install with vitest 3 reported 2 moderate advisories (`@vitest/mocker` path traversal, GHSA-82fw-gwwq-j7x9, dev-only). Upgraded both workspaces before any real tests existed; audit now `found 0 vulnerabilities`.
 - **No Tailwind/shadcn:** UI stack belongs to Phase 11 per master plan; Phase 01 is a buildable placeholder only.
 - **`sanity-studio/` not added to root workspaces or CI:** separate toolchain; schema arrives Phase 08 (MT-2 dataset decision pending).
+- **Linux rollup native binary pinned in root `optionalDependencies` (`@rollup/rollup-linux-x64-gnu@^4.63.5`):** CI runs on `ubuntu-latest` while the lockfile is authored on Windows; npm prunes foreign-platform optional binaries from the lockfile (npm/cli#4828), so `npm ci` failed on Linux with `Cannot find module @rollup/rollup-linux-x64-gnu`. The os/cpu-guarded entry is skipped on Windows and restores the binary on Linux. Maintenance rule recorded in `ci.yml`: keep this entry in sync when rollup bumps. Two CI runs failed before this fix (36456514335, 36456951037); run 36457300658 green.
 - **Pre-plan leftovers untouched:** stray gitignored root `node_modules/` from the deleted prototype (npm install pruned extraneous packages); empty untracked `plans/e2e-sample-comparison-slice/` directory left as found.
 
 ## Files/components affected
