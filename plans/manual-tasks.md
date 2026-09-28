@@ -1,0 +1,56 @@
+# Manual tasks — human-only steps
+
+Mapped to the phase that needs each. Owner does these in a browser or cloud console.
+Secrets travel only through a secure channel into the local git-ignored `.env` or the
+platform secret binding — never into plans, logs, chat, or source control.
+
+## MT-1 — Gemini API key → needed by Phase 03
+1. Create an API key in Google AI Studio (aistudio.google.com/apikey).
+2. Owner states the account tier/API path used (needed later for the provider-processing notice per `docs/SECURITY.md` §2).
+3. Place into `api/.env` as `GEMINI_API_KEY=…` (local only).
+4. Status: owner supplies immediately.
+
+## MT-2 — Sanity dataset decision → needed by Phase 08
+1. Choose the dataset for curated reference records: dedicated (recommended, e.g. `knowledge`) vs existing `production` (studio currently hardcodes `production`, project `8g0kllu0`).
+2. Create it in sanity.io/manage if dedicated; record the final `projectId` + `dataset` pair for config.
+3. Set Studio editor roles/invites (editors only; no public write).
+
+## MT-3 — Studio deploy → after Phase 08 schema lands
+1. `cd sanity-studio && npx sanity deploy` (interactive login).
+2. Record the deployed Studio URL (nonsecret; goes in docs).
+
+## MT-4 — Official-source browser verification → needed by Phase 09
+1. Open each `candidate` source in `docs/SOURCES.md` §3 in a normal browser — especially BEOE PDFs/pages and the MOHRE-hosted law PDFs that blocked automated fetches. Work from the owner's downloaded official PDFs and dated browser captures; do not defeat access restrictions and do not infer a rule from search snippets.
+2. For each: record retrieval date, exact URL opened, document title/edition, and (for stable PDFs) the file so a digest can be computed. Keep files under `sources/` with their candidate ID in the filename (e.g. `sources/pakistan/PK-01-emigration-rules.pdf`). Captures stay local-only (git-ignored) and count as **unreviewed captures** until provenance is recorded: official URL, publisher, capture time, version where known, exact section.
+3. Mark verified candidates clearly; unverified ones stay `candidate` and can never back a rule. Proposed narrow records/rules (with conditions and exceptions) go to human review; only approved, current records with verified pinpoints reach Sanity and the Knowledge Base input. Full PDFs upload to Sanity only when permitted and needed.
+
+## MT-5 — Knowledge Base + runtime Context endpoint → needed by Phase 10
+1. In the Sanity org, create the Knowledge Base; feed it the approved-record projection (Phase 09 output) and any vetted official PDFs.
+2. Create the **Context MCP endpoint with Knowledge Base sources only** — do NOT attach a dataset source (that selects GROQ mode and displaces the KB tools).
+3. Create the **organization token** with Context Viewer access.
+4. Provide: endpoint URL (nonsecret, goes in `.env.example` as placeholder + config), `SANITY_ORGANIZATION_TOKEN` (secret → `api/.env` locally, Secret Manager at deploy).
+5. Status: owner says Context is enabled on the org; KB/endpoint/token creation in progress.
+
+## MT-6 — Canonical Sanity read credential → Phase 09/10 (conditional)
+1. If the curated dataset is private, create a separate minimum-privilege **read** token for the canonical-record reader.
+2. If the dataset is public and the planned read path is reviewed as adequate, record that decision instead (`docs/DEPLOYMENT.md` allows omitting `SANITY_READ_TOKEN`).
+
+## MT-7 — GCP project + billing → needed by Phase 14
+1. Finish creating the Google Cloud project; enable billing; note the project ID (nonsecret).
+2. Pick the Cloud Run region and note it (nonsecret).
+3. Enable only needed APIs (Cloud Run, Artifact Registry, Secret Manager; Cloud Build if used).
+4. Create/record: Artifact Registry repo, runtime service account, deploy identity, budget/alert owner, two release contacts.
+
+## MT-8 — HMAC signing secret → needed by Phase 03 (first signed run)
+1. Generate a high-entropy secret (e.g. `openssl rand -base64 48`).
+2. Owner supplies via secure channel; placed into `api/.env` as `REVIEW_HMAC_SECRET=…` with an initial `keyId` recorded in config (nonsecret label).
+3. At deployment: Secret Manager + pinned version binding.
+
+## MT-9 — Repository housekeeping decisions → any time
+1. `sources/` (third-party official PDFs) — confirm they belong in Git (size/licensing) or stay local-only.
+2. License choice (README notes none selected).
+
+## MT-10 — Provider data-handling review → before ANY custom-upload gate change
+1. Record the actual Gemini account/API data-handling behavior for the deployed path (per `docs/SECURITY.md` §2 / ADR-003).
+2. Approve the public provider-processing notice text and its `privacyNoticeVersion`.
+3. Until done, `customUploadEnabled` stays `false`; arbitrary files rejected with `403 CUSTOM_UPLOAD_DISABLED`.
