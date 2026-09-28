@@ -1,0 +1,43 @@
+# dependencies
+node_modules/
+
+# environment and secrets
+.env
+.env.local
+.env.*.local
+
+# build output
+dist/
+build/
+
+# sanity studio local state
+sanity-studio/.sanity/
+sanity-studio/dist/
+
+# uploads and temp files
+tmp/
+uploads/
+
+# agent-local settings
+.claude/
+
+# source research materials — local only, never committed (third-party official
+# documents and captures; policy in docs/SOURCES.md, provenance in sources/README.md).
+# Only link lists (.md), inventory metadata, and reviewed documentation are committed.
+sources/**/*.pdf
+sources/**/*.doc
+sources/**/*.docx
+sources/**/*.png
+sources/**/*.jpg
+sources/**/*.jpeg
+sources/**/*.webp
+sources/**/*.gif
+sources/**/*.html
+sources/**/*.htm
+sources/**/*.mhtml
+sources/**/*.eml
+sources/captures/
+
+# OS noise
+.DS_Store
+Thumbs.db
