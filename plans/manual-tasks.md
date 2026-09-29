@@ -31,8 +31,7 @@ platform secret binding — never into plans, logs, chat, or source control.
 5. Status: owner says Context is enabled on the org; KB/endpoint/token creation in progress.
 
 ## MT-6 — Canonical Sanity read credential → Phase 09/10 (conditional)
-1. If the curated dataset is private, create a separate minimum-privilege **read** token for the canonical-record reader.
-2. If the dataset is public and the planned read path is reviewed as adequate, record that decision instead (`docs/DEPLOYMENT.md` allows omitting `SANITY_READ_TOKEN`).
+**DECIDED (owner, 2026-09-29): the `production` dataset is public.** The Phase 10 canonical-record reader reads published approved records without `SANITY_READ_TOKEN`; the variable stays optional-with-degradation in config. A read token is added only if visibility ever changes.
 
 ## MT-7 — GCP project + billing → needed by Phase 14
 1. Finish creating the Google Cloud project; enable billing; note the project ID (nonsecret).

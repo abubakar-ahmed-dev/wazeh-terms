@@ -68,9 +68,12 @@ export function gateCandidate(
     return withheld('schema_version_unsupported');
   }
 
-  // 3. Trigger + evidence-class compatibility.
-  const trigger = rule.triggerKey ? triggerDefinition(rule.triggerKey) : undefined;
-  if (rule.triggerKey && !trigger) return withheld('trigger_unregistered');
+  // 3. Trigger + evidence-class compatibility. A null triggerKey marks an
+  // informational/guidance record (docs/DATABASE_SCHEMA.md §6) — it can
+  // never back an automated concern.
+  if (!rule.triggerKey) return withheld('trigger_unregistered');
+  const trigger = triggerDefinition(rule.triggerKey);
+  if (!trigger) return withheld('trigger_unregistered');
   if (rule.evidenceClass !== source.evidenceClass) return withheld('evidence_class_mismatch');
   // International guidance can never produce a national-law citation
   // (docs/API.md §6: the citation's evidenceClass is binding-or-official).
