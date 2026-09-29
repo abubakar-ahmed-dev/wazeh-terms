@@ -19,7 +19,7 @@ export const TEST_SECRET = 'k'.repeat(48);
 export function testConfig(overrides: Partial<AppConfig> = {}): AppConfig {
   const base = loadConfig({
     GEMINI_API_KEY: 'test-key',
-    GEMINI_MODEL: 'gemini-3.5-flash',
+    GEMINI_MODEL: 'gemini-3.5-flash-lite',
     REVIEW_HMAC_SECRET: TEST_SECRET,
     REVIEW_HMAC_KEY_ID: 'key-1',
     SAMPLE_MODE_ENABLED: 'true',
