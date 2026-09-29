@@ -1,0 +1,50 @@
+/**
+ * Shared Phase 10 fixtures: one fully valid canonical rule + source version
+ * (fictional seed content, mirroring the Phase 09 seed shape).
+ */
+import type { CanonicalRule } from '../../src/services/canonical/reader.js';
+
+export const validRuleRow = {
+  ruleKey: 'ae-recruitment-costs-employer-bears',
+  revision: 2,
+  title: 'Employer bears recruitment costs',
+  claimText: 'The employer bears the recruitment cost and shall not recover it from the worker.',
+  topic: 'worker_costs',
+  triggerKey: 'worker_charge.payer_must_be_uae_employer',
+  ruleKind: 'obligation',
+  evidenceClass: 'binding_official_rule',
+  jurisdiction: 'AE',
+  origin: 'PK',
+  destination: 'AE',
+  employmentRegime: 'uae_mainland_private',
+  workerCategory: 'non_domestic',
+  responsibleParty: 'uae_employer',
+  conditions: [],
+  exceptions: [],
+  machineConditionKeys: ['worker_charge_class_present'],
+  effectiveFrom: '2022-02-02',
+  effectiveTo: null,
+  currentGuidanceVerifiedAt: null,
+  pinpoint: { label: 'Article 8(2)', quote: 'The employer shall bear the recruitment cost.' },
+  primarySource: {
+    sourceKey: 'uae-federal-decree-law-33-2021',
+    versionKey: 'mohre-pdf-2026',
+    title: 'Federal Decree-Law No. 33 of 2021',
+    evidenceClass: 'binding_official_rule',
+    jurisdiction: 'AE',
+    officialUrl: 'https://www.mohre.gov.ae/assets/download/4d342ff8/example.pdf',
+    issuingAuthorityName: 'Ministry of Human Resources and Emiratisation',
+    effectiveFrom: '2022-02-02',
+    effectiveTo: null,
+    recordStatus: 'current',
+    reviewStatus: 'approved',
+    retrievedAt: '2026-09-29T08:00:00.000Z',
+    lastVerifiedAt: '2026-09-29T08:00:00.000Z',
+    schemaVersion: 1,
+  },
+  plainEnglish: 'Your employer must pay recruitment costs; they cannot pass them to you.',
+  sourceCheckedAt: '2026-09-29T08:00:00.000Z',
+  recordStatus: 'current',
+  reviewStatus: 'approved',
+  schemaVersion: 1,
+} satisfies CanonicalRule;

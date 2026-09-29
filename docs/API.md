@@ -42,11 +42,12 @@ Sample preview assets, if served, use fixed same-origin `/samples/...` URLs retu
   "maxTotalBytes": 16777216,
   "maxPagesPerPdf": 15,
   "maxCorrections": 100,
+  "sourceBackedChecks": "unconfigured",
   "privacyNoticeVersion": "2026-09-28-draft"
 }
 ```
 
-`customUploadEnabled: false` means the API rejects **all arbitrary user files**; it cannot infer whether an arbitrary PDF is fictional by reading it. Sample mode remains usable through a server allowlist. If images or Urdu pass their gates, update this response, frontend copy, tests, and deployment notes together.
+`sourceBackedChecks` reports the real retrieval state: `"available"` only when the Knowledge Base-only Context MCP endpoint and canonical dataset are configured; `"unconfigured"` deployments show no rule-backed concerns and say so. `customUploadEnabled: false` means the API rejects **all arbitrary user files**; it cannot infer whether an arbitrary PDF is fictional by reading it. Sample mode remains usable through a server allowlist. If images or Urdu pass their gates, update this response, frontend copy, tests, and deployment notes together.
 
 `GET /api/v1/samples` returns only safe metadata, such as `{ "samples": [{ "sampleCaseId": "TC-002", "title": "Fictional salary change", "scope": { ... }, "documents": [{ "role": "offer", "previewUrl": "/samples/TC-002/offer.pdf" }] }] }`. A `sampleCaseId` must match an allowlisted manifest entry; it is not a filesystem path. Samples contain no real worker details.
 
