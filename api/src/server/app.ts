@@ -12,6 +12,7 @@ import type { ErrorCode, StageName } from '../contracts/index.js';
 import type { AppConfig } from '../config.js';
 import { HttpError } from '../errors.js';
 import { logRequest } from '../logging.js';
+import { analysesRouter } from '../routes/analyses.js';
 import { extractionsRouter } from '../routes/extractions.js';
 import { findSampleFile, readOnlyRouter } from '../routes/read-only.js';
 import type { GeminiExtractionService } from '../services/gemini/types.js';
@@ -49,10 +50,13 @@ export function buildApp(deps: AppDeps): Express {
     next();
   });
 
-  app.use(express.json({ limit: '64kb' }));
+  // Analyses requests carry the full signed extraction; the bound is a
+  // coarse ceiling until measured limits replace it (Phase 13/14).
+  app.use(express.json({ limit: '512kb' }));
 
   app.use(readOnlyRouter(deps));
   app.use(extractionsRouter(deps));
+  app.use(analysesRouter(deps));
 
   app.get('/samples/:caseId/:file', (req: Request, res: Response, next: NextFunction) => {
     void (async () => {

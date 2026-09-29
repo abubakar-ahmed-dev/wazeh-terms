@@ -10,6 +10,7 @@ import { StageStatusesSchema } from './stage-status.js';
 
 export const AnalysisStatusSchema = z.enum(['complete', 'partial']);
 export const ScopeApplicabilitySchema = z.enum(['supported', 'conflicting', 'unknown']);
+export type ScopeApplicability = z.infer<typeof ScopeApplicabilitySchema>;
 
 export const OfficialNextStepSchema = z.strictObject({
   label: z.string().min(1).max(200),
