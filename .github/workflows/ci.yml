@@ -27,6 +27,11 @@ jobs:
       - name: Install workspaces
         run: npm ci
 
+      # sanity-studio keeps its own toolchain (not a root workspace); its
+      # deps are needed for the studio typecheck inside `npm run typecheck`.
+      - name: Install Sanity Studio deps
+        run: npm ci --prefix sanity-studio
+
       - name: Lint
         run: npm run lint
 
