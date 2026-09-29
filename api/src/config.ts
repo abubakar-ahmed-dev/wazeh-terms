@@ -36,6 +36,22 @@ export interface AppConfig {
     readonly maxCorrections: number;
     readonly applicationDeadlineMs: number;
   };
+  readonly sanity: {
+    /** Application-facing Context MCP endpoint; Knowledge Base sources only. */
+    readonly contextMcpUrl: string | null;
+    /** Context Viewer organization token — secret, server-only. */
+    readonly organizationToken: string | null;
+    readonly projectId: string | null;
+    readonly dataset: string | null;
+    /** Optional minimum-privilege read token for the canonical-record reader. */
+    readonly readToken: string | null;
+  };
+  readonly retrieval: {
+    readonly maxToolCalls: number;
+    readonly timeoutMs: number;
+    /** Rules whose `sourceCheckedAt` is older than this are stale → withheld. */
+    readonly sourceCheckMaxAgeDays: number;
+  };
   readonly privacyNoticeVersion: string;
   readonly port: number;
 }
@@ -82,6 +98,18 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
       maxCorrections: getInt('MAX_CORRECTIONS', 100),
       applicationDeadlineMs: getInt('APPLICATION_DEADLINE_MS', 30_000),
     },
+    sanity: {
+      contextMcpUrl: get('SANITY_CONTEXT_MCP_URL') ?? null,
+      organizationToken: get('SANITY_ORGANIZATION_TOKEN') ?? null,
+      projectId: get('SANITY_PROJECT_ID') ?? null,
+      dataset: get('SANITY_DATASET') ?? null,
+      readToken: get('SANITY_READ_TOKEN') ?? null,
+    },
+    retrieval: {
+      maxToolCalls: getInt('RETRIEVAL_MAX_TOOL_CALLS', 6),
+      timeoutMs: getInt('RETRIEVAL_TIMEOUT_MS', 8_000),
+      sourceCheckMaxAgeDays: getInt('SOURCE_CHECK_MAX_AGE_DAYS', 180),
+    },
     privacyNoticeVersion: get('PRIVACY_NOTICE_VERSION') ?? '2026-09-28-draft',
     port: getInt('PORT', 3000),
   };
@@ -106,6 +134,11 @@ export function configSourceSummary(config: AppConfig): string[] {
     `MAX_PAGES_PER_PDF=${config.limits.maxPagesPerPdf}`,
     `MAX_CORRECTIONS=${config.limits.maxCorrections}`,
     `APPLICATION_DEADLINE_MS=${config.limits.applicationDeadlineMs}`,
+    `SANITY_CONTEXT_MCP_URL=${config.sanity.contextMcpUrl ? 'set' : 'missing'}`,
+    `SANITY_ORGANIZATION_TOKEN=${config.sanity.organizationToken ? 'set' : 'missing'}`,
+    `SANITY_PROJECT_ID=${config.sanity.projectId ?? 'missing'}`,
+    `SANITY_DATASET=${config.sanity.dataset ?? 'missing'}`,
+    `SANITY_READ_TOKEN=${config.sanity.readToken ? 'set' : 'missing'}`,
     `PRIVACY_NOTICE_VERSION=${config.privacyNoticeVersion}`,
     `PORT=${config.port}`,
   ];

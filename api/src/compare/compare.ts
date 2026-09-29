@@ -30,6 +30,8 @@ export interface FindingDraft {
   readonly documentEvidence: readonly Evidence[];
   readonly valueOrigins: readonly ('document' | 'user')[];
   readonly comparisonRuleKey?: string;
+  /** Set only for a gate-approved source-backed concern (Phase 10). */
+  readonly source?: import('../contracts/index.js').SourceCitation;
   readonly uncertaintyReasons: readonly string[];
   readonly suggestedQuestionOrStep: string;
 }

@@ -34,6 +34,12 @@ export function readOnlyRouter(deps: RouteDeps): Router {
       maxTotalBytes: config.limits.maxTotalBytes,
       maxPagesPerPdf: config.limits.maxPagesPerPdf,
       maxCorrections: config.limits.maxCorrections,
+      // Phase 10: the real retrieval state, never an aspiration. Unconfigured
+      // deployments keep rule-backed findings off and say so.
+      sourceBackedChecks:
+        config.sanity.contextMcpUrl && config.sanity.projectId && config.sanity.dataset
+          ? 'available'
+          : 'unconfigured',
       privacyNoticeVersion: config.privacyNoticeVersion,
     });
   });

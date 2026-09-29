@@ -13,6 +13,7 @@
     "start": "tsx src/server/index.ts",
     "live:sample": "tsx scripts/live-extraction.ts",
     "generate:corpus": "tsx scripts/generate-corpus.ts",
+    "live:retrieval": "tsx scripts/live-retrieval-check.ts",
     "validate:content": "tsx ../sanity-studio/scripts/validate-content.cli.mjs",
     "build": "tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit -p tsconfig.json",
