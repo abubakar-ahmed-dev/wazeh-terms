@@ -6,7 +6,16 @@
 import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
 
-import { StageStatusSchema } from './stage-status.js';
+/** Names the pipeline stage an error belongs to (docs/API.md §7 example `stage: "review"`). */
+export const StageNameSchema = z.enum([
+  'extraction',
+  'review',
+  'comparison',
+  'retrieval',
+  'applicability',
+  'explanation',
+]);
+export type StageName = z.infer<typeof StageNameSchema>;
 
 export const ErrorCodeSchema = z.enum([
   // 400
@@ -36,6 +45,9 @@ export const ErrorCodeSchema = z.enum([
   'REFERENCE_UNAVAILABLE',
   // 504
   'ANALYSIS_TIMEOUT',
+  // Unexpected internal failure (API.md §7 lists example codes; this is the
+  // safe-envelope code for failures with no more specific class).
+  'INTERNAL_ERROR',
 ]);
 export type ErrorCode = z.infer<typeof ErrorCodeSchema>;
 
@@ -43,7 +55,7 @@ export const ErrorEnvelopeSchema = z.strictObject({
   error: z.strictObject({
     code: ErrorCodeSchema,
     message: z.string().min(1).max(500),
-    stage: StageStatusSchema.optional(),
+    stage: StageNameSchema.optional(),
     retryable: z.boolean(),
   }),
   requestId: z.string().min(1).max(64),

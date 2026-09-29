@@ -14,4 +14,18 @@ export default tseslint.config(
       'no-console': 'warn',
     },
   },
+  {
+    // Operational logging lives only here (docs/SECURITY.md §6).
+    files: ['src/logging.ts'],
+    rules: {
+      'no-console': 'off',
+    },
+  },
+  {
+    // The manual live-check script is a CLI tool, not library code.
+    files: ['scripts/**'],
+    rules: {
+      'no-console': 'off',
+    },
+  },
 );
