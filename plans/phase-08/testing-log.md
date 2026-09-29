@@ -12,7 +12,7 @@ Studio deploy involved).
 | 4 | CLI behavior | `validate-content.cli.mjs` | Pass — valid seed exit 0; `invalid-two-approved.json` exit 1 with `[approved_current_uniqueness]` finding printed. `--from-dataset` path present for Phase 09 (requires env; untested here by design). |
 | 5 | Studio build | `npx sanity build` | Pass — build succeeds with the five record types wired (`dist/index.html` emitted). First run failed with missing-export errors from a stale barrel (index re-exporting moved symbols) — fixed by re-pointing the barrel at `registry-mirror.ts`. |
 | 6 | Studio typecheck | `tsc -p sanity-studio/tsconfig.json --noEmit` (also wired into root `npm run typecheck`) | Pass — schema types, registry mirror, trigger keys, and the gate script all type-clean under the studio tsconfig. |
-| 7 | Regression | full suite | Pass — **32 files, 178/178 tests** (12 new); root `lint` 0 issues; root `typecheck` (api + web + studio) clean; api + web builds green. |
+| 7 | Regression | full suite | Pass — **32 files, 178/178 tests** (12 new); root `lint` 0 issues; root `typecheck` (api + web + studio) clean; api + web builds green. CI: first run failed because sanity-studio deps were not installed on the runner (studio is its own package, not a root workspace) — workflow now runs `npm ci --prefix sanity-studio` before typecheck; rerun green. |
 
 ## Issues found and fixed during the phase
 
