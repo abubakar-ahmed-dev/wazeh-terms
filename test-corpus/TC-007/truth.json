@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "caseId": "TC-007",
+  "route": {
+    "origin": "PK",
+    "destination": "AE",
+    "declaredRegime": "uae_mainland_private",
+    "declaredWorkerCategory": "non_domestic"
+  },
+  "documents": [
+    {
+      "role": "offer",
+      "file": "offer.pdf",
+      "pageCount": 1,
+      "readablePages": [
+        1
+      ]
+    },
+    {
+      "role": "contract",
+      "file": "contract.pdf",
+      "pageCount": 1,
+      "readablePages": [
+        1
+      ]
+    }
+  ],
+  "expectedFields": [
+    {
+      "role": "offer",
+      "fieldKey": "stated_total_pay",
+      "state": "present",
+      "value": {
+        "kind": "money",
+        "amount": "3000.00",
+        "currency": "AED",
+        "frequency": "monthly",
+        "component": "stated_total",
+        "payer": null
+      },
+      "evidence": {
+        "page": 1,
+        "role": "offer",
+        "line": 16
+      }
+    },
+    {
+      "role": "contract",
+      "fieldKey": "stated_total_pay",
+      "state": "present",
+      "value": {
+        "kind": "money",
+        "amount": "3450.00",
+        "currency": "AED",
+        "frequency": "monthly",
+        "component": "stated_total",
+        "payer": null
+      },
+      "evidence": {
+        "page": 1,
+        "role": "contract",
+        "line": 16
+      }
+    }
+  ],
+  "seededDifferences": [
+    {
+      "fieldKey": "stated_total_pay",
+      "kind": "value",
+      "note": "Seeded difference: stated total 3,000 vs 3,450 (allowance drift)."
+    }
+  ],
+  "allowedFindingCategories": [
+    "document_mismatch",
+    "missing_information"
+  ],
+  "forbiddenFindingCategories": [
+    "source_backed_concern"
+  ],
+  "requiredRuleRefs": [],
+  "expectedAbstentions": [
+    "no_global_verdict"
+  ],
+  "notes": "Total-vs-components mismatch."
+}

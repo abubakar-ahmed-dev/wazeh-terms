@@ -1,0 +1,112 @@
+{
+  "schemaVersion": 1,
+  "caseId": "TC-009",
+  "route": {
+    "origin": "PK",
+    "destination": "AE",
+    "declaredRegime": "uae_mainland_private",
+    "declaredWorkerCategory": "non_domestic"
+  },
+  "documents": [
+    {
+      "role": "offer",
+      "file": "offer.pdf",
+      "pageCount": 1,
+      "readablePages": [
+        1
+      ]
+    },
+    {
+      "role": "contract",
+      "file": "contract.pdf",
+      "pageCount": 1,
+      "readablePages": [
+        1
+      ]
+    }
+  ],
+  "expectedFields": [
+    {
+      "role": "offer",
+      "fieldKey": "start_date",
+      "state": "present",
+      "value": {
+        "kind": "date",
+        "date": "2026-03-01"
+      },
+      "evidence": {
+        "page": 1,
+        "role": "offer",
+        "line": 18
+      }
+    },
+    {
+      "role": "contract",
+      "fieldKey": "start_date",
+      "state": "present",
+      "value": {
+        "kind": "date",
+        "date": "2026-04-01"
+      },
+      "evidence": {
+        "page": 1,
+        "role": "contract",
+        "line": 18
+      }
+    },
+    {
+      "role": "offer",
+      "fieldKey": "contract_duration",
+      "state": "present",
+      "value": {
+        "kind": "duration",
+        "amount": "12",
+        "unit": "month"
+      },
+      "evidence": {
+        "page": 1,
+        "role": "offer",
+        "line": 19
+      }
+    },
+    {
+      "role": "contract",
+      "fieldKey": "contract_duration",
+      "state": "present",
+      "value": {
+        "kind": "duration",
+        "amount": "24",
+        "unit": "month"
+      },
+      "evidence": {
+        "page": 1,
+        "role": "contract",
+        "line": 19
+      }
+    }
+  ],
+  "seededDifferences": [
+    {
+      "fieldKey": "start_date",
+      "kind": "value",
+      "note": "Seeded difference: start date one month apart."
+    },
+    {
+      "fieldKey": "contract_duration",
+      "kind": "value",
+      "note": "Seeded difference: duration 12 vs 24 months."
+    }
+  ],
+  "allowedFindingCategories": [
+    "document_mismatch",
+    "missing_information"
+  ],
+  "forbiddenFindingCategories": [
+    "source_backed_concern"
+  ],
+  "requiredRuleRefs": [],
+  "expectedAbstentions": [
+    "no_global_verdict"
+  ],
+  "notes": "Date and duration mismatches in one pair."
+}
