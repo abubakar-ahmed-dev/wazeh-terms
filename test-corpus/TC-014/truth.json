@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "caseId": "TC-014",
+  "route": {
+    "origin": "PK",
+    "destination": "AE",
+    "declaredRegime": "uae_mainland_private",
+    "declaredWorkerCategory": "non_domestic"
+  },
+  "documents": [
+    {
+      "role": "contract",
+      "file": "contract.pdf",
+      "pageCount": 2,
+      "readablePages": [
+        1
+      ]
+    }
+  ],
+  "expectedFields": [
+    {
+      "role": "contract",
+      "fieldKey": "employer_name",
+      "state": "present",
+      "value": {
+        "kind": "text",
+        "text": "Desert Star Equipment Rental LLC"
+      },
+      "evidence": {
+        "page": 1,
+        "role": "contract",
+        "line": 6
+      }
+    },
+    {
+      "role": "contract",
+      "fieldKey": "job_title",
+      "state": "present",
+      "value": {
+        "kind": "text",
+        "text": "Workshop Helper"
+      },
+      "evidence": {
+        "page": 1,
+        "role": "contract",
+        "line": 7
+      }
+    },
+    {
+      "role": "contract",
+      "fieldKey": "basic_salary",
+      "state": "unreadable",
+      "value": null
+    }
+  ],
+  "seededDifferences": [
+    {
+      "fieldKey": "basic_salary",
+      "kind": "clue",
+      "note": "Salary falls on the unreadable page; the field stays unreadable, never absent."
+    }
+  ],
+  "allowedFindingCategories": [
+    "unable_to_determine",
+    "missing_information"
+  ],
+  "forbiddenFindingCategories": [
+    "document_mismatch",
+    "source_backed_concern"
+  ],
+  "requiredRuleRefs": [],
+  "expectedAbstentions": [
+    "no_comparison_single_document",
+    "no_global_verdict"
+  ],
+  "notes": "Single-document low-quality case: page 2 unreadable in truth, no offer, comparison not applicable."
+}

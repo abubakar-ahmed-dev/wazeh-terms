@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "caseId": "TC-006",
+  "route": {
+    "origin": "PK",
+    "destination": "AE",
+    "declaredRegime": "uae_mainland_private",
+    "declaredWorkerCategory": "non_domestic"
+  },
+  "documents": [
+    {
+      "role": "offer",
+      "file": "offer.pdf",
+      "pageCount": 1,
+      "readablePages": [
+        1
+      ]
+    },
+    {
+      "role": "contract",
+      "file": "contract.pdf",
+      "pageCount": 1,
+      "readablePages": [
+        1
+      ]
+    }
+  ],
+  "expectedFields": [
+    {
+      "role": "offer",
+      "fieldKey": "basic_salary",
+      "state": "present",
+      "value": {
+        "kind": "money",
+        "amount": "2200.00",
+        "currency": "AED",
+        "frequency": "monthly",
+        "component": "basic_salary",
+        "payer": null
+      },
+      "evidence": {
+        "page": 1,
+        "role": "offer",
+        "line": 14
+      }
+    },
+    {
+      "role": "contract",
+      "fieldKey": "basic_salary",
+      "state": "present",
+      "value": {
+        "kind": "money",
+        "amount": "1750.00",
+        "currency": "AED",
+        "frequency": "monthly",
+        "component": "basic_salary",
+        "payer": null
+      },
+      "evidence": {
+        "page": 1,
+        "role": "contract",
+        "line": 14
+      }
+    }
+  ],
+  "seededDifferences": [
+    {
+      "fieldKey": "basic_salary",
+      "kind": "value",
+      "note": "Seeded critical difference: basic salary 2,200 vs 1,750."
+    }
+  ],
+  "allowedFindingCategories": [
+    "document_mismatch",
+    "missing_information"
+  ],
+  "forbiddenFindingCategories": [
+    "source_backed_concern"
+  ],
+  "requiredRuleRefs": [],
+  "expectedAbstentions": [
+    "no_global_verdict"
+  ],
+  "notes": "Critical salary mismatch with both passages readable."
+}

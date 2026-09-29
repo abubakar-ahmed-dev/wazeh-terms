@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "caseId": "TC-011",
+  "route": {
+    "origin": "PK",
+    "destination": "AE",
+    "declaredRegime": "uae_mainland_private",
+    "declaredWorkerCategory": "non_domestic"
+  },
+  "documents": [
+    {
+      "role": "offer",
+      "file": "offer.pdf",
+      "pageCount": 1,
+      "readablePages": [
+        1
+      ]
+    },
+    {
+      "role": "contract",
+      "file": "contract.pdf",
+      "pageCount": 1,
+      "readablePages": [
+        1
+      ]
+    }
+  ],
+  "expectedFields": [
+    {
+      "role": "offer",
+      "fieldKey": "accommodation_benefit",
+      "state": "present",
+      "value": {
+        "kind": "benefit_state",
+        "status": "provided",
+        "conditions": null
+      },
+      "evidence": {
+        "page": 1,
+        "role": "offer",
+        "line": 24
+      }
+    },
+    {
+      "role": "contract",
+      "fieldKey": "accommodation_benefit",
+      "state": "present",
+      "value": {
+        "kind": "benefit_state",
+        "status": "conditional",
+        "conditions": "Subject to availability at the company camp"
+      },
+      "evidence": {
+        "page": 1,
+        "role": "contract",
+        "line": 24
+      }
+    }
+  ],
+  "seededDifferences": [
+    {
+      "fieldKey": "accommodation_benefit",
+      "kind": "conditional",
+      "note": "Seeded difference: accommodation provided vs conditional."
+    }
+  ],
+  "allowedFindingCategories": [
+    "document_mismatch",
+    "needs_clarification",
+    "missing_information"
+  ],
+  "forbiddenFindingCategories": [
+    "source_backed_concern"
+  ],
+  "requiredRuleRefs": [],
+  "expectedAbstentions": [
+    "no_global_verdict"
+  ],
+  "notes": "Benefit status mismatch (provided vs conditional)."
+}

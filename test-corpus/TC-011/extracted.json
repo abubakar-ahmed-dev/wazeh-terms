@@ -1,0 +1,640 @@
+{
+  "offer": {
+    "documentId": "doc-offer",
+    "role": "offer",
+    "mimeType": "application/pdf",
+    "pageCount": 1,
+    "sha256": "71487a720a69b0603fc55b77058144491d03713368cbc7d15ee33ea496a058ce",
+    "extractionStatus": "completed",
+    "fields": [
+      {
+        "fieldKey": "employer_name",
+        "instanceId": "employer_name:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "job_title",
+        "instanceId": "job_title:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "work_location",
+        "instanceId": "work_location:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "basic_salary",
+        "instanceId": "basic_salary:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "allowance_item",
+        "instanceId": "allowance_item:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "stated_total_pay",
+        "instanceId": "stated_total_pay:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "payment_frequency",
+        "instanceId": "payment_frequency:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "start_date",
+        "instanceId": "start_date:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "contract_duration",
+        "instanceId": "contract_duration:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "renewal_terms",
+        "instanceId": "renewal_terms:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "probation_period",
+        "instanceId": "probation_period:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "ordinary_hours",
+        "instanceId": "ordinary_hours:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "overtime_terms",
+        "instanceId": "overtime_terms:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "notice_terms",
+        "instanceId": "notice_terms:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "termination_terms",
+        "instanceId": "termination_terms:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "deduction_item",
+        "instanceId": "deduction_item:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "other_worker_charge",
+        "instanceId": "other_worker_charge:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "recruitment_cost",
+        "instanceId": "recruitment_cost:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "visa_cost",
+        "instanceId": "visa_cost:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "residency_cost",
+        "instanceId": "residency_cost:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "medical_cost",
+        "instanceId": "medical_cost:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "travel_cost",
+        "instanceId": "travel_cost:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "accommodation_benefit",
+        "instanceId": "accommodation_benefit:0",
+        "state": "present",
+        "rawText": "Accommodation: Provided by the company",
+        "value": {
+          "kind": "benefit_state",
+          "status": "provided",
+          "conditions": null
+        },
+        "evidence": [
+          {
+            "documentId": "doc-offer",
+            "page": 1,
+            "quote": "Accommodation: Provided by the company",
+            "verification": "matched_text"
+          }
+        ],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "food_benefit",
+        "instanceId": "food_benefit:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "transport_benefit",
+        "instanceId": "transport_benefit:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "medical_benefit",
+        "instanceId": "medical_benefit:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "return_ticket_benefit",
+        "instanceId": "return_ticket_benefit:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "document_language",
+        "instanceId": "document_language:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "signature_presence",
+        "instanceId": "signature_presence:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "document_date",
+        "instanceId": "document_date:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "document_reference",
+        "instanceId": "document_reference:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "verification_reference",
+        "instanceId": "verification_reference:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "annex_reference",
+        "instanceId": "annex_reference:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      }
+    ],
+    "unreadablePages": []
+  },
+  "contract": {
+    "documentId": "doc-contract",
+    "role": "contract",
+    "mimeType": "application/pdf",
+    "pageCount": 1,
+    "sha256": "47dad3ae2fafaae6fa8aab6dfe70f336d9fc2a1560fba160f0b7a2374b5f8e42",
+    "extractionStatus": "completed",
+    "fields": [
+      {
+        "fieldKey": "employer_name",
+        "instanceId": "employer_name:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "job_title",
+        "instanceId": "job_title:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "work_location",
+        "instanceId": "work_location:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "basic_salary",
+        "instanceId": "basic_salary:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "allowance_item",
+        "instanceId": "allowance_item:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "stated_total_pay",
+        "instanceId": "stated_total_pay:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "payment_frequency",
+        "instanceId": "payment_frequency:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "start_date",
+        "instanceId": "start_date:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "contract_duration",
+        "instanceId": "contract_duration:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "renewal_terms",
+        "instanceId": "renewal_terms:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "probation_period",
+        "instanceId": "probation_period:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "ordinary_hours",
+        "instanceId": "ordinary_hours:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "overtime_terms",
+        "instanceId": "overtime_terms:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "notice_terms",
+        "instanceId": "notice_terms:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "termination_terms",
+        "instanceId": "termination_terms:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "deduction_item",
+        "instanceId": "deduction_item:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "other_worker_charge",
+        "instanceId": "other_worker_charge:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "recruitment_cost",
+        "instanceId": "recruitment_cost:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "visa_cost",
+        "instanceId": "visa_cost:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "residency_cost",
+        "instanceId": "residency_cost:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "medical_cost",
+        "instanceId": "medical_cost:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "travel_cost",
+        "instanceId": "travel_cost:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "accommodation_benefit",
+        "instanceId": "accommodation_benefit:0",
+        "state": "present",
+        "rawText": "Accommodation: Subject to availability at the company camp",
+        "value": {
+          "kind": "benefit_state",
+          "status": "conditional",
+          "conditions": "Subject to availability at the company camp"
+        },
+        "evidence": [
+          {
+            "documentId": "doc-contract",
+            "page": 1,
+            "quote": "Accommodation: Subject to availability at the company camp",
+            "verification": "matched_text"
+          }
+        ],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "food_benefit",
+        "instanceId": "food_benefit:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "transport_benefit",
+        "instanceId": "transport_benefit:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "medical_benefit",
+        "instanceId": "medical_benefit:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "return_ticket_benefit",
+        "instanceId": "return_ticket_benefit:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "document_language",
+        "instanceId": "document_language:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "signature_presence",
+        "instanceId": "signature_presence:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "document_date",
+        "instanceId": "document_date:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "document_reference",
+        "instanceId": "document_reference:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "verification_reference",
+        "instanceId": "verification_reference:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      },
+      {
+        "fieldKey": "annex_reference",
+        "instanceId": "annex_reference:0",
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
+        "qualityNotes": []
+      }
+    ],
+    "unreadablePages": []
+  }
+}

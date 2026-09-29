@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "caseId": "TC-012",
+  "route": {
+    "origin": "PK",
+    "destination": "AE",
+    "declaredRegime": "uae_mainland_private",
+    "declaredWorkerCategory": "non_domestic"
+  },
+  "documents": [
+    {
+      "role": "offer",
+      "file": "offer.pdf",
+      "pageCount": 1,
+      "readablePages": [
+        1
+      ]
+    },
+    {
+      "role": "contract",
+      "file": "contract.pdf",
+      "pageCount": 1,
+      "readablePages": [
+        1
+      ]
+    }
+  ],
+  "expectedFields": [
+    {
+      "role": "offer",
+      "fieldKey": "deduction_item",
+      "state": "present",
+      "value": {
+        "kind": "money",
+        "amount": "3100.00",
+        "currency": "AED",
+        "frequency": "monthly",
+        "component": "worker_charge",
+        "payer": null
+      },
+      "evidence": {
+        "page": 1,
+        "role": "offer",
+        "line": 28
+      }
+    },
+    {
+      "role": "contract",
+      "fieldKey": "deduction_item",
+      "state": "present",
+      "value": {
+        "kind": "money",
+        "amount": "3500.00",
+        "currency": "AED",
+        "frequency": "monthly",
+        "component": "worker_charge",
+        "payer": null
+      },
+      "evidence": {
+        "page": 1,
+        "role": "contract",
+        "line": 28
+      }
+    }
+  ],
+  "seededDifferences": [
+    {
+      "fieldKey": "deduction_item",
+      "kind": "value",
+      "note": "Seeded difference: worker-paid recruitment fee 3,100 vs 3,500, both attributed to the worker."
+    }
+  ],
+  "allowedFindingCategories": [
+    "document_mismatch",
+    "missing_information"
+  ],
+  "forbiddenFindingCategories": [
+    "source_backed_concern"
+  ],
+  "requiredRuleRefs": [],
+  "expectedAbstentions": [
+    "no_rule_claims",
+    "no_global_verdict"
+  ],
+  "notes": "Worker-charge case: a source-backed concern becomes possible only after approved rules exist (Phases 09/10); this corpus version asserts the document-check layer only."
+}
