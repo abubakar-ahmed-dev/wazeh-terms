@@ -43,9 +43,16 @@ the Phase 09 seed — it does **not** by itself approve a rule.
 
 ## Open items blocking approvals
 
-1. Amendment cross-check for Decree-Law 33/2021 Articles 6 and 22 (download
-   official PDFs of Decree-Law 20 of 2023 and 9 of 2024 from
-   uaelegislation.gov.ae, or confirm a consolidated edition) — until then the
-   worker-charge rule carries a version note and the amendment check stays open.
-2. Pinpoint approvals by the owner (see phase-09 plan/log drafts).
+1. Amendment cross-check for Decree-Law 33/2021 Articles 6 and 22. Automated
+   access to `uaelegislation.gov.ae` is blocked by a Cloudflare challenge
+   (403 on `curl`/fetch, 2026-09-29); access restrictions are not bypassed.
+   Owner to download the official amendment texts — search the portal for:
+   - Federal Decree-Law No. 14 of 2022 (amending 33/2021)
+   - Federal Decree-Law No. 20 of 2023 (amending 33/2021)
+   - Federal Decree-Law No. 9 of 2024 (amending 33/2021)
+   and add them under `## OFFICIAL PDFs WEBPAGE LINKS` in `sources/uae/links.md`
+   in the same `Link:/Retrieved:/Type:` format. Until then the worker-charge
+   rule stays `draft` (unpublished) and the check stays open.
+2. Owner approval of the revised seed package (final claims/pinpoints) before
+   import + publish.
 3. Resolution 340/2026 official copy — deferred; does not block the seed.
