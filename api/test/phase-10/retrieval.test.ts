@@ -23,6 +23,7 @@ function sanityConfig(overrides: Partial<AppConfig['sanity']> = {}): AppConfig {
       organizationToken: 'org-token',
       projectId: '8g0kllu0',
       dataset: 'production',
+      knowledgeBaseId: 'kbTest123',
       readToken: null,
       ...overrides,
     },
@@ -100,7 +101,7 @@ describe('mode verification', () => {
 });
 
 describe('query sanitization', () => {
-  it('outgoing payloads carry only allowlisted fact keys', () => {
+  it('outgoing payloads carry only the closed search-tool shape', () => {
     const query = {
       topic: 'worker_costs' as const,
       jurisdiction: 'AE' as const,
@@ -109,9 +110,10 @@ describe('query sanitization', () => {
       responsibleParty: 'uae_employer' as const,
       effectiveDate: '2026-09-29',
     };
-    expect(isAllowlistedQueryPayload(kbSearchArguments(query))).toBe(true);
+    expect(isAllowlistedQueryPayload(kbSearchArguments(query, 'kbTest123'))).toBe(true);
     // Any injected personal field breaks the allowlist.
-    expect(isAllowlistedQueryPayload({ ...kbSearchArguments(query), workerName: 'X' })).toBe(false);
+    expect(isAllowlistedQueryPayload({ ...kbSearchArguments(query, 'kbTest123'), workerName: 'X' })).toBe(false);
+    expect(isAllowlistedQueryPayload({ knowledgeBase: 'kb', query: '' })).toBe(false);
   });
 
   it('search arguments never embed document text', async () => {
@@ -125,6 +127,7 @@ describe('query sanitization', () => {
     const service = createRetrievalService({ config: sanityConfig(), transport, reader: () => Promise.resolve(readerOk()) });
     await service.run({ ...supportedInput, reconciliation: reconcileCorrections([document('offer', workerChargeDocuments().offer.fields)], []) });
     const serialized = JSON.stringify(seen);
+    expect(serialized).toContain('kbTest123');
     expect(serialized).not.toContain('500.00');
     expect(serialized).not.toContain('visa');
   });
@@ -239,17 +242,17 @@ describe('known-answer check', () => {
         content: [{ type: 'text', text: JSON.stringify([{ entryId: 'e', ruleKey: 'ae-recruitment-costs-employer-bears', snippet: 's' }]) }],
       }),
     });
-    const pass = await verifyKnownAnswer(good.transport, { query: 'recruitment costs', expectRuleKey: 'ae-recruitment-costs-employer-bears' });
+    const pass = await verifyKnownAnswer(good.transport, { query: 'recruitment costs', expectRuleKey: 'ae-recruitment-costs-employer-bears', knowledgeBaseId: 'kbTest123' });
     expect(pass).toEqual({ ok: true, entryCount: 1 });
 
     const bad = fakeTransport({
       onSearch: () => ({ content: [{ type: 'text', text: JSON.stringify([{ entryId: 'e', ruleKey: 'other-rule', snippet: 's' }]) }] }),
     });
-    const fail = await verifyKnownAnswer(bad.transport, { query: 'recruitment costs', expectRuleKey: 'ae-recruitment-costs-employer-bears' });
+    const fail = await verifyKnownAnswer(bad.transport, { query: 'recruitment costs', expectRuleKey: 'ae-recruitment-costs-employer-bears', knowledgeBaseId: 'kbTest123' });
     expect(fail).toEqual({ ok: false, reason: 'rule_key_missing' });
 
     const wrongMode = fakeTransport({ toolsList: { tools: [{ name: 'groq_query' }] } });
-    const modeFail = await verifyKnownAnswer(wrongMode.transport, { query: 'q', expectRuleKey: 'k' });
+    const modeFail = await verifyKnownAnswer(wrongMode.transport, { query: 'q', expectRuleKey: 'k', knowledgeBaseId: 'kbTest123' });
     expect(modeFail).toEqual({ ok: false, reason: 'wrong_mode' });
   });
 });

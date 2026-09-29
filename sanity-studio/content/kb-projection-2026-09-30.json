@@ -1,0 +1,417 @@
+{
+  "generatedAt": "2026-09-29T20:04:30.419Z",
+  "basis": "published approved/current records from 8g0kllu0/production (43 published; Rule 1 remains draft)",
+  "counts": {
+    "authority": 2,
+    "contractFieldDefinition": 33,
+    "rule": 2,
+    "sourceDocument": 6
+  },
+  "records": [
+    {
+      "recordType": "authority",
+      "authorityKey": "beoe",
+      "name": "Bureau of Emigration and Overseas Employment (Pakistan)"
+    },
+    {
+      "recordType": "authority",
+      "authorityKey": "uae-federal-government",
+      "name": "Government of the United Arab Emirates (federal)"
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "accommodation_benefit",
+      "groupKey": "benefits",
+      "label": "Accommodation benefit",
+      "valueKind": "benefit_state",
+      "comparisonStrategyKey": "benefit_state_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "allowance_item",
+      "groupKey": "pay",
+      "label": "Allowance item",
+      "valueKind": "money",
+      "comparisonStrategyKey": "money_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "annex_reference",
+      "groupKey": "document_details",
+      "label": "Annex or policy reference",
+      "valueKind": "reference_text",
+      "comparisonStrategyKey": "reference_text_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "basic_salary",
+      "groupKey": "pay",
+      "label": "Basic salary",
+      "valueKind": "money",
+      "comparisonStrategyKey": "money_equality",
+      "importantIfAbsent": true
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "contract_duration",
+      "groupKey": "term",
+      "label": "Contract duration",
+      "valueKind": "duration",
+      "comparisonStrategyKey": "duration_equality",
+      "importantIfAbsent": true
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "deduction_item",
+      "groupKey": "deductions",
+      "label": "Deduction item",
+      "valueKind": "money",
+      "comparisonStrategyKey": "money_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "document_date",
+      "groupKey": "document_details",
+      "label": "Document date",
+      "valueKind": "date",
+      "comparisonStrategyKey": "date_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "document_language",
+      "groupKey": "document_details",
+      "label": "Document language",
+      "valueKind": "text",
+      "comparisonStrategyKey": "text_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "document_reference",
+      "groupKey": "document_details",
+      "label": "Document reference",
+      "valueKind": "reference_text",
+      "comparisonStrategyKey": "reference_text_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "employer_name",
+      "groupKey": "employer",
+      "label": "Employer name",
+      "valueKind": "text",
+      "comparisonStrategyKey": "text_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "food_benefit",
+      "groupKey": "benefits",
+      "label": "Food benefit",
+      "valueKind": "benefit_state",
+      "comparisonStrategyKey": "benefit_state_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "job_title",
+      "groupKey": "occupation",
+      "label": "Job title or occupation",
+      "valueKind": "text",
+      "comparisonStrategyKey": "text_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "medical_benefit",
+      "groupKey": "benefits",
+      "label": "Medical coverage benefit",
+      "valueKind": "benefit_state",
+      "comparisonStrategyKey": "benefit_state_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "medical_cost",
+      "groupKey": "recruitment_and_travel_costs",
+      "label": "Medical cost",
+      "valueKind": "money",
+      "comparisonStrategyKey": "money_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "notice_terms",
+      "groupKey": "ending_terms",
+      "label": "Notice terms",
+      "valueKind": "text",
+      "comparisonStrategyKey": "text_equality",
+      "importantIfAbsent": true
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "ordinary_hours",
+      "groupKey": "working_time",
+      "label": "Ordinary working hours",
+      "valueKind": "text",
+      "comparisonStrategyKey": "text_equality",
+      "importantIfAbsent": true
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "other_worker_charge",
+      "groupKey": "deductions",
+      "label": "Other worker charge",
+      "valueKind": "money",
+      "comparisonStrategyKey": "money_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "overtime_terms",
+      "groupKey": "working_time",
+      "label": "Overtime wording",
+      "valueKind": "text",
+      "comparisonStrategyKey": "text_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "payment_frequency",
+      "groupKey": "pay",
+      "label": "Payment frequency",
+      "valueKind": "text",
+      "comparisonStrategyKey": "text_equality",
+      "importantIfAbsent": true
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "probation_period",
+      "groupKey": "probation",
+      "label": "Probation period",
+      "valueKind": "duration",
+      "comparisonStrategyKey": "duration_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "recruitment_cost",
+      "groupKey": "recruitment_and_travel_costs",
+      "label": "Recruitment cost",
+      "valueKind": "money",
+      "comparisonStrategyKey": "money_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "renewal_terms",
+      "groupKey": "term",
+      "label": "Renewal wording",
+      "valueKind": "text",
+      "comparisonStrategyKey": "text_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "residency_cost",
+      "groupKey": "recruitment_and_travel_costs",
+      "label": "Residency cost",
+      "valueKind": "money",
+      "comparisonStrategyKey": "money_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "return_ticket_benefit",
+      "groupKey": "benefits",
+      "label": "Travel or return ticket benefit",
+      "valueKind": "benefit_state",
+      "comparisonStrategyKey": "benefit_state_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "signature_presence",
+      "groupKey": "document_details",
+      "label": "Signature presence",
+      "valueKind": "boolean",
+      "comparisonStrategyKey": "boolean_equality",
+      "importantIfAbsent": true
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "start_date",
+      "groupKey": "term",
+      "label": "Start date",
+      "valueKind": "date",
+      "comparisonStrategyKey": "date_equality",
+      "importantIfAbsent": true
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "stated_total_pay",
+      "groupKey": "pay",
+      "label": "Stated total pay",
+      "valueKind": "money",
+      "comparisonStrategyKey": "money_equality",
+      "importantIfAbsent": true
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "termination_terms",
+      "groupKey": "ending_terms",
+      "label": "Termination wording",
+      "valueKind": "text",
+      "comparisonStrategyKey": "text_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "transport_benefit",
+      "groupKey": "benefits",
+      "label": "Transport benefit",
+      "valueKind": "benefit_state",
+      "comparisonStrategyKey": "benefit_state_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "travel_cost",
+      "groupKey": "recruitment_and_travel_costs",
+      "label": "Travel cost",
+      "valueKind": "money",
+      "comparisonStrategyKey": "money_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "verification_reference",
+      "groupKey": "document_details",
+      "label": "Verification reference",
+      "valueKind": "reference_text",
+      "comparisonStrategyKey": "reference_text_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "visa_cost",
+      "groupKey": "recruitment_and_travel_costs",
+      "label": "Visa or residency charge",
+      "valueKind": "money",
+      "comparisonStrategyKey": "money_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "work_location",
+      "groupKey": "location",
+      "label": "Work location",
+      "valueKind": "text",
+      "comparisonStrategyKey": "text_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "rule",
+      "ruleKey": "ae-salary-payment-due-monthly",
+      "revision": 1,
+      "title": "Official guidance: salaries for the previous month fall due on the first of each month",
+      "claimText": "Salaries for the previous month are due on the first day of each Gregorian month, according to official UAE Government guidance on payment of wages.",
+      "topic": "pay",
+      "conditions": [],
+      "exceptions": [],
+      "triggerKey": null,
+      "primarySource": {
+        "sourceKey": "uae-payment-of-wages",
+        "versionKey": "web-2026-09-28",
+        "officialUrl": "https://u.ae/en/information-and-services/jobs/Sector-of-employment/employment-in-the-private-sector/payment-of-wages",
+        "evidenceClass": "official_guidance"
+      },
+      "pinpoint": {
+        "label": "When Should Employers Pay Salaries?",
+        "page": 1,
+        "quote": "salaries for the previous month are due on the first day of each Gregorian month"
+      }
+    },
+    {
+      "recordType": "rule",
+      "ruleKey": "pk-oep-service-charges-bank-deposit",
+      "revision": 1,
+      "title": "Pakistan: OEP service charges are bank-deposited, certification-bound, and refundable",
+      "claimText": "Service charges for employment obtained through an overseas employment promoter are deposited in a bank; the promoter is reimbursed only on certification by the Protector of Emigrants that the employment was provided and joined, and deposited amounts are returned to the intending emigrant where the promoter fails to fulfil obligations under the rules.",
+      "topic": "worker_costs",
+      "conditions": [],
+      "exceptions": [],
+      "triggerKey": null,
+      "primarySource": {
+        "sourceKey": "pk-emigration-rules-1979",
+        "versionKey": "consolidated-2023",
+        "officialUrl": "https://beoe.gov.pk/files/legal-framework/Emigration_Rules_1979_Updated_2023.pdf",
+        "evidenceClass": "binding_official_rule"
+      },
+      "pinpoint": {
+        "label": "Rule 15(1A) and the proviso thereto — Service Charges, their distribution etc.",
+        "page": 12,
+        "quote": "The overseas employment promoter or, as the case may be, Corporation on whose behalf their service charges are deposited in the bank under sub-rule (1) shall, subject to the proviso hereto, be entitled to reimbursement of the service charges only on certification by the Protector of Emigrants to the extent that the employment abroad has been provided to the emigrant and he has duly joined the same after registration with the protector of emigrant: Provided that where the overseas employment promoter or, as the case may be, the Corporation fail to fulfil his or its obligations in accordance with these rules, the deposited amount shall be returned to the intending emigrant."
+      }
+    },
+    {
+      "recordType": "sourceDocument",
+      "sourceKey": "pk-emigration-rules-1979",
+      "versionKey": "consolidated-2023",
+      "title": "Emigration Rules, 1979 (consolidated text updated 2023, BEOE)",
+      "officialUrl": "https://beoe.gov.pk/files/legal-framework/Emigration_Rules_1979_Updated_2023.pdf",
+      "evidenceClass": "binding_official_rule",
+      "versionNote": "Consolidated text: SRO 1058(I)/2023 amendment markers inline. 28 pages; Rule 15 (Service Charges) verified on PDF pages 11-12. Rule-specific effective dates not established from the text; recorded as informational only."
+    },
+    {
+      "recordType": "sourceDocument",
+      "sourceKey": "pk-fee-structure",
+      "versionKey": "web-2026-09-28",
+      "title": "BEOE — Emigrant Fee Structure (page snapshot 2026-09-28)",
+      "officialUrl": "https://beoe.gov.pk/fee-structure-emigrant",
+      "evidenceClass": "official_guidance",
+      "versionNote": "Component table as displayed 2026-09-28: OEP route total PKR 22,200 (incl. Rs 15,000 OEP service charges); direct route total PKR 9,200. Pakistan-side context only — never merged with UAE-side charges."
+    },
+    {
+      "recordType": "sourceDocument",
+      "sourceKey": "uae-cabinet-resolution-1-2022",
+      "versionKey": "executive-regulation-2022",
+      "title": "Cabinet Resolution No. (1) of 2022 Concerning the Executive Regulation of Federal Decree-Law No. (33) of 2021 (official English text)",
+      "officialUrl": "https://uaelegislation.gov.ae/en/legislations/1547/download",
+      "evidenceClass": "binding_official_rule",
+      "versionNote": "Official English text from the UAE Legislation portal, 31 pages. In force as of 02 February 2022. Article 16 (Wages) implements Decree-Law Article 22 through the Wage Protection System. No seed rule points at this version yet."
+    },
+    {
+      "recordType": "sourceDocument",
+      "sourceKey": "uae-federal-decree-law-33-2021",
+      "versionKey": "base-text-2022",
+      "title": "Federal Decree-Law No. (33) of 2021 on the Regulation of Labour Relations (official English text)",
+      "officialUrl": "https://uaelegislation.gov.ae/en/legislations/1541/download",
+      "evidenceClass": "binding_official_rule",
+      "versionNote": "Official English text from the UAE Legislation portal, 46 pages. Base text only: later amendments (Decree-Law 14/2022, 20/2023, 9/2024) are not included; the amendment cross-check for Articles 6 and 22 stays open. Commencement 'as of 02 February 2022' on the signature page."
+    },
+    {
+      "recordType": "sourceDocument",
+      "sourceKey": "uae-laws-overview",
+      "versionKey": "web-2026-09-28",
+      "title": "u.ae — Employment regulations in the private sector (page snapshot 2026-09-28)",
+      "officialUrl": "https://u.ae/en/information-and-services/jobs/Sector-of-employment/employment-in-the-private-sector/employment-laws-and-regulations-in-the-private-sector",
+      "evidenceClass": "official_guidance",
+      "versionNote": "Overview page; classified as guidance, never as law (owner decision 2026-09-29). Names Decree-Law 33/2021 as amended by Decree-Law 20/2023, effective 2 February 2022."
+    },
+    {
+      "recordType": "sourceDocument",
+      "sourceKey": "uae-payment-of-wages",
+      "versionKey": "web-2026-09-28",
+      "title": "u.ae — Payment of salaries/wages in the private sector (page snapshot 2026-09-28)",
+      "officialUrl": "https://u.ae/en/information-and-services/jobs/Sector-of-employment/employment-in-the-private-sector/payment-of-wages",
+      "evidenceClass": "official_guidance",
+      "versionNote": "u.ae portal page (official guidance; 7-page snapshot). Cites Ministerial Resolution 340/2026 (WPS), whose own official copy remains unverified — guidance claims rest on this page's own wording only."
+    }
+  ]
+}

@@ -6,19 +6,21 @@ here runs before that confirmation. Prepared 2026-09-30.
 
 ## Scope of the publication
 
-Published: the eligible reviewed records — 2 authorities, 6 source versions,
-**rule 2 only** (`ae-salary-payment-due-monthly`, approved guidance, no
-trigger), 33 field definitions.
+**Updated 2026-09-30 per owner decision: 43 published records** — 2
+authorities, 6 source versions, **Rules 2 and 3** (wage guidance + confirmed
+Pakistan-side informational rule), 33 field definitions.
 
-NOT published (stay drafts):
+NOT published (stays a draft):
 
 - `rule.ae-recruitment-costs-employer-bears.r1` — Rule 1, draft pending the
-  Article 6 amendment check. **Excluded from claimable retrieval by
-  construction**: the canonical reader only sees approved+current *published*
-  records, and the eligibility gate withholds null-approval anyway.
-- `rule.pk-oep-service-charges-bank-deposit.r1` — Rule 3, until the owner
-  confirms it. If confirmed in the same session, it publishes with the rest;
-  otherwise it stays a draft.
+  Article 6 amendment check (14/2022 verified; 20/2023 + 9/2024 open).
+  **Excluded from claimable retrieval by construction**: the canonical reader
+  only sees approved+current *published* records, and the eligibility gate
+  withholds unapproved rules regardless.
+
+(Executed 2026-09-30: all publication steps below ran in dependency order —
+authorities → sources → rules 2+3 → fields — with weak references replaced by
+strong ones at each level before publishing.)
 
 ## Steps (in order; abort on any failure)
 

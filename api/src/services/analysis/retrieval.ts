@@ -16,7 +16,7 @@ import { gateCandidate, type WithholdReason } from '../eligibility/gate.js';
 import { evaluateTriggers, type TriggerEvaluation } from '../eligibility/triggers.js';
 import { triggerDefinition, type MachineConditionContext } from '../eligibility/trigger-keys.js';
 import { parseKbToolResult, type RuleCandidate } from '../retrieval/candidates.js';
-import { initializeMcpClient, callKbTool } from '../retrieval/client.js';
+import { initializeMcpClient, callKbTool, pickKbSearchTool } from '../retrieval/client.js';
 import { buildRetrievalQuery, kbSearchArguments } from '../retrieval/query-builder.js';
 import { McpTransportError, type McpTransport } from '../retrieval/transport.js';
 import type { Reconciliation } from './reconcile.js';
@@ -59,7 +59,8 @@ export function createRetrievalService(options: RetrievalServiceOptions): Retrie
   return {
     async run(input): Promise<RetrievalOutcome> {
       const { config } = options;
-      const unconfigured = !options.transport || !options.reader || !config.sanity.contextMcpUrl;
+      const unconfigured =
+        !options.transport || !options.reader || !config.sanity.contextMcpUrl || !config.sanity.knowledgeBaseId;
       if (unconfigured || input.scopeApplicability !== 'supported') {
         // Unconfigured is reported upstream (stage not_started + limitation);
         // unsupported scope keeps rules withheld without any retrieval call.
@@ -88,6 +89,7 @@ export function createRetrievalService(options: RetrievalServiceOptions): Retrie
 
       const deadlineAt = Date.now() + input.deadlineMs;
       const toolBudget = config.retrieval.maxToolCalls;
+      const searchTool = pickKbSearchTool(init.kbTools)!.name;
       let toolCalls = 0;
       const sourceFindings: FindingDraft[] = [];
       const withheld: Array<{ ruleKey: string | null; reason: WithholdReason }> = [];
@@ -98,7 +100,7 @@ export function createRetrievalService(options: RetrievalServiceOptions): Retrie
         const query = buildRetrievalQuery(topic.topic, input.analysisDate);
         let result: unknown;
         try {
-          result = await callKbTool(options.transport, init.kbTools[0]!.name, kbSearchArguments(query));
+          result = await callKbTool(options.transport, searchTool, kbSearchArguments(query, config.sanity.knowledgeBaseId!));
           toolCalls += 1;
         } catch (error) {
           if (error instanceof McpTransportError && error.reason === 'timeout') break;
@@ -123,6 +125,7 @@ export function createRetrievalService(options: RetrievalServiceOptions): Retrie
             analysisDate: input.analysisDate,
             sourceCheckMaxAgeDays: config.retrieval.sourceCheckMaxAgeDays,
             machineConditions: triggers.machineConditions as MachineConditionContext,
+            expectedTopic: topic.topic,
           });
           if (verdict.verdict === 'withheld') {
             withheld.push({ ruleKey: canonical.read.rule.ruleKey, reason: verdict.reason });

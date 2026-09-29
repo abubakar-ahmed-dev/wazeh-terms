@@ -26,8 +26,8 @@ async function main(): Promise<void> {
   const config = loadConfig();
   const { sanity, retrieval } = config;
 
-  if (!sanity.contextMcpUrl || !sanity.projectId || !sanity.dataset) {
-    console.error('FAIL setup: SANITY_CONTEXT_MCP_URL / SANITY_PROJECT_ID / SANITY_DATASET are required.');
+  if (!sanity.contextMcpUrl || !sanity.projectId || !sanity.dataset || !sanity.knowledgeBaseId) {
+    console.error('FAIL setup: SANITY_CONTEXT_MCP_URL / SANITY_PROJECT_ID / SANITY_DATASET / SANITY_KB_ID are required.');
     process.exitCode = 1;
     return;
   }
@@ -48,7 +48,11 @@ async function main(): Promise<void> {
     return;
   }
 
-  const knownAnswer = await verifyKnownAnswer(transport, { query, expectRuleKey });
+  const knownAnswer = await verifyKnownAnswer(transport, {
+    query,
+    expectRuleKey,
+    knowledgeBaseId: sanity.knowledgeBaseId ?? '',
+  });
   if (knownAnswer.ok) {
     console.log(`PASS tools/list + mode verification + known-answer read (${knownAnswer.entryCount} entries).`);
   } else {

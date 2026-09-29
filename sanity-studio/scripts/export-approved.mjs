@@ -64,7 +64,13 @@ const sourceById = new Map(
   publicSafe.filter((record) => record._type === 'sourceDocument').map((record) => [record._id, record]),
 );
 const projection = publicSafe
-  .filter((record) => record.reviewStatus === 'approved' && record.recordStatus === 'current')
+  // Authorities carry no recordStatus (docs/DATABASE_SCHEMA.md §4); their
+  // approval is the reviewStatus alone.
+  .filter((record) =>
+    record._type === 'authority'
+      ? record.reviewStatus === 'approved'
+      : record.reviewStatus === 'approved' && record.recordStatus === 'current',
+  )
   .map((record) => {
     if (record._type === 'rule') {
       const source = sourceById.get(record.primarySource?._ref);

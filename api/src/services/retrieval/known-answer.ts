@@ -4,7 +4,7 @@
  * surface an entry carrying the expected canonical ruleKey before any claim
  * of a working retrieval path is made.
  */
-import { initializeMcpClient } from './client.js';
+import { initializeMcpClient, pickKbSearchTool } from './client.js';
 import { parseKbToolResult } from './candidates.js';
 import { kbSearchArguments } from './query-builder.js';
 import type { McpTransport } from './transport.js';
@@ -14,6 +14,8 @@ export interface KnownAnswerSeed {
   readonly query: string;
   /** The canonical ruleKey the result must carry. */
   readonly expectRuleKey: string;
+  /** Nonsecret KB id addressed by the search tool. */
+  readonly knowledgeBaseId: string;
 }
 
 export type KnownAnswerResult =
@@ -37,13 +39,17 @@ export async function verifyKnownAnswer(
     responsibleParty: 'uae_employer' as const,
     effectiveDate: new Date().toISOString().slice(0, 10),
   };
-  // The seed query replaces the fact-derived keyword line; filters stay fact-only.
-  const args = kbSearchArguments(facts);
+  // The seed query replaces the fact-derived keyword line; the payload stays
+  // inside the closed search-tool shape.
+  const args = kbSearchArguments(facts, seed.knowledgeBaseId);
   args.query = seed.query;
 
   let result: unknown;
   try {
-    result = await transport.request('tools/call', { name: init.kbTools[0]!.name, arguments: args });
+    result = await transport.request('tools/call', {
+      name: pickKbSearchTool(init.kbTools)!.name,
+      arguments: args,
+    });
   } catch {
     return { ok: false, reason: 'unavailable' };
   }

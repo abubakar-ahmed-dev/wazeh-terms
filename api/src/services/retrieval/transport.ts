@@ -49,7 +49,9 @@ export function createFetchMcpTransport(options: FetchTransportOptions): McpTran
   const controller = new AbortController();
 
   async function request(method: string, params: Record<string, unknown>): Promise<unknown> {
-    const id = nextId++;
+    // JSON-RPC notifications carry no id and expect no response body.
+    const isNotification = method.startsWith('notifications/');
+    const id = isNotification ? null : nextId++;
     const timeout = AbortSignal.timeout(options.timeoutMs);
     // Combined signal so close() can cancel an in-flight call immediately.
     const signal = AbortSignal.any([timeout, controller.signal]);
@@ -66,7 +68,7 @@ export function createFetchMcpTransport(options: FetchTransportOptions): McpTran
           ...(sessionId ? { 'Mcp-Session-Id': sessionId } : {}),
           ...(options.bearerToken ? { Authorization: `Bearer ${options.bearerToken}` } : {}),
         },
-        body: JSON.stringify({ jsonrpc: '2.0', id, method, params }),
+        body: JSON.stringify({ jsonrpc: '2.0', ...(id !== null ? { id } : {}), method, params }),
       });
     } catch (error) {
       if (controller.signal.aborted) throw new McpTransportError('timeout', 'MCP call aborted.');
@@ -80,8 +82,16 @@ export function createFetchMcpTransport(options: FetchTransportOptions): McpTran
     const returnedSession = response.headers.get('mcp-session-id');
     if (returnedSession) sessionId = returnedSession;
 
-    if (response.status === 204) return {};
-    const payload = (await response.json().catch(() => undefined)) as JsonRpcResponse | undefined;
+    // Notifications answer 202/204 with no body — success, nothing to parse.
+    if (response.status === 202 || response.status === 204) return {};
+    const rawBody = await response.text();
+    if (!rawBody.trim()) return {};
+    let payload: JsonRpcResponse | undefined;
+    try {
+      payload = JSON.parse(rawBody) as JsonRpcResponse;
+    } catch {
+      throw new McpTransportError('malformed', 'MCP endpoint returned a non-JSON body.');
+    }
     if (!payload || typeof payload !== 'object') {
       throw new McpTransportError('malformed', 'MCP endpoint returned a non-JSON body.');
     }

@@ -80,6 +80,56 @@ Salaries?"), PK informational rule (Emigration Rules Rule 15, p.12).
   published approved records after Studio review + publish.
 - Nothing published; Phase 09 and the Phase 10 live check remain open.
 
+## Publication + KB build executed (2026-09-30, owner-confirmed)
+
+- **43 records published** in dependency order with strong references:
+  2 authorities → 6 source versions (issuer patched weak→strong) → Rules 2+3
+  (`primarySource` patched weak→strong) → 33 field definitions.
+  Rule 3 updates applied before publish: plain-English narrowed to OEP
+  service-charge deposits, `reviewedAt` set to the owner's actual review date
+  2026-09-30, `reviewStatus: approved` (owner confirmed the Rule 15(1A)
+  passage against the official BEOE PDF).
+- **Rule 1 remains the only draft** — published-perspective counts: 43
+  published / 1 draft (`drafts.rule.ae-recruitment-costs-employer-bears.r1`)
+  / 0 weak references among published records.
+- **Published-record gate: PASS** on the authenticated read-back of all 43
+  (`seed/published-readback-2026-09-30.json`). Note: the CLI
+  `--from-dataset --published` path fetched 0 records — the Content Lake API
+  does not serve anonymous queries, and the org Context token is not a
+  project member (`401 project user not found`). The owner's earlier "public
+  dataset" belief does not hold for API reads → **MT-6 reversed**:
+  `SANITY_READ_TOKEN` (project Viewer) is required. Recorded in
+  `plans/manual-tasks.md` + `plans/needs-and-requirements.md`.
+- **Dated export + KB projection committed**: `content/export-2026-09-30.json`
+  (43 records) + `content/kb-projection-2026-09-30.json` (43 entries; Rule 1
+  excluded — not approved). Built from the authenticated read-back;
+  `export-approved.mjs` will reproduce them from the API once a read token
+  exists (authorities projection-filter bug fixed in the script).
+- **KB fed + built via the signed-in Sanity CLI** (owner's session):
+  `sanity context imports create kbynAP4r8P6m --file …/kb-projection-2026-09-30.json`
+  → job `ctx-ingest-e8368760…` **succeeded**;
+  `sanity context build kbynAP4r8P6m` → job `ctx-build-c2ff3a39…`
+  **succeeded** (2026-09-29T20:08Z). No owner action was needed.
+- **Retrieval client fixes found by the live endpoint** (all tested offline
+  too): JSON-RPC notifications must not carry an `id` (server rejected
+  id-bearing `notifications/initialized`); 202/204 empty bodies are success;
+  the search tool is `knowledge_base_search` requiring `knowledgeBase` +
+  `query` (new nonsecret `SANITY_KB_ID` config); KB renders entries as prose,
+  so candidate extraction now scans stable `ae-/pk-` key tokens data-only
+  (each gated separately against the canonical reader, with a new
+  `expectedTopic` gate check so a key found in an unrelated entry can never
+  back a claim).
+- **Live tools-only + known-answer check: PASS** — tools/list + KB mode
+  verified; known-answer read surfaced `ae-salary-payment-due-monthly` (4
+  entries). Reported separately from any source-backed concern test; guidance
+  retrieval does not complete Phase 10 (owner instruction).
+- Amendment status: **14/2022 verified** (owner PDF, legislation 1637;
+  amends Article 8 only — Articles 6 and 22 untouched). **20/2023 +
+  consolidated law unavailable** (owner browser attempts failed; portal
+  Cloudflare-blocked for automation). **9/2024 not yet obtained.** Rule 1
+  stays draft/unpublished/ineligible until the remaining amendments are
+  checked.
+
 ## Remaining issues / open items
 
 1. **Amendment cross-check** for Decree-Law 33/2021 Arts 6 & 22: automated

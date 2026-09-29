@@ -41,6 +41,8 @@ export interface GateContext {
   /** Retrieval runs only for a supported mainland route; anything else never reaches here. */
   readonly sourceCheckMaxAgeDays: number;
   readonly machineConditions: MachineConditionContext;
+  /** Topic the retrieval query asked about; a rule must match it. */
+  readonly expectedTopic?: string;
 }
 
 export function gateCandidate(
@@ -91,11 +93,14 @@ export function gateCandidate(
 
   // 5. Scope: the rule's own applicability fields must match the analysis
   //    context (mainland non-domestic UAE route; the gate is only reached in
-  //    that scope, so any other rule value is a mismatch).
+  //    that scope, so any other rule value is a mismatch). The rule's topic
+  //    must also match the topic the query asked about — a key token found in
+  //    an unrelated entry never becomes a claim.
   if (
     rule.jurisdiction !== 'AE' ||
     rule.employmentRegime !== 'uae_mainland_private' ||
-    rule.workerCategory !== 'non_domestic'
+    rule.workerCategory !== 'non_domestic' ||
+    (context.expectedTopic !== undefined && rule.topic !== context.expectedTopic)
   ) {
     return withheld('scope_mismatch');
   }

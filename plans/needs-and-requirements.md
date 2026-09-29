@@ -24,7 +24,7 @@ in the git-ignored `api/.env` — never in chat, plans, logs, CI, or Git.
 | Phase 03 | `GEMINI_API_KEY` | `api/.env` locally; Secret Manager at Phase 14 |
 | Phase 03 | `REVIEW_HMAC_SECRET` (+ chosen `keyId` label, nonsecret) | same |
 | Phase 10 | `SANITY_ORGANIZATION_TOKEN` (Context Viewer, org-level) | same |
-| Phase 09/10 | `SANITY_READ_TOKEN` (only if curated dataset is private) | same |
+| Phase 09/10 | `SANITY_READ_TOKEN` (project Viewer token — **required**: the API does not serve anonymous dataset queries, verified 2026-09-30) | same |
 
 ## Decisions requested (owner owns these)
 
