@@ -1,0 +1,20 @@
+{
+  "note": "Fictional corpus case TC-014. All people and employers invented. Single source of truth for the generated PDFs and fixture extraction evidence.",
+  "offer": [],
+  "contract": [
+    "SYNTHETIC SAMPLE DOCUMENT - FICTIONAL EMPLOYER AND WORKER",
+    "FOR TESTING ONLY - NOT A REAL DOCUMENT",
+    "",
+    "EMPLOYMENT CONTRACT (TEST SAMPLE TC-014-C)",
+    "Date of issue: 1 March 2026",
+    "",
+    "This contract is issued by Desert Star Equipment Rental LLC (fictional employer).",
+    "Position: Workshop Helper",
+    "Work location: Abu Dhabi, United Arab Emirates (mainland)",
+    "",
+    "Basic salary: AED 2,900 per month",
+    "Contract duration: 24 months",
+    "",
+    "Signature: (signed) A. Manager"
+  ]
+}

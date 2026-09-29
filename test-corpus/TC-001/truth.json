@@ -1,0 +1,179 @@
+{
+  "schemaVersion": 1,
+  "caseId": "TC-001",
+  "route": {
+    "origin": "PK",
+    "destination": "AE",
+    "declaredRegime": "uae_mainland_private",
+    "declaredWorkerCategory": "non_domestic"
+  },
+  "documents": [
+    {
+      "role": "offer",
+      "file": "offer.pdf",
+      "pageCount": 1,
+      "readablePages": [
+        1
+      ]
+    },
+    {
+      "role": "contract",
+      "file": "contract.pdf",
+      "pageCount": 1,
+      "readablePages": [
+        1
+      ]
+    }
+  ],
+  "expectedFields": [
+    {
+      "role": "offer",
+      "fieldKey": "basic_salary",
+      "state": "present",
+      "value": {
+        "kind": "money",
+        "amount": "2500.00",
+        "currency": "AED",
+        "frequency": "monthly",
+        "component": "basic_salary",
+        "payer": null
+      },
+      "evidence": {
+        "page": 1,
+        "role": "offer",
+        "line": 14
+      }
+    },
+    {
+      "role": "contract",
+      "fieldKey": "basic_salary",
+      "state": "present",
+      "value": {
+        "kind": "money",
+        "amount": "2500.00",
+        "currency": "AED",
+        "frequency": "monthly",
+        "component": "basic_salary",
+        "payer": null
+      },
+      "evidence": {
+        "page": 1,
+        "role": "contract",
+        "line": 14
+      }
+    },
+    {
+      "role": "offer",
+      "fieldKey": "stated_total_pay",
+      "state": "present",
+      "value": {
+        "kind": "money",
+        "amount": "3200.00",
+        "currency": "AED",
+        "frequency": "monthly",
+        "component": "stated_total",
+        "payer": null
+      },
+      "evidence": {
+        "page": 1,
+        "role": "offer",
+        "line": 16
+      }
+    },
+    {
+      "role": "contract",
+      "fieldKey": "stated_total_pay",
+      "state": "present",
+      "value": {
+        "kind": "money",
+        "amount": "3200.00",
+        "currency": "AED",
+        "frequency": "monthly",
+        "component": "stated_total",
+        "payer": null
+      },
+      "evidence": {
+        "page": 1,
+        "role": "contract",
+        "line": 16
+      }
+    },
+    {
+      "role": "offer",
+      "fieldKey": "start_date",
+      "state": "present",
+      "value": {
+        "kind": "date",
+        "date": "2026-05-01"
+      },
+      "evidence": {
+        "page": 1,
+        "role": "offer",
+        "line": 18
+      }
+    },
+    {
+      "role": "contract",
+      "fieldKey": "start_date",
+      "state": "present",
+      "value": {
+        "kind": "date",
+        "date": "2026-05-01"
+      },
+      "evidence": {
+        "page": 1,
+        "role": "contract",
+        "line": 18
+      }
+    },
+    {
+      "role": "offer",
+      "fieldKey": "contract_duration",
+      "state": "present",
+      "value": {
+        "kind": "duration",
+        "amount": "24",
+        "unit": "month"
+      },
+      "evidence": {
+        "page": 1,
+        "role": "offer",
+        "line": 19
+      }
+    },
+    {
+      "role": "contract",
+      "fieldKey": "contract_duration",
+      "state": "present",
+      "value": {
+        "kind": "duration",
+        "amount": "24",
+        "unit": "month"
+      },
+      "evidence": {
+        "page": 1,
+        "role": "contract",
+        "line": 19
+      }
+    }
+  ],
+  "seededDifferences": [
+    {
+      "fieldKey": "basic_salary",
+      "kind": "value",
+      "note": "No seeded difference: the pair is consistent."
+    }
+  ],
+  "allowedFindingCategories": [
+    "missing_information"
+  ],
+  "forbiddenFindingCategories": [
+    "document_mismatch",
+    "source_backed_concern"
+  ],
+  "requiredRuleRefs": [],
+  "expectedAbstentions": [
+    "no_global_verdict"
+  ],
+  "notes": "Consistent pair: all pinned terms agree across the two documents."
+}
