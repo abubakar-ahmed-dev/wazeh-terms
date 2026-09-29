@@ -16,7 +16,6 @@ import {
   type FieldDefinition,
   type FieldState,
   type FindingCategory,
-  type IssuedExtractionDocument,
 } from '../contracts/index.js';
 import { resolveCategory } from './category.js';
 import { defaultImportance } from './importance.js';
@@ -43,12 +42,18 @@ export interface ComparisonResult {
   readonly checkedFieldKeys: readonly string[];
 }
 
+/** Minimal side shape: the engine reads only the effective field list. */
+export interface CompareDocumentInput {
+  readonly role: 'offer' | 'contract';
+  readonly fields: readonly ExtractedField[];
+}
+
 const HIGH_EXPLANATION = (label: string): string =>
   `The offer and the contract state different ${label.toLowerCase()} values.`;
 
 export function compareDocuments(sides: {
-  offer?: IssuedExtractionDocument;
-  contract?: IssuedExtractionDocument;
+  offer?: CompareDocumentInput;
+  contract?: CompareDocumentInput;
 }): ComparisonResult {
   const { offer, contract } = sides;
   if (!offer || !contract) {
