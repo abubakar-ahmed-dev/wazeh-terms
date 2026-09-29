@@ -31,20 +31,27 @@ describe('operational logging redaction', () => {
         ...warnSpy.mock.calls.map((call) => String(call[0])),
         ...errorSpy.mock.calls.map((call) => String(call[0])),
       ];
-      expect(lines.length).toBeGreaterThanOrEqual(2);
+      // pdfjs-dist may emit non-JSON library warnings on import; only our
+      // logger's lines are asserted.
+      const jsonLines = lines.filter((line) => line.startsWith('{'));
+      expect(jsonLines.length).toBeGreaterThanOrEqual(2);
 
       for (const line of lines) {
-        // Every line parses as JSON with only coarse fields.
-        const entry = JSON.parse(line) as Record<string, unknown>;
-        expect(Object.keys(entry)).toEqual(
-          expect.arrayContaining(['ts', 'level', 'event', 'requestId', 'route', 'status', 'durationMs']),
-        );
-        // No fixture content, no model values, no base64 PDFs, no prompts.
+        // No fixture content, no model values, no base64 PDFs, no prompts —
+        // in logger output or library warnings alike.
         expect(line).not.toContain('Gulf Horizon');
         expect(line).not.toContain('AED');
         expect(line).not.toContain('sample-offer.pdf');
         expect(line).not.toContain('JVBER'); // base64 of "%PDF"
         expect(line).not.toContain('FIELD REGISTRY');
+      }
+
+      for (const line of jsonLines) {
+        // Logger lines parse as JSON with only coarse fields.
+        const entry = JSON.parse(line) as Record<string, unknown>;
+        expect(Object.keys(entry)).toEqual(
+          expect.arrayContaining(['ts', 'level', 'event', 'requestId', 'route', 'status', 'durationMs']),
+        );
       }
     } finally {
       logSpy.mockRestore();
