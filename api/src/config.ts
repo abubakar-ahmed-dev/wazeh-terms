@@ -64,7 +64,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
   return {
     gemini: {
       apiKey: get('GEMINI_API_KEY') ?? null,
-      model: get('GEMINI_MODEL') ?? 'gemini-3.5-flash',
+      model: get('GEMINI_MODEL') ?? 'gemini-3.5-flash-lite',
     },
     hmac: {
       secret: get('REVIEW_HMAC_SECRET') ?? null,

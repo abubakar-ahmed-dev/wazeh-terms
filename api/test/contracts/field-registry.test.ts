@@ -120,4 +120,18 @@ describe('field registry', () => {
     expect(FieldKeySchema.safeParse('monthly_wage').success).toBe(false);
     expect(FieldKeySchema.safeParse('').success).toBe(false);
   });
+
+  it('flags exactly the eight material keys as importantIfAbsent', () => {
+    const flagged = FIELD_DEFINITIONS.filter((f) => f.importantIfAbsent).map((f) => f.fieldKey);
+    expect(flagged).toEqual([
+      'basic_salary',
+      'stated_total_pay',
+      'payment_frequency',
+      'start_date',
+      'contract_duration',
+      'ordinary_hours',
+      'notice_terms',
+      'signature_presence',
+    ]);
+  });
 });

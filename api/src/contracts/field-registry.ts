@@ -5,7 +5,7 @@
  * This registry is the authority for which components may appear in an
  * `ExtractedField`. Studio content (`contractFieldDefinition` records) can
  * only supply labels/hints for keys that already exist here — it can never
- * add, remove, or re-type a key. Comparison strategies are named here but
+ * add, remove, or re-type a key. Comparison strategies are named here and
  * implemented in Phase 05 (`api/src/compare/`).
  */
 import { z } from 'zod';
@@ -82,12 +82,19 @@ export interface FieldDefinition {
   readonly repeatable: boolean;
   /** Non-null only for `valueKind: "money"` fields. */
   readonly expectedMoneyComponent: MoneyComponent | null;
+  /**
+   * Material enough that absence from both documents (after readable
+   * coverage) is itself reported as missing information
+   * (`docs/DATABASE_SCHEMA.md` §7). Does not declare a legal requirement.
+   */
+  readonly importantIfAbsent: boolean;
 }
 
 const text = (
   fieldKey: string,
   groupKey: FieldGroupKey,
   label: string,
+  importantIfAbsent = false,
 ): FieldDefinition => ({
   fieldKey,
   groupKey,
@@ -96,6 +103,7 @@ const text = (
   comparisonStrategyKey: 'text_equality',
   repeatable: false,
   expectedMoneyComponent: null,
+  importantIfAbsent,
 });
 
 const money = (
@@ -104,6 +112,7 @@ const money = (
   label: string,
   component: MoneyComponent,
   repeatable = false,
+  importantIfAbsent = false,
 ): FieldDefinition => ({
   fieldKey,
   groupKey,
@@ -112,47 +121,42 @@ const money = (
   comparisonStrategyKey: 'money_equality',
   repeatable,
   expectedMoneyComponent: component,
+  importantIfAbsent,
+});
+
+const typed = (
+  fieldKey: string,
+  groupKey: FieldGroupKey,
+  label: string,
+  valueKind: ValueKind,
+  comparisonStrategyKey: ComparisonStrategyKey,
+  importantIfAbsent = false,
+): FieldDefinition => ({
+  fieldKey,
+  groupKey,
+  label,
+  valueKind,
+  comparisonStrategyKey,
+  repeatable: false,
+  expectedMoneyComponent: null,
+  importantIfAbsent,
 });
 
 export const FIELD_DEFINITIONS: readonly FieldDefinition[] = [
   text('employer_name', 'employer', 'Employer name'),
   text('job_title', 'occupation', 'Job title or occupation'),
   text('work_location', 'location', 'Work location'),
-  money('basic_salary', 'pay', 'Basic salary', 'basic_salary'),
+  money('basic_salary', 'pay', 'Basic salary', 'basic_salary', false, true),
   money('allowance_item', 'pay', 'Allowance item', 'allowance', true),
-  money('stated_total_pay', 'pay', 'Stated total pay', 'stated_total'),
-  text('payment_frequency', 'pay', 'Payment frequency'),
-  {
-    fieldKey: 'start_date',
-    groupKey: 'term',
-    label: 'Start date',
-    valueKind: 'date',
-    comparisonStrategyKey: 'date_equality',
-    repeatable: false,
-    expectedMoneyComponent: null,
-  },
-  {
-    fieldKey: 'contract_duration',
-    groupKey: 'term',
-    label: 'Contract duration',
-    valueKind: 'duration',
-    comparisonStrategyKey: 'duration_equality',
-    repeatable: false,
-    expectedMoneyComponent: null,
-  },
+  money('stated_total_pay', 'pay', 'Stated total pay', 'stated_total', false, true),
+  text('payment_frequency', 'pay', 'Payment frequency', true),
+  typed('start_date', 'term', 'Start date', 'date', 'date_equality', true),
+  typed('contract_duration', 'term', 'Contract duration', 'duration', 'duration_equality', true),
   text('renewal_terms', 'term', 'Renewal wording'),
-  {
-    fieldKey: 'probation_period',
-    groupKey: 'probation',
-    label: 'Probation period',
-    valueKind: 'duration',
-    comparisonStrategyKey: 'duration_equality',
-    repeatable: false,
-    expectedMoneyComponent: null,
-  },
-  text('ordinary_hours', 'working_time', 'Ordinary working hours'),
+  typed('probation_period', 'probation', 'Probation period', 'duration', 'duration_equality'),
+  text('ordinary_hours', 'working_time', 'Ordinary working hours', true),
   text('overtime_terms', 'working_time', 'Overtime wording'),
-  text('notice_terms', 'ending_terms', 'Notice terms'),
+  text('notice_terms', 'ending_terms', 'Notice terms', true),
   text('termination_terms', 'ending_terms', 'Termination wording'),
   money('deduction_item', 'deductions', 'Deduction item', 'worker_charge', true),
   money('other_worker_charge', 'deductions', 'Other worker charge', 'worker_charge'),
@@ -161,97 +165,17 @@ export const FIELD_DEFINITIONS: readonly FieldDefinition[] = [
   money('residency_cost', 'recruitment_and_travel_costs', 'Residency cost', 'worker_charge'),
   money('medical_cost', 'recruitment_and_travel_costs', 'Medical cost', 'worker_charge'),
   money('travel_cost', 'recruitment_and_travel_costs', 'Travel cost', 'worker_charge'),
-  {
-    fieldKey: 'accommodation_benefit',
-    groupKey: 'benefits',
-    label: 'Accommodation benefit',
-    valueKind: 'benefit_state',
-    comparisonStrategyKey: 'benefit_state_equality',
-    repeatable: false,
-    expectedMoneyComponent: null,
-  },
-  {
-    fieldKey: 'food_benefit',
-    groupKey: 'benefits',
-    label: 'Food benefit',
-    valueKind: 'benefit_state',
-    comparisonStrategyKey: 'benefit_state_equality',
-    repeatable: false,
-    expectedMoneyComponent: null,
-  },
-  {
-    fieldKey: 'transport_benefit',
-    groupKey: 'benefits',
-    label: 'Transport benefit',
-    valueKind: 'benefit_state',
-    comparisonStrategyKey: 'benefit_state_equality',
-    repeatable: false,
-    expectedMoneyComponent: null,
-  },
-  {
-    fieldKey: 'medical_benefit',
-    groupKey: 'benefits',
-    label: 'Medical coverage benefit',
-    valueKind: 'benefit_state',
-    comparisonStrategyKey: 'benefit_state_equality',
-    repeatable: false,
-    expectedMoneyComponent: null,
-  },
-  {
-    fieldKey: 'return_ticket_benefit',
-    groupKey: 'benefits',
-    label: 'Travel or return ticket benefit',
-    valueKind: 'benefit_state',
-    comparisonStrategyKey: 'benefit_state_equality',
-    repeatable: false,
-    expectedMoneyComponent: null,
-  },
+  typed('accommodation_benefit', 'benefits', 'Accommodation benefit', 'benefit_state', 'benefit_state_equality'),
+  typed('food_benefit', 'benefits', 'Food benefit', 'benefit_state', 'benefit_state_equality'),
+  typed('transport_benefit', 'benefits', 'Transport benefit', 'benefit_state', 'benefit_state_equality'),
+  typed('medical_benefit', 'benefits', 'Medical coverage benefit', 'benefit_state', 'benefit_state_equality'),
+  typed('return_ticket_benefit', 'benefits', 'Travel or return ticket benefit', 'benefit_state', 'benefit_state_equality'),
   text('document_language', 'document_details', 'Document language'),
-  {
-    fieldKey: 'signature_presence',
-    groupKey: 'document_details',
-    label: 'Signature presence',
-    valueKind: 'boolean',
-    comparisonStrategyKey: 'boolean_equality',
-    repeatable: false,
-    expectedMoneyComponent: null,
-  },
-  {
-    fieldKey: 'document_date',
-    groupKey: 'document_details',
-    label: 'Document date',
-    valueKind: 'date',
-    comparisonStrategyKey: 'date_equality',
-    repeatable: false,
-    expectedMoneyComponent: null,
-  },
-  {
-    fieldKey: 'document_reference',
-    groupKey: 'document_details',
-    label: 'Document reference',
-    valueKind: 'reference_text',
-    comparisonStrategyKey: 'reference_text_equality',
-    repeatable: false,
-    expectedMoneyComponent: null,
-  },
-  {
-    fieldKey: 'verification_reference',
-    groupKey: 'document_details',
-    label: 'Verification reference',
-    valueKind: 'reference_text',
-    comparisonStrategyKey: 'reference_text_equality',
-    repeatable: false,
-    expectedMoneyComponent: null,
-  },
-  {
-    fieldKey: 'annex_reference',
-    groupKey: 'document_details',
-    label: 'Annex or policy reference',
-    valueKind: 'reference_text',
-    comparisonStrategyKey: 'reference_text_equality',
-    repeatable: false,
-    expectedMoneyComponent: null,
-  },
+  typed('signature_presence', 'document_details', 'Signature presence', 'boolean', 'boolean_equality', true),
+  typed('document_date', 'document_details', 'Document date', 'date', 'date_equality'),
+  typed('document_reference', 'document_details', 'Document reference', 'reference_text', 'reference_text_equality'),
+  typed('verification_reference', 'document_details', 'Verification reference', 'reference_text', 'reference_text_equality'),
+  typed('annex_reference', 'document_details', 'Annex or policy reference', 'reference_text', 'reference_text_equality'),
 ];
 
 export type FieldKey = (typeof FIELD_DEFINITIONS)[number]['fieldKey'];
