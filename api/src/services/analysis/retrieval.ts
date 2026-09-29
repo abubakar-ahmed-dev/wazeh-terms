@@ -12,8 +12,6 @@ import type { AppConfig } from '../../config.js';
 import type { FindingDraft } from '../../compare/compare.js';
 import type { ScopeApplicability, SourceCitation } from '../../contracts/index.js';
 import type { CanonicalRead, CanonicalReadFailed } from '../canonical/reader.js';
-import type { ReaderOptions } from '../canonical/reader.js';
-import { readCanonicalRule } from '../canonical/reader.js';
 import { gateCandidate, type WithholdReason } from '../eligibility/gate.js';
 import { evaluateTriggers, type TriggerEvaluation } from '../eligibility/triggers.js';
 import { triggerDefinition, type MachineConditionContext } from '../eligibility/trigger-keys.js';
