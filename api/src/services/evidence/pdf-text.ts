@@ -6,6 +6,21 @@
  * page count.
  */
 import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+// pdfjs needs the bundled standard-font metrics to map glyphs for the
+// base-14 fonts (Helvetica etc.); without it text extraction degrades. The
+// Node factory wants a filesystem path with forward slashes and a trailing
+// slash. NOTE (Phase 14): the deployment image must ship this directory.
+const STANDARD_FONTS_URL =
+  path
+    .resolve(
+      path.dirname(fileURLToPath(import.meta.url)),
+      '../../../../node_modules/pdfjs-dist/standard_fonts',
+    )
+    .split(path.sep)
+    .join('/') + '/';
 
 export class PdfTextError extends Error {
   constructor(message: string) {
@@ -32,6 +47,7 @@ export async function extractPdfPageTexts(
     data: new Uint8Array(bytes),
     disableFontFace: true,
     useSystemFonts: false,
+    standardFontDataUrl: STANDARD_FONTS_URL,
   });
 
   let document: Awaited<typeof loadingTask.promise>;
