@@ -16,6 +16,7 @@ import type { AppConfig } from '../config.js';
 import type { GeminiExtractionService } from '../services/gemini/types.js';
 import { NothingUsableError, mapModelExtraction, type MapperDocumentInput } from '../services/extraction/mapper.js';
 import { PdfStructureError, inspectPdf } from '../services/pdf-structure.js';
+import { extractPdfPageTexts } from '../services/evidence/pdf-text.js';
 
 const SampleRequestBodySchema = z.strictObject({
   sampleCaseId: z.string().min(1).max(32),
@@ -107,7 +108,24 @@ export function extractionsRouter(deps: RouteDeps): Router {
       if (structure.pageCount > config.limits.maxPagesPerPdf) {
         throw new HttpError(413, 'TOO_MANY_PAGES', 'The sample exceeds the configured page limit.');
       }
-      inputs.push({ role: document.role, pdfBytes: bytes, pageCount: structure.pageCount, bytes });
+
+      // Text layer for evidence corroboration (Phase 04). Extracted once,
+      // bounded by the admitted page count; failure degrades to all-null
+      // pages rather than blocking extraction.
+      let pageTexts: Array<string | null>;
+      try {
+        pageTexts = await extractPdfPageTexts(bytes, { maxPages: config.limits.maxPagesPerPdf });
+      } catch {
+        pageTexts = Array.from({ length: structure.pageCount }, () => null);
+      }
+
+      inputs.push({
+        role: document.role,
+        pdfBytes: bytes,
+        pageCount: structure.pageCount,
+        pageTexts,
+        bytes,
+      });
     }
 
     // One bounded provider call for the pair (ADR-003).

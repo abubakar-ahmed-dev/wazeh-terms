@@ -130,11 +130,18 @@ export function validModelExtraction(): ModelExtraction {
 const MARKER = 'SYNTHETIC SAMPLE - FICTIONAL';
 
 export async function createPdf(pageCount: number, text: string): Promise<Buffer> {
+  return createTextPdf(Array.from({ length: pageCount }, (_, i) => [`${MARKER} ${text} page ${i + 1}`]));
+}
+
+/** PDF whose page i carries exactly the given lines (deterministic text layer). */
+export async function createTextPdf(pageLines: string[][]): Promise<Buffer> {
   const pdf = await PDFDocument.create();
   const font = await pdf.embedFont(StandardFonts.Helvetica);
-  for (let i = 0; i < pageCount; i++) {
+  for (const lines of pageLines) {
     const page = pdf.addPage([595, 842]);
-    page.drawText(`${MARKER} ${text} page ${i + 1}`, { x: 50, y: 780, size: 10, font });
+    lines.forEach((line, index) => {
+      page.drawText(line, { x: 50, y: 780 - index * 20, size: 10, font });
+    });
   }
   return Buffer.from(await pdf.save());
 }
@@ -169,6 +176,14 @@ export async function writeTestManifest(): Promise<TestFixture> {
 
   await writeCase('TC-002', 'sample-offer.pdf', await createPdf(1, 'OFFER'));
   await writeCase('TC-002', 'sample-contract.pdf', await createPdf(1, 'CONTRACT'));
+  await writeCase(
+    'TC-TEXT',
+    'offer.pdf',
+    await createTextPdf([
+      ['Fictional employer Gulf Horizon', 'Basic salary AED 2,400 per month'],
+      ['Contract duration six months'],
+    ]),
+  );
   await writeCase('TC-LONG', 'sample-offer.pdf', await createPdf(20, 'LONG'));
   await writeCase('TC-GARBAGE', 'sample-offer.pdf', Buffer.from('%PDF-1.4 this is not a real pdf'));
   await writeCase('TC-EMPTY', 'sample-offer.pdf', Buffer.alloc(0));
@@ -189,6 +204,13 @@ export async function writeTestManifest(): Promise<TestFixture> {
         ],
       },
       { sampleCaseId: 'TC-LONG', title: 't', description: 't', scope: manifestScope(), documents: [offer] },
+      {
+        sampleCaseId: 'TC-TEXT',
+        title: 't',
+        description: 't',
+        scope: manifestScope(),
+        documents: [{ role: 'offer' as const, file: 'offer.pdf', previewUrl: '' }],
+      },
       { sampleCaseId: 'TC-GARBAGE', title: 't', description: 't', scope: manifestScope(), documents: [offer] },
       { sampleCaseId: 'TC-EMPTY', title: 't', description: 't', scope: manifestScope(), documents: [offer] },
       { sampleCaseId: 'TC-NOTPDF', title: 't', description: 't', scope: manifestScope(), documents: [offer] },

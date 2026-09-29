@@ -14,12 +14,19 @@ import {
   type NormalizedValue,
 } from '../../contracts/index.js';
 import { isKnownFieldKey } from '../../contracts/index.js';
+import {
+  allUnmatched,
+  claimedPagesWithoutTextLayer,
+  verifyEvidence,
+} from '../evidence/matcher.js';
 import type { ModelDocument, ModelField } from './model-output.js';
 
 export interface MapperDocumentInput {
   readonly role: 'offer' | 'contract';
   readonly pdfBytes: Buffer;
   readonly pageCount: number;
+  /** Per-page text layer (null = no usable text). Ordered 1-based. */
+  readonly pageTexts: readonly (string | null)[];
 }
 
 export interface MappedDocument {
@@ -65,6 +72,7 @@ function mapField(
   field: ModelField,
   documentId: string,
   usedCounts: Map<string, number>,
+  pageTexts: readonly (string | null)[],
 ): { field: ExtractedFieldInput | null; degraded: boolean } {
   if (!isKnownFieldKey(field.fieldKey)) {
     return { field: null, degraded: true };
@@ -74,14 +82,20 @@ function mapField(
   const qualityNotes = [...(field.qualityNotes ?? [])];
   if (note) qualityNotes.push(note);
 
-  const evidence = (field.evidence ?? []).map((entry) => ({
+  const matchResults = (field.evidence ?? []).map((entry) =>
+    verifyEvidence(entry.quote, entry.page, pageTexts),
+  );
+  const evidence = (field.evidence ?? []).map((entry, index) => ({
     documentId,
     page: entry.page,
     quote: entry.quote,
-    // Text-layer corroboration arrives in Phase 04; before it runs, every
-    // passage is honestly a model transcription.
-    verification: 'model_transcription' as const,
+    verification: matchResults[index]!.verification,
   }));
+  for (const result of matchResults) {
+    for (const noteToken of result.qualityNotes) {
+      if (!qualityNotes.includes(noteToken)) qualityNotes.push(noteToken);
+    }
+  }
 
   let state = field.state;
   let degraded = valueDegraded;
@@ -107,6 +121,20 @@ function mapField(
     candidate.state = 'unclear';
     candidate.qualityNotes.push('Present field had no usable evidence passage');
     degraded = true;
+  }
+
+  // Present value corroborated by nothing, on pages with no text layer: keep
+  // it present for user inspection, but mark the transcription unverified
+  // (ADR-004 — no fabricated absence, no silent trust of a scan reading).
+  if (
+    state === 'present' &&
+    allUnmatched(matchResults) &&
+    claimedPagesWithoutTextLayer(
+      (field.evidence ?? []).map((entry) => entry.page),
+      pageTexts,
+    )
+  ) {
+    candidate.qualityNotes.push('transcription_unverified_scan');
   }
 
   // Registry-contract violations that survive the steps above (e.g. a money
@@ -139,7 +167,7 @@ function mapDocument(
 
   const fields: ExtractedFieldInput[] = [];
   for (const modelField of modelDocument.fields ?? []) {
-    const { field, degraded: fieldDegraded } = mapField(modelField, documentId, usedCounts);
+    const { field, degraded: fieldDegraded } = mapField(modelField, documentId, usedCounts, input.pageTexts);
     if (field !== null) {
       fields.push(field);
     }
