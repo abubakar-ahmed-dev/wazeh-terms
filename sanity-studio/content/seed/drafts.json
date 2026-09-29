@@ -42,7 +42,8 @@
     "title": "Federal Decree-Law No. (33) of 2021 on the Regulation of Labour Relations (official English text)",
     "issuer": {
       "_type": "reference",
-      "_ref": "authority.uae-federal-government"
+      "_ref": "authority.uae-federal-government",
+      "_weak": true
     },
     "jurisdiction": "AE",
     "evidenceClass": "binding_official_rule",
@@ -75,7 +76,8 @@
     "title": "Cabinet Resolution No. (1) of 2022 Concerning the Executive Regulation of Federal Decree-Law No. (33) of 2021 (official English text)",
     "issuer": {
       "_type": "reference",
-      "_ref": "authority.uae-federal-government"
+      "_ref": "authority.uae-federal-government",
+      "_weak": true
     },
     "jurisdiction": "AE",
     "evidenceClass": "binding_official_rule",
@@ -108,7 +110,8 @@
     "title": "u.ae — Payment of salaries/wages in the private sector (page snapshot 2026-09-28)",
     "issuer": {
       "_type": "reference",
-      "_ref": "authority.uae-federal-government"
+      "_ref": "authority.uae-federal-government",
+      "_weak": true
     },
     "jurisdiction": "AE",
     "evidenceClass": "official_guidance",
@@ -139,7 +142,8 @@
     "title": "u.ae — Employment regulations in the private sector (page snapshot 2026-09-28)",
     "issuer": {
       "_type": "reference",
-      "_ref": "authority.uae-federal-government"
+      "_ref": "authority.uae-federal-government",
+      "_weak": true
     },
     "jurisdiction": "AE",
     "evidenceClass": "official_guidance",
@@ -170,7 +174,8 @@
     "title": "Emigration Rules, 1979 (consolidated text updated 2023, BEOE)",
     "issuer": {
       "_type": "reference",
-      "_ref": "authority.beoe"
+      "_ref": "authority.beoe",
+      "_weak": true
     },
     "jurisdiction": "PK",
     "evidenceClass": "binding_official_rule",
@@ -201,7 +206,8 @@
     "title": "BEOE — Emigrant Fee Structure (page snapshot 2026-09-28)",
     "issuer": {
       "_type": "reference",
-      "_ref": "authority.beoe"
+      "_ref": "authority.beoe",
+      "_weak": true
     },
     "jurisdiction": "PK",
     "evidenceClass": "official_guidance",
@@ -260,7 +266,8 @@
     "currentGuidanceVerifiedAt": null,
     "primarySource": {
       "_type": "reference",
-      "_ref": "source.uae-federal-decree-law-33-2021.base-text-2022"
+      "_ref": "source.uae-federal-decree-law-33-2021.base-text-2022",
+      "_weak": true
     },
     "pinpoint": {
       "label": "Article (6) Recruitment and Employment of Workers, clause (4)",
@@ -304,7 +311,8 @@
     "currentGuidanceVerifiedAt": "2026-09-29T00:00:00.000Z",
     "primarySource": {
       "_type": "reference",
-      "_ref": "source.uae-payment-of-wages.web-2026-09-28"
+      "_ref": "source.uae-payment-of-wages.web-2026-09-28",
+      "_weak": true
     },
     "pinpoint": {
       "label": "When Should Employers Pay Salaries?",
@@ -347,7 +355,8 @@
     "currentGuidanceVerifiedAt": null,
     "primarySource": {
       "_type": "reference",
-      "_ref": "source.pk-emigration-rules-1979.consolidated-2023"
+      "_ref": "source.pk-emigration-rules-1979.consolidated-2023",
+      "_weak": true
     },
     "pinpoint": {
       "label": "Rule 15(1A) and the proviso thereto — Service Charges, their distribution etc.",

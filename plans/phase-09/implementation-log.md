@@ -54,6 +54,32 @@ See chat draft table: worker-charge rule (Decree-Law 33 Art 6(4), PDF p.8),
 wage-frequency guidance rule (u.ae payment page, "When Should Employers Pay
 Salaries?"), PK informational rule (Emigration Rules Rule 15, p.12).
 
+## Draft import executed (owner authorization 2026-09-30: drafts only, no publication)
+
+- All 44 gate-passing records imported as **drafts** via the authenticated
+  Sanity MCP session (project `8g0kllu0`, dataset `production`): 2 authorities,
+  6 source versions, 3 rules, 33 field definitions. `publish_documents` was
+  NOT called; a published-perspective query confirms **0 published records**.
+- Rule states as imported: worker-charge rule `draft`, wage-guidance rule
+  `approved` (no trigger), PK OEP rule `draft` (owner demoted it from approved
+  before import; gate re-run PASS).
+- **Weak references during draft stage:** Sanity strong references require a
+  published target, so draft-only imports carry `_weak: true` refs
+  (`prep-draft-import.ts` → `seed/drafts.json`; authored seed keeps strong
+  refs as contract truth). At publish time records are re-created with strong
+  refs in dependency order. Logged as a deliberate, reversible deviation.
+- **Post-import validation caught a real defect:** the first read-back gate
+  run FAILED — `responsibleParty` missing on both UAE rules (my import
+  payload omission; Content Lake writes bypass Studio-required validation,
+  exactly what this gate exists for). Patched both drafts via
+  `patch_documents`; re-read all 44 and re-ran the gate on the read-back
+  (`readback-2026-09-29.json`): **PASS, exit 0**. Seed and read-back agree.
+- KB projection **preview** generated from eligible seed records
+  (`content/kb-projection-preview-2026-09-30.json`: 6 sources, 1 rule, 33
+  field definitions). Preview only — the real projection is rebuilt from
+  published approved records after Studio review + publish.
+- Nothing published; Phase 09 and the Phase 10 live check remain open.
+
 ## Remaining issues / open items
 
 1. **Amendment cross-check** for Decree-Law 33/2021 Arts 6 & 22: automated
