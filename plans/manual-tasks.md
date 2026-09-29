@@ -11,13 +11,12 @@ platform secret binding — never into plans, logs, chat, or source control.
 4. Status: owner supplies immediately.
 
 ## MT-2 — Sanity dataset decision → needed by Phase 08
-1. Choose the dataset for curated reference records: dedicated (recommended, e.g. `knowledge`) vs existing `production` (studio currently hardcodes `production`, project `8g0kllu0`).
-2. Create it in sanity.io/manage if dedicated; record the final `projectId` + `dataset` pair for config.
-3. Set Studio editor roles/invites (editors only; no public write).
+**DECIDED (owner, 2026-09-29): use the existing `production` dataset in project `8g0kllu0`.** The project is dedicated to WazehTerms reference content; no second dataset is created. Studio, the Phase 09 import, the canonical record reader, and the Knowledge Base configuration all stay aligned to `production`. Dataset visibility is not changed as part of Phase 08. Publish only reviewed reference records; never put worker documents in Sanity.
 
 ## MT-3 — Studio deploy → after Phase 08 schema lands
-1. `cd sanity-studio && npx sanity deploy` (interactive login).
-2. Record the deployed Studio URL (nonsecret; goes in docs).
+**PENDING owner deployment.** Phase 08 code + tests + `sanity build` are complete; the owner will run `cd sanity-studio && npx sanity deploy` (interactive login) and supply the deployed Studio URL. Do not record Studio deployment as complete before then.
+
+**Editor invites:** none needed — the owner is the sole Sanity editor and reviewer at present; no collaborators to invite.
 
 ## MT-4 — Official-source browser verification → needed by Phase 09
 1. Open each `candidate` source in `docs/SOURCES.md` §3 in a normal browser — especially BEOE PDFs/pages and the MOHRE-hosted law PDFs that blocked automated fetches. Work from the owner's downloaded official PDFs and dated browser captures; do not defeat access restrictions and do not infer a rule from search snippets.

@@ -28,7 +28,7 @@ in the git-ignored `api/.env` — never in chat, plans, logs, CI, or Git.
 
 ## Decisions requested (owner owns these)
 
-1. Dataset choice for curated records (MT-2) — dedicated `knowledge` vs `production`.
+1. Dataset choice for curated records (MT-2) — **DECIDED (2026-09-29): `production` in project `8g0kllu0`**; no dedicated dataset. Studio, Phase 09 import, canonical reader, and KB configuration stay aligned to `production`; visibility unchanged.
 2. Whether `sources/` official PDFs stay in Git (MT-9).
 3. License selection (MT-9).
 4. Provider-processing notice text approval (MT-10) — blocks any future custom-upload gate, not the sample-only path.

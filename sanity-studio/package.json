@@ -6,6 +6,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "sanity build",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
     "deploy": "sanity deploy",
     "deploy-graphql": "sanity graphql deploy",
     "dev": "sanity dev",

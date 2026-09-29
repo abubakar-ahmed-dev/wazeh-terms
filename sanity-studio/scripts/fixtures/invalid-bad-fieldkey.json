@@ -1,0 +1,17 @@
+[
+  {
+    "_id": "field.monthly_wage",
+    "_type": "contractFieldDefinition",
+    "fieldKey": "monthly_wage",
+    "groupKey": "employer",
+    "label": "employer name",
+    "valueKind": "text",
+    "comparisonStrategyKey": "text_equality",
+    "importantIfAbsent": false,
+    "recordStatus": "current",
+    "reviewStatus": "approved",
+    "reviewedAt": "2026-09-01T00:00:00.000Z",
+    "reviewerCode": "REV-1",
+    "schemaVersion": 1
+  }
+]

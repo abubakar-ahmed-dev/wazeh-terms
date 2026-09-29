@@ -1,0 +1,44 @@
+[
+  {
+    "_id": "rule.broken-ref",
+    "_type": "rule",
+    "ruleKey": "ae-worker-charge-employer-borne",
+    "revision": 1,
+    "title": "Worker-charge attribution check (fictional seed)",
+    "claimText": "Fictional seed claim: recruitment-class charges for this route are carried by the UAE employer, not the worker.",
+    "topic": "worker_costs",
+    "relatedFieldKeys": [
+      "deduction_item",
+      "recruitment_cost"
+    ],
+    "triggerKey": "worker_charge.payer_must_be_uae_employer",
+    "ruleKind": "obligation",
+    "evidenceClass": "binding_official_rule",
+    "jurisdiction": "AE",
+    "origin": "PK",
+    "destination": "AE",
+    "employmentRegime": "uae_mainland_private",
+    "workerCategory": "non_domestic",
+    "responsibleParty": "uae_employer",
+    "conditions": [],
+    "exceptions": [
+      "Fictional seed: any real rule replaces this record after source verification."
+    ],
+    "effectiveFrom": "2022-02-02",
+    "primarySource": {
+      "_type": "reference",
+      "_ref": "source.nowhere"
+    },
+    "pinpoint": {
+      "label": "Article 2 (fictional seed)",
+      "quote": "Fictional seed passage — replaced by the verified passage in Phase 09."
+    },
+    "plainEnglish": "Fictional seed explanation; replaced by reviewed content in Phase 09.",
+    "sourceCheckedAt": "2026-09-01T00:00:00.000Z",
+    "reviewStatus": "approved",
+    "reviewedAt": "2026-09-01T00:00:00.000Z",
+    "reviewerCode": "REV-1",
+    "schemaVersion": 1,
+    "recordStatus": "current"
+  }
+]
