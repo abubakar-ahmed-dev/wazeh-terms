@@ -9,7 +9,9 @@ import { loadBundledSampleManifest } from '../src/content/samples-manifest.js';
 import { verifyIssuedExtraction, IssuedExtractionV1Schema } from '../src/contracts/index.js';
 import { createGeminiHttpService } from '../src/services/gemini/gemini-http.js';
 import { buildApp } from '../src/server/app.js';
+import { readFile } from 'node:fs/promises';
 import type { Server } from 'node:http';
+import path from 'node:path';
 
 async function main(): Promise<void> {
   const config = loadConfig();
@@ -43,9 +45,14 @@ async function main(): Promise<void> {
       const code = (body as { error?: { code?: string } }).error?.code ?? 'UNKNOWN';
       console.error(JSON.stringify({ result: 'error', status: response.status, code, totalMs }));
       if (code === 'EXTRACTION_UNAVAILABLE') {
-        // One diagnostic probe outside the app path: which provider class failed.
+        // One diagnostic probe outside the app path: which provider class
+        // failed. Uses the real fixture so the class reflects the pipeline's
+        // actual request, not probe artifacts.
+        const offerBytes = await readFile(
+          path.resolve('../fixtures/samples/TC-002/sample-offer.pdf'),
+        );
         const probe = await gemini.extract({
-          documents: [{ role: 'offer', pdfBase64: Buffer.from('%PDF-').toString('base64') }],
+          documents: [{ role: 'offer', pdfBase64: offerBytes.toString('base64') }],
           deadlineMs: config.limits.applicationDeadlineMs,
         });
         console.error(JSON.stringify({ probe: probe.ok ? 'provider-ok' : { reason: probe.reason, errorClass: probe.errorClass ?? null } }));
