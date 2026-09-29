@@ -1,0 +1,62 @@
+[
+  {
+    "_id": "source.ae-decree-33.2021-en",
+    "_type": "sourceDocument",
+    "sourceKey": "ae-federal-decree-law-33",
+    "versionKey": "2021-en",
+    "title": "Federal Decree-Law No. 33 of 2021 (fictional seed record)",
+    "issuer": {
+      "_type": "reference",
+      "_ref": "authority.mohre"
+    },
+    "jurisdiction": "AE",
+    "evidenceClass": "binding_official_rule",
+    "officialUrl": "https://www.mohre.gov.ae/en/laws-and-regulations/laws.aspx",
+    "sourceKind": "law",
+    "mediaType": "pdf",
+    "effectiveFrom": "2022-02-02",
+    "retrievedAt": "2026-09-01T00:00:00.000Z",
+    "lastVerifiedAt": "2026-09-01T00:00:00.000Z",
+    "applicableRegimes": [
+      "uae_mainland_private"
+    ],
+    "applicableCategories": [
+      "non_domestic"
+    ],
+    "recordStatus": "current",
+    "reviewStatus": "approved",
+    "reviewedAt": "2026-09-01T00:00:00.000Z",
+    "reviewerCode": "REV-1",
+    "schemaVersion": 1
+  },
+  {
+    "_id": "source.ae-decree-33.2021-en-dup",
+    "_type": "sourceDocument",
+    "sourceKey": "ae-federal-decree-law-33",
+    "versionKey": "2021-en",
+    "title": "Duplicate pair",
+    "issuer": {
+      "_type": "reference",
+      "_ref": "authority.mohre"
+    },
+    "jurisdiction": "AE",
+    "evidenceClass": "binding_official_rule",
+    "officialUrl": "https://www.mohre.gov.ae/en/laws-and-regulations/laws.aspx",
+    "sourceKind": "law",
+    "mediaType": "pdf",
+    "effectiveFrom": "2022-02-02",
+    "retrievedAt": "2026-09-01T00:00:00.000Z",
+    "lastVerifiedAt": "2026-09-01T00:00:00.000Z",
+    "applicableRegimes": [
+      "uae_mainland_private"
+    ],
+    "applicableCategories": [
+      "non_domestic"
+    ],
+    "recordStatus": "current",
+    "reviewStatus": "approved",
+    "reviewedAt": "2026-09-01T00:00:00.000Z",
+    "reviewerCode": "REV-1",
+    "schemaVersion": 1
+  }
+]
