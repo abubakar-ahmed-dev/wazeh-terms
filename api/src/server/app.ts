@@ -16,12 +16,15 @@ import { analysesRouter } from '../routes/analyses.js';
 import { extractionsRouter } from '../routes/extractions.js';
 import { findSampleFile, readOnlyRouter } from '../routes/read-only.js';
 import type { GeminiExtractionService } from '../services/gemini/types.js';
+import type { RetrievalService } from '../services/analysis/retrieval.js';
 import type { SampleManifest } from '../content/samples-manifest.js';
 
 export interface AppDeps {
   readonly config: AppConfig;
   readonly gemini: GeminiExtractionService;
   readonly manifest: SampleManifest;
+  /** Phase 10: injected when the retrieval chain is configured. */
+  readonly retrieval?: RetrievalService;
 }
 
 export function buildApp(deps: AppDeps): Express {
@@ -56,7 +59,7 @@ export function buildApp(deps: AppDeps): Express {
 
   app.use(readOnlyRouter(deps));
   app.use(extractionsRouter(deps));
-  app.use(analysesRouter(deps));
+  app.use(analysesRouter({ config: deps.config, ...(deps.retrieval ? { retrieval: deps.retrieval } : {}) }));
 
   app.get('/samples/:caseId/:file', (req: Request, res: Response, next: NextFunction) => {
     void (async () => {

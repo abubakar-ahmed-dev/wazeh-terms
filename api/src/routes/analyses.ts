@@ -18,6 +18,8 @@ import { HttpError } from '../errors.js';
 import { compareDocuments } from '../compare/index.js';
 import { InvalidCorrectionError, reconcileCorrections } from '../services/analysis/reconcile.js';
 import { assembleReport } from '../services/analysis/report.js';
+import type { RetrievalService } from '../services/analysis/retrieval.js';
+import { scopeApplicability } from '../services/analysis/scope.js';
 
 const ReviewRequestBodySchema = z.strictObject({
   issuedExtraction: z.record(z.string(), z.unknown()),
@@ -29,6 +31,8 @@ const ReviewRequestBodySchema = z.strictObject({
 
 interface RouteDeps {
   readonly config: AppConfig;
+  /** Absent (or unconfigured) = honest partial without retrieval (D8). */
+  readonly retrieval?: RetrievalService;
 }
 
 export function analysesRouter(deps: RouteDeps): Router {
@@ -99,6 +103,21 @@ export function analysesRouter(deps: RouteDeps): Router {
         : undefined,
     });
 
+    const applicability = scopeApplicability(issued.scope, issued.documents);
+    const retrievalConfigured =
+      !!deps.retrieval &&
+      !!(deps.config.sanity.contextMcpUrl && deps.config.sanity.projectId && deps.config.sanity.dataset);
+    // Retrieval runs inside the same request deadline envelope; it never
+    // blocks or degrades the document findings below (docs/ADR-010).
+    const retrieval = deps.retrieval
+      ? await deps.retrieval.run({
+          reconciliation,
+          scopeApplicability: applicability,
+          analysisDate: new Date(),
+          deadlineMs: deps.config.retrieval.timeoutMs,
+        })
+      : undefined;
+
     const report = assembleReport({
       issued,
       reconciliation,
@@ -107,6 +126,8 @@ export function analysesRouter(deps: RouteDeps): Router {
       checkedFieldKeys: comparison.checkedFieldKeys,
       requestId: res.locals.requestId as string,
       reviewedAsOf: new Date(),
+      ...(retrieval ? { retrieval } : {}),
+      retrievalConfigured,
     });
 
     res.status(200).json(report);

@@ -16,14 +16,19 @@ import { defaultImportance } from '../../compare/importance.js';
 import { getFieldDefinition } from '../../contracts/index.js';
 import { OFFICIAL_NEXT_STEPS } from './next-steps.js';
 import { isCorrected, type Reconciliation } from './reconcile.js';
+import type { RetrievalOutcome } from './retrieval.js';
 import { scopeApplicability } from './scope.js';
 
 export const ALL_CLEAR_SUMMARY = 'No concern detected in the fields checked.';
 export const PARTIAL_SUMMARY =
   'Partial review: the document comparison finished, but the official-source check was not performed.';
+export const COMPLETE_WITH_FINDINGS_SUMMARY =
+  'Review complete. Address the findings below before you sign.';
 
 const SOURCE_REVIEW_LIMITATION =
   'The official-source check was not performed: no Knowledge Base endpoint is configured on this deployment, so no rule-backed concerns are shown.';
+const WITHHELD_LIMITATION = (count: number): string =>
+  `${count} possible official-source concern${count === 1 ? ' was' : 's were'} withheld because the cited rule could not be fully verified against its approved source. The document findings below still stand.`;
 const SCOPE_LIMITATIONS: Partial<Record<string, string>> = {
   conflicting:
     'The documents contain wording that conflicts with the declared employment category, so category-specific rules were withheld.',
@@ -39,6 +44,9 @@ export interface AssembleInput {
   readonly checkedFieldKeys: readonly string[];
   readonly requestId: string;
   readonly reviewedAsOf: Date;
+  /** Phase 10: retrieval outcome; absent = endpoint unconfigured (D8). */
+  readonly retrieval?: RetrievalOutcome;
+  readonly retrievalConfigured: boolean;
 }
 
 /** A user-corrected side can never support a confirmed mismatch (API.md §6). */
@@ -158,7 +166,7 @@ export function assembleReport(input: AssembleInput): AnalysisResponse {
   const { issued, reconciliation, requestId, reviewedAsOf } = input;
   const downgraded = downgradeUserCorrectedMismatches(input.drafts, issued, reconciliation);
   const synthesized = synthesizeCorrectionClarifications(issued, reconciliation, downgraded);
-  const drafts = [...downgraded, ...synthesized];
+  const drafts = [...downgraded, ...synthesized, ...(input.retrieval?.sourceFindings ?? [])];
 
   const findings: Finding[] = drafts.map((draft, index) => ({
     id: `finding-${index + 1}`,
@@ -169,6 +177,7 @@ export function assembleReport(input: AssembleInput): AnalysisResponse {
     documentEvidence: [...draft.documentEvidence],
     valueOrigins: [...draft.valueOrigins],
     ...(draft.comparisonRuleKey ? { comparisonRuleKey: draft.comparisonRuleKey } : {}),
+    ...(draft.source ? { source: draft.source } : {}),
     uncertaintyReasons: [...draft.uncertaintyReasons],
     suggestedQuestionOrStep: draft.suggestedQuestionOrStep,
   }));
@@ -180,13 +189,21 @@ export function assembleReport(input: AssembleInput): AnalysisResponse {
       : 'partial';
 
   const applicability = scopeApplicability(issued.scope, issued.documents);
+  const retrieval = input.retrieval;
+  const retrievalStage: StageStatus = retrieval?.stage ?? 'not_started';
+
+  // Applicability completes only when the supported route actually went
+  // through retrieval; an unsupported scope or unconfigured endpoint keeps
+  // the honest partial.
+  const applicabilityStage: StageStatus =
+    applicability === 'supported' && retrievalStage === 'completed' ? 'completed' : 'partial';
 
   const stages: AnalysisResponse['stages'] = {
     extraction,
     review: 'completed',
     comparison: input.comparisonApplicable ? 'completed' : 'not_applicable',
-    retrieval: 'not_started',
-    applicability: 'partial',
+    retrieval: retrievalStage,
+    applicability: applicabilityStage,
     explanation: 'completed',
   };
 
@@ -196,25 +213,46 @@ export function assembleReport(input: AssembleInput): AnalysisResponse {
     )
     .filter((key, index, all) => all.indexOf(key) === index);
 
-  const limitations: string[] = [SOURCE_REVIEW_LIMITATION];
+  const limitations: string[] = [];
+  if (retrieval?.disclosure) limitations.push(retrieval.disclosure);
+  if (!retrieval || retrievalStage === 'not_started' || retrievalStage === 'failed') {
+    limitations.push(SOURCE_REVIEW_LIMITATION);
+  }
+  if (retrieval && retrieval.withheld.length > 0) {
+    limitations.push(WITHHELD_LIMITATION(retrieval.withheld.length));
+  }
   const scopeLimitation = SCOPE_LIMITATIONS[applicability];
   if (scopeLimitation) limitations.push(scopeLimitation);
   if (extraction === 'partial') {
     limitations.push('Some parts of the documents could not be read with confidence; the affected fields are marked.');
   }
 
-  const omittedChecks = ['official-source rule review (no Knowledge Base endpoint configured)'];
+  const omittedChecks: string[] = [];
+  if (!input.retrievalConfigured) {
+    omittedChecks.push('official-source rule review (no Knowledge Base endpoint configured)');
+  } else if (retrievalStage !== 'completed') {
+    omittedChecks.push('official-source rule review (reference endpoint unavailable or not in Knowledge Base mode)');
+  }
 
-  // The all-clear sentence is reserved for a completed review with no
-  // findings. Retrieval never runs in this phase (D8), so the report is
-  // always partial here and the sentence must not appear.
-  const summary = PARTIAL_SUMMARY;
+  // `complete` requires the whole configured chain to have actually run and
+  // passed: extraction finished, the supported route held, retrieval ran
+  // without withholdings, and no critical unreadable field remains.
+  const complete =
+    extraction === 'completed' &&
+    applicability === 'supported' &&
+    retrievalStage === 'completed' &&
+    (retrieval?.withheld.length ?? 0) === 0 &&
+    unreadableFieldKeys.length === 0;
+
+  const summary = complete
+    ? findings.length > 0
+      ? COMPLETE_WITH_FINDINGS_SUMMARY
+      : ALL_CLEAR_SUMMARY
+    : PARTIAL_SUMMARY;
 
   return AnalysisResponseSchema.parse({
     requestId,
-    // Retrieval never runs in this phase (D8): the sample-only deployment
-    // always reports an honest partial.
-    status: 'partial',
+    status: complete ? 'complete' : 'partial',
     reviewedAsOf: reviewedAsOf.toISOString(),
     scopeApplicability: applicability,
     stages,
