@@ -5,13 +5,15 @@
  *
  *   SANITY_CONTEXT_MCP_URL=… SANITY_ORGANIZATION_TOKEN=… \
  *   SANITY_PROJECT_ID=… SANITY_DATASET=… \
- *   LIVE_KNOWN_ANSWER_QUERY="recruitment costs employer" \
- *   LIVE_KNOWN_ANSWER_RULE_KEY=ae-recruitment-costs-employer-bears \
- *   npm run live:retrieval -w api
+ *   LIVE_KNOWN_ANSWER_QUERY="…" LIVE_KNOWN_ANSWER_RULE_KEY=… \
+ *   npm run live:retrieval -w api            # full: tools + known-answer + gate
+ *   npm run live:retrieval -w api -- --tools-only   # tools + known-answer only
  *
- * Steps: tools/list + mode verification → known-answer read → gate a demo
- * candidate end to end. Output records pass/fail per step; nothing from the
- * endpoint is echoed beyond counts and verdicts.
+ * `--tools-only` reports the endpoint/KB checks separately from the gated
+ * source-backed concern test (owner instruction 2026-09-30): guidance-only
+ * content must not be counted as a gated-concern pass. Output records
+ * pass/fail per step; nothing from the endpoint is echoed beyond counts and
+ * verdicts.
  */
 import { loadConfig } from '../src/config.js';
 import { readCanonicalRule } from '../src/services/canonical/reader.js';
@@ -20,6 +22,7 @@ import { verifyKnownAnswer } from '../src/services/retrieval/known-answer.js';
 import { createFetchMcpTransport } from '../src/services/retrieval/transport.js';
 
 async function main(): Promise<void> {
+  const toolsOnly = process.argv.includes('--tools-only');
   const config = loadConfig();
   const { sanity, retrieval } = config;
 
@@ -51,6 +54,12 @@ async function main(): Promise<void> {
   } else {
     console.error(`FAIL known-answer: ${knownAnswer.reason}.`);
     process.exitCode = 1;
+    transport.close();
+    return;
+  }
+
+  if (toolsOnly) {
+    console.log('SKIPPED gated source-backed concern test (--tools-only). A guidance-only KB does not count as a gated-concern pass.');
     transport.close();
     return;
   }
