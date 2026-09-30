@@ -54,6 +54,11 @@ export interface AppConfig {
     /** Rules whose `sourceCheckedAt` is older than this are stale → withheld. */
     readonly sourceCheckMaxAgeDays: number;
   };
+  readonly security: {
+    readonly rateLimitMax: number;
+    readonly rateLimitWindowMs: number;
+    readonly maxConcurrentExtractions: number;
+  };
   readonly privacyNoticeVersion: string;
   readonly port: number;
 }
@@ -113,6 +118,11 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
       timeoutMs: getInt('RETRIEVAL_TIMEOUT_MS', 8_000),
       sourceCheckMaxAgeDays: getInt('SOURCE_CHECK_MAX_AGE_DAYS', 180),
     },
+    security: {
+      rateLimitMax: getInt('RATE_LIMIT_MAX', 60),
+      rateLimitWindowMs: getInt('RATE_LIMIT_WINDOW_MS', 60_000),
+      maxConcurrentExtractions: getInt('MAX_CONCURRENT_EXTRACTIONS', 5),
+    },
     privacyNoticeVersion: get('PRIVACY_NOTICE_VERSION') ?? '2026-09-28-draft',
     port: getInt('PORT', 3000),
   };
@@ -132,6 +142,9 @@ export function configSourceSummary(config: AppConfig): string[] {
     `CUSTOM_UPLOAD_ENABLED=${config.customUploadEnabled}`,
     `IMAGE_INPUT_ENABLED=${config.imageInputEnabled}`,
     `URDU_EXPLANATION_ENABLED=${config.urduExplanationEnabled}`,
+    `RATE_LIMIT_MAX=${config.security.rateLimitMax}`,
+    `RATE_LIMIT_WINDOW_MS=${config.security.rateLimitWindowMs}`,
+    `MAX_CONCURRENT_EXTRACTIONS=${config.security.maxConcurrentExtractions}`,
     `MAX_BYTES_PER_FILE=${config.limits.maxBytesPerFile}`,
     `MAX_TOTAL_BYTES=${config.limits.maxTotalBytes}`,
     `MAX_PAGES_PER_PDF=${config.limits.maxPagesPerPdf}`,

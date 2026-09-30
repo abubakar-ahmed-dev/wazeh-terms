@@ -43,6 +43,9 @@ export function analysesRouter(deps: RouteDeps): Router {
   });
 
   async function handleAnalyses(req: Request, res: Response): Promise<void> {
+    if (res.destroyed && !res.writableFinished) {
+      return;
+    }
     const body = ReviewRequestBodySchema.safeParse(req.body);
     if (!body.success) {
       throw new HttpError(400, 'BAD_REQUEST', 'The analysis request must carry an issued extraction, its proof, and corrections.');
@@ -129,6 +132,10 @@ export function analysesRouter(deps: RouteDeps): Router {
       ...(retrieval ? { retrieval } : {}),
       retrievalConfigured,
     });
+
+    if (res.destroyed && !res.writableFinished) {
+      return;
+    }
 
     res.status(200).json(report);
   }

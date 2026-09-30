@@ -12,12 +12,13 @@ export class HttpError extends Error {
   readonly code: ErrorCode;
   readonly retryable: boolean;
   readonly stage?: StageName;
+  readonly retryAfterSeconds?: number;
 
   constructor(
     status: number,
     code: ErrorCode,
     message: string,
-    options: { retryable?: boolean; stage?: StageName } = {},
+    options: { retryable?: boolean; stage?: StageName; retryAfterSeconds?: number } = {},
   ) {
     super(message);
     this.name = 'HttpError';
@@ -25,5 +26,6 @@ export class HttpError extends Error {
     this.code = code;
     this.retryable = options.retryable ?? false;
     this.stage = options.stage;
+    this.retryAfterSeconds = options.retryAfterSeconds;
   }
 }

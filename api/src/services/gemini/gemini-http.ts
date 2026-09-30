@@ -35,6 +35,17 @@ export function createGeminiHttpService(options: {
         Math.max(1_000, request.deadlineMs),
       );
 
+      const onAbort = () => {
+        controller.abort();
+      };
+      if (request.signal) {
+        if (request.signal.aborted) {
+          controller.abort();
+        } else {
+          request.signal.addEventListener('abort', onAbort, { once: true });
+        }
+      }
+
       try {
         for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
           try {
@@ -113,6 +124,9 @@ export function createGeminiHttpService(options: {
         };
       } finally {
         clearTimeout(timer);
+        if (request.signal) {
+          request.signal.removeEventListener('abort', onAbort);
+        }
       }
     },
   };

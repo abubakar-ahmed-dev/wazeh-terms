@@ -16,7 +16,10 @@ import type { ModelExtraction } from '../../src/services/extraction/model-output
 
 export const TEST_SECRET = 'k'.repeat(48);
 
-export function testConfig(overrides: Partial<AppConfig> = {}): AppConfig {
+export function testConfig(overrides: Partial<Omit<AppConfig, 'limits' | 'security'>> & {
+  limits?: Partial<AppConfig['limits']>;
+  security?: Partial<AppConfig['security']>;
+} = {}): AppConfig {
   const base = loadConfig({
     GEMINI_API_KEY: 'test-key',
     GEMINI_MODEL: 'gemini-3.5-flash-lite',
@@ -29,6 +32,7 @@ export function testConfig(overrides: Partial<AppConfig> = {}): AppConfig {
     ...base,
     ...overrides,
     limits: { ...base.limits, ...overrides.limits },
+    security: { ...base.security, ...overrides.security },
   };
 }
 
