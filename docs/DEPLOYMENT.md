@@ -35,7 +35,29 @@ These names describe a proposed deployment contract; implementation may choose d
 
 ## 3. Build and deploy procedure (template to fill with real commands)
 
-The repository has not yet supplied a verified Dockerfile, package scripts, image location, or running project settings. The following is an operator **template**, not a command history or claim that it runs today. Use PowerShell with values supplied from the actual GCP project; never paste secret values into commands, shell history, or CI output.
+**Phase 14 status (2026-09-30):** the procedure now exists in the repository
+and its local stages are verified; the push/deploy stages await the owner's
+first promotion run.
+
+- **Verified locally:** production builds without `tsx` (`node
+  api/dist/server/index.js` served `/health`, `/api/v1/*`, the SPA, sample
+  PDFs, and one real signed sample extraction); multi-stage `Dockerfile`
+  (node:22-bookworm-slim, non-root, image carries only the five allowlisted
+  sample fixtures — `.dockerignore` bars `.env`, corpus, sources, docs,
+  plans, Studio); image runs green and fails closed (`503
+  EXTRACTION_UNAVAILABLE` with no `GEMINI_API_KEY`); Secret Manager secrets
+  `gemini-api-key`, `review-hmac-secret`, `sanity-organization-token`,
+  `sanity-read-token` created with pinned version 1; runtime SA grants
+  `secretAccessor` (×4) and `artifactregistry.reader` applied.
+- **Executable procedure:** `deploy/deploy.sh` (project `wazeh-terms`,
+  region `asia-south1`, repo `wazehterms`, service `wazehterms`, nonsecret
+  env `deploy/env.staging.yaml`, secrets bound at pinned numeric versions).
+  First deploy uses `--no-traffic --tag staging`; promotion and the rollback
+  drill commands are in that script. The provisional Cloud Run flags
+  (512Mi/1 vCPU, concurrency 40, timeout 120s, max-instances 4) are replaced
+  by staging measurements per deliverable 7 of `plans/phase-14/plan.md`.
+
+The original operator template below remains as the shape reference; never paste secret values into commands, shell history, or CI output.
 
 1. Freeze the commit, sample manifest, model/prompt IDs, approved Sanity content revision, KB build, and notice version. Run the defined tests in `TESTING.md`; record achieved metrics and release gates.
 2. Build the container using the repository's verified Dockerfile and publish an immutable image digest to its approved Artifact Registry location. Record digest and build provenance. Create/update the runtime service account, secret bindings, environment file of **nonsecret** flags, and budget/alert settings using reviewed infrastructure configuration.
