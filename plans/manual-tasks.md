@@ -32,10 +32,15 @@ platform secret binding — never into plans, logs, chat, or source control.
 **RESOLVED (2026-09-30):** the owner provided a project Viewer `SANITY_READ_TOKEN`; the canonical reader + CLI dataset reads verified working against all 44 published records. Earlier "public dataset = anonymous reads" expectation did NOT hold: unauthenticated queries answer HTTP 200 with an **empty result set** (probes across v1/v2021/v2024 API versions, `perspective=raw|published`, and the `apicdn` host; a bogus token yields 401, so anonymous requests are authorized-but-shown-zero, not rejected). `aclMode` reads `public` via the API. Cause of the zero-vs-documentation discrepancy is not establishable from outside the platform; recorded as an open observation. The runtime keeps the Viewer token — least privilege, and it removes any dependence on anonymous-read behavior.
 
 ## MT-7 — GCP project + billing → needed by Phase 14
-1. Finish creating the Google Cloud project; enable billing; note the project ID (nonsecret).
-2. Pick the Cloud Run region and note it (nonsecret).
-3. Enable only needed APIs (Cloud Run, Artifact Registry, Secret Manager; Cloud Build if used).
-4. Create/record: Artifact Registry repo, runtime service account, deploy identity, budget/alert owner, two release contacts.
+**DONE except release contacts (2026-09-30, agent via signed-in gcloud):**
+- Project: `wazeh-terms` (number 957765366699), billing enabled (`01B610-B4BA8B-955985`, $300 credit, $1 spending alert exists per owner).
+- Region: `asia-south1` (owner-approved).
+- APIs enabled: `run`, `artifactregistry`, `secretmanager`, `iam` (+ monitoring already on). Cloud Build not enabled — image builds locally (Dockerfile is Phase 14 work).
+- Artifact Registry: `asia-south1-docker.pkg.dev/wazeh-terms/wazehterms` (docker).
+- Runtime SA: `wazehterms-runtime@wazeh-terms.iam.gserviceaccount.com` (created; **no roles yet** — Phase 14 deploy grants `secretmanager.secretAccessor` on pinned secret versions and `artifactregistry.reader`).
+- Deploy identity: owner account `abubakar.ahmed.dev@gmail.com` (`roles/owner` covers run.admin / artifactregistry.writer / serviceAccountUser; explicit grants skipped as redundant).
+- Release contacts: **sole release operator = owner** (`abubakar.ahmed.dev@gmail.com`); **backup: not assigned** (owner decision 2026-09-30 — no second contact invented, no personal emails committed). Revisit before any multi-operator launch.
+- **Remaining:** nothing blocking. Optional: budget-amount refinement before launch.
 
 ## MT-8 — HMAC signing secret → needed by Phase 03 (first signed run)
 1. Generate a high-entropy secret (e.g. `openssl rand -base64 48`).
