@@ -1,15 +1,10 @@
-import { StrictMode } from 'react';
+import '@fontsource/fraunces/600.css';
+import '@fontsource/source-sans-3/400.css';
+import '@fontsource/source-sans-3/600.css';
+import './styles.css';
+
 import { createRoot } from 'react-dom/client';
 
 import { App } from './App';
 
-const rootElement = document.getElementById('root');
-if (!rootElement) {
-  throw new Error('Root element #root not found');
-}
-
-createRoot(rootElement).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-);
+createRoot(document.getElementById('root')!).render(<App />);
