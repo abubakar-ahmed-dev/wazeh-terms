@@ -12,6 +12,8 @@ the Phase 09 seed — it does **not** by itself approve a rule.
 | --- | --- | --- | --- |
 | `Federal Decree by Law No. (33) of 2021 Concerning Regulating Labour Relations.pdf` | `f58777b34ca69bc71003518a104f7b014b2e4073207bd25a6cf5e80f183e081c` | https://uaelegislation.gov.ae/en/legislations/1541/download | 46 pp, English text layer. **Base text only** — no `Decree-Law 20 of 2023` amendment text inside; commencement "as of 02 February 2022" on the signature page. Article 6(4) present as quoted in the seed. Amendment cross-check: 14/2022 verified below (Arts 6 & 22 untouched); 20/2023 + 9/2024 still open. |
 | `Federal Decree by Law No. (14) of 2022 Amending certain Provisions of Federal Decree by Law No. (33) of 2021 Regulating Labour Relations.pdf` | `dfbc17be0919617628fd9013a7c384baa0ac1e07bb4a3bbdfee004654ece81b9` | https://uaelegislation.gov.ae/en/legislations/1637/download | Retrieved by owner 2026-09-30. 2 pp, English text layer. Amends **Article 8 only** (employment contract concluded for a definite period, renewable). Articles 6 and 22 are **not touched** by this amendment. |
+| `Federal Decree by Law No. (20) of 2023 Amending certain Provisions of Federal Decree by Law No. (33) of 2021 Regulating Labour Relations (Arabic official).pdf` | `dccede2d0dbdb330993f6e1ff18c3b354c4635bee395ddf6c8290638cefd030d` | https://uaelegislation.gov.ae/ar/constitution/modifications/1297/download | Retrieved by owner 2026-09-30. 2 pp, **Arabic official text** (text layer verified). Article 1 replaces **Article 54 only** (Individual Labour Disputes — Ministry dispute procedure, salary continuation up to 2 months, one-year claim bar). In force 01/01/2024. Articles 6 and 22 are **not touched**. |
+| `Federal Decree by Law No. (9) of 2024 Amending certain Provisions of Federal Decree by Law No. (33) of 2021 Regulating Labour Relations (Arabic official).pdf` | `7456df1697e17c69b353b5a3b69992dfe1a93ba08011f3f33c348aa050ddf72f` | https://uaelegislation.gov.ae/ar/constitution/modifications/1760/download | Retrieved by owner 2026-09-30. 3 pp, **Arabic official text** (text layer verified). Article 1 replaces **Articles 54 and 60 only** (dispute provisions). Issued 29/07/2024. Articles 6 and 22 are **not touched**. |
 | `Cabinet Resolution No. (1) of 2022 … Executive Regulation ….pdf` | `eb41435e2e1ce0f731441165387a3404501e75b0ac7160dfaa550299c46d13b2` | https://uaelegislation.gov.ae/en/legislations/1547/download | 31 pp, English text layer. In force as of 02 February 2022. Article 16 (Wages) mirrors Decree-Law Art 22 via WPS. No seed rule points at it yet; kept as a verified approved source version. |
 
 ## UAE — u.ae official portal pages (retrieved 2026-09-28; `official_guidance` class only)
@@ -44,16 +46,12 @@ the Phase 09 seed — it does **not** by itself approve a rule.
 
 ## Open items blocking approvals
 
-1. Amendment cross-check for Decree-Law 33/2021 Articles 6 and 22 — status
-   2026-09-30:
-   - **14/2022: VERIFIED.** Owner-provided official PDF (legislation 1637);
-     amends Article 8 only; Articles 6 and 22 untouched.
-   - **20/2023: UNAVAILABLE.** MOHRE-hosted individual PDF and the
-     consolidated amended law did not load for the owner in a browser
-     (2026-09-30), and `uaelegislation.gov.ae` serves a Cloudflare challenge
-     to automated fetch (not bypassed). Recorded as unavailable; re-check
-     later or via another official channel.
-   - **9/2024: NOT YET OBTAINED.**
-   Until 20/2023 and 9/2024 are checked, the worker-charge rule stays
-   `draft`, unpublished, and ineligible for a current binding finding.
+1. **Amendment cross-check for Decree-Law 33/2021 Articles 6 and 22: COMPLETE
+   (2026-09-30).** All three amendment decrees verified from owner-provided
+   official PDFs: 14/2022 → Article 8 only; 20/2023 (Arabic official) →
+   Article 54 only; 9/2024 (Arabic official) → Articles 54 and 60 only.
+   **Article 6(4) and Article 22 remain in force per the base text**;
+   the worker-charge rule's Article 6(4) pinpoint stands unamended.
 2. Resolution 340/2026 official copy — deferred; does not block the seed.
+   (Note: 20/2023's amendment of Article 54 is unrelated to the wage-payment
+   subject matter of the deferred WPS rule.)

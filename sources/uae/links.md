@@ -15,6 +15,8 @@
 - PDF Name: Federal Decree by Law No. (33) of 2021 Regulating Labor Relations , Link: https://uaelegislation.gov.ae/en/legislations/1541/download, Retrieved: 2026-09-29, Type: official PDF
 - PDF Name: Cabinet Resolution No. (1) of 2022 Concerning the Executive Regulation of Federal Decree-Law No. (33) of 2021 Regulating Labour Relations , Link: https://uaelegislation.gov.ae/en/legislations/1547/download, Retrieved: 2026-09-29, Type: official PDF
 - PDF Name: Federal Decree by Law No. (14) of 2022 Amending certain Provisions of Federal Decree by Law No. (33) of 2021 Regulating Labour Relations , Link: https://uaelegislation.gov.ae/en/legislations/1637/download, Retrieved: 2026-09-30, Type: official PDF
+- PDF Name: Federal Decree by Law No. (20) of 2023 Amending certain Provisions of Federal Decree by Law No. (33) of 2021 Regulating Labour Relations (Arabic official text), Link: https://uaelegislation.gov.ae/ar/constitution/modifications/1297/download , Retrieved: 2026-09-30, Type: official PDF
+- PDF Name: Federal Decree by Law No. (9) of 2024 Amending certain Provisions of Federal Decree by Law No. (33) of 2021 Regulating Labour Relations (Arabic official text), Link: https://uaelegislation.gov.ae/ar/constitution/modifications/1760/download , Retrieved: 2026-09-30, Type: official PDF
 
 ## Third-party copy — not sole evidence
 
