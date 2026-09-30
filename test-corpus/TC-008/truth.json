@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "caseId": "TC-008",
+  "route": {
+    "origin": "PK",
+    "destination": "AE",
+    "declaredRegime": "uae_mainland_private",
+    "declaredWorkerCategory": "non_domestic"
+  },
+  "documents": [
+    {
+      "role": "offer",
+      "file": "offer.pdf",
+      "pageCount": 1,
+      "readablePages": [
+        1
+      ]
+    },
+    {
+      "role": "contract",
+      "file": "contract.pdf",
+      "pageCount": 1,
+      "readablePages": [
+        1
+      ]
+    }
+  ],
+  "expectedFields": [
+    {
+      "role": "offer",
+      "fieldKey": "job_title",
+      "state": "present",
+      "value": {
+        "kind": "text",
+        "text": "Site Engineer"
+      },
+      "evidence": {
+        "page": 1,
+        "role": "offer",
+        "line": 11
+      }
+    },
+    {
+      "role": "contract",
+      "fieldKey": "job_title",
+      "state": "present",
+      "value": {
+        "kind": "text",
+        "text": "Site Supervisor"
+      },
+      "evidence": {
+        "page": 1,
+        "role": "contract",
+        "line": 11
+      }
+    }
+  ],
+  "seededDifferences": [
+    {
+      "fieldKey": "job_title",
+      "kind": "value",
+      "note": "Seeded difference: job title differs."
+    }
+  ],
+  "allowedFindingCategories": [
+    "document_mismatch",
+    "missing_information"
+  ],
+  "forbiddenFindingCategories": [
+    "source_backed_concern"
+  ],
+  "requiredRuleRefs": [],
+  "expectedAbstentions": [
+    "no_global_verdict"
+  ],
+  "notes": "Job-title mismatch."
+}

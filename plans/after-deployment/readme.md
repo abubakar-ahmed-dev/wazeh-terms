@@ -1,0 +1,1 @@
+only one rule, do not stage, commit and push this folder named after-deployment. This folder is for listing any errors find in the app. the specific agent will read the errors, solve it if not already solved , and deploy again the updated app.

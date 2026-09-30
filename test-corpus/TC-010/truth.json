@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "caseId": "TC-010",
+  "route": {
+    "origin": "PK",
+    "destination": "AE",
+    "declaredRegime": "uae_mainland_private",
+    "declaredWorkerCategory": "non_domestic"
+  },
+  "documents": [
+    {
+      "role": "offer",
+      "file": "offer.pdf",
+      "pageCount": 1,
+      "readablePages": [
+        1
+      ]
+    },
+    {
+      "role": "contract",
+      "file": "contract.pdf",
+      "pageCount": 1,
+      "readablePages": [
+        1
+      ]
+    }
+  ],
+  "expectedFields": [
+    {
+      "role": "offer",
+      "fieldKey": "overtime_terms",
+      "state": "present",
+      "value": {
+        "kind": "text",
+        "text": "Paid at 125 percent after ordinary hours"
+      },
+      "evidence": {
+        "page": 1,
+        "role": "offer",
+        "line": 22
+      }
+    },
+    {
+      "role": "contract",
+      "fieldKey": "overtime_terms",
+      "state": "present",
+      "value": {
+        "kind": "text",
+        "text": "Unpaid and included in the salary"
+      },
+      "evidence": {
+        "page": 1,
+        "role": "contract",
+        "line": 22
+      }
+    }
+  ],
+  "seededDifferences": [
+    {
+      "fieldKey": "overtime_terms",
+      "kind": "value",
+      "note": "Seeded difference: overtime paid vs declared unpaid."
+    }
+  ],
+  "allowedFindingCategories": [
+    "document_mismatch",
+    "missing_information"
+  ],
+  "forbiddenFindingCategories": [
+    "source_backed_concern"
+  ],
+  "requiredRuleRefs": [],
+  "expectedAbstentions": [
+    "no_global_verdict"
+  ],
+  "notes": "Overtime wording mismatch (text strategy)."
+}

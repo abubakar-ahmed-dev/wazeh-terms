@@ -1,0 +1,140 @@
+[
+  {
+    "_id": "rule.ae-recruitment-costs-employer-bears.r1",
+    "_type": "rule",
+    "ruleKey": "ae-recruitment-costs-employer-bears",
+    "revision": 1,
+    "title": "UAE employer must not charge the worker recruitment and employment costs",
+    "claimText": "A UAE employer must not charge or collect recruitment and employment fees or costs from the worker, directly or indirectly.",
+    "topic": "worker_costs",
+    "relatedFieldKeys": [
+      "recruitment_cost",
+      "visa_cost",
+      "residency_cost",
+      "medical_cost",
+      "travel_cost",
+      "other_worker_charge",
+      "deduction_item"
+    ],
+    "triggerKey": "worker_charge.payer_must_be_uae_employer",
+    "ruleKind": "prohibition",
+    "evidenceClass": "binding_official_rule",
+    "jurisdiction": "AE",
+    "origin": "PK",
+    "destination": "AE",
+    "employmentRegime": "uae_mainland_private",
+    "workerCategory": "non_domestic",
+    "responsibleParty": "uae_employer",
+    "conditions": [],
+    "exceptions": [],
+    "machineConditionKeys": [
+      "worker_charge_class_present"
+    ],
+    "effectiveFrom": "2022-02-02",
+    "effectiveTo": null,
+    "currentGuidanceVerifiedAt": null,
+    "primarySource": {
+      "_type": "reference",
+      "_ref": "source.uae-federal-decree-law-33-2021.base-text-2022"
+    },
+    "pinpoint": {
+      "label": "Article (6) Recruitment and Employment of Workers, clause (4)",
+      "page": 8,
+      "quote": "The Employer is prohibited from charging the Worker the fees and costs of recruitment and employment or collecting them from him, whether directly or indirectly."
+    },
+    "plainEnglish": "Your employer must pay recruitment and employment costs. Any recruitment, visa, residency, medical, or travel charge you are asked to pay yourself should be questioned and confirmed with the employer and the Ministry before you sign.",
+    "sourceCheckedAt": "2026-09-29T00:00:00.000Z",
+    "reviewStatus": "approved",
+    "reviewedAt": "2026-09-30T00:00:00.000Z",
+    "reviewerCode": "owner-1",
+    "recordStatus": "current",
+    "schemaVersion": 1
+  },
+  {
+    "_id": "rule.ae-salary-payment-due-monthly.r1",
+    "_type": "rule",
+    "ruleKey": "ae-salary-payment-due-monthly",
+    "revision": 1,
+    "title": "Official guidance: salaries for the previous month fall due on the first of each month",
+    "claimText": "Salaries for the previous month are due on the first day of each Gregorian month, according to official UAE Government guidance on payment of wages.",
+    "topic": "pay",
+    "relatedFieldKeys": [
+      "basic_salary",
+      "stated_total_pay",
+      "payment_frequency"
+    ],
+    "ruleKind": "guidance",
+    "evidenceClass": "official_guidance",
+    "jurisdiction": "AE",
+    "origin": "PK",
+    "destination": "AE",
+    "employmentRegime": "uae_mainland_private",
+    "workerCategory": "non_domestic",
+    "responsibleParty": "uae_employer",
+    "conditions": [],
+    "exceptions": [],
+    "machineConditionKeys": [],
+    "effectiveFrom": null,
+    "effectiveTo": null,
+    "currentGuidanceVerifiedAt": "2026-09-29T00:00:00.000Z",
+    "primarySource": {
+      "_type": "reference",
+      "_ref": "source.uae-payment-of-wages.web-2026-09-28"
+    },
+    "pinpoint": {
+      "label": "When Should Employers Pay Salaries?",
+      "page": 1,
+      "quote": "salaries for the previous month are due on the first day of each Gregorian month"
+    },
+    "plainEnglish": "Official guidance says salaries for the previous month are due on the first day of each month, paid through the Wage Protection System. If your documents state a different pay cycle, ask the employer to confirm the arrangement in writing. This is guidance, not a finding that anything is unlawful.",
+    "sourceCheckedAt": "2026-09-29T00:00:00.000Z",
+    "reviewStatus": "approved",
+    "reviewedAt": "2026-09-29T00:00:00.000Z",
+    "reviewerCode": "owner-1",
+    "recordStatus": "current",
+    "schemaVersion": 1
+  },
+  {
+    "_id": "rule.pk-oep-service-charges-bank-deposit.r1",
+    "_type": "rule",
+    "ruleKey": "pk-oep-service-charges-bank-deposit",
+    "revision": 1,
+    "title": "Pakistan: OEP service charges are bank-deposited, certification-bound, and refundable",
+    "claimText": "Service charges for employment obtained through an overseas employment promoter are deposited in a bank; the promoter is reimbursed only on certification by the Protector of Emigrants that the employment was provided and joined, and deposited amounts are returned to the intending emigrant where the promoter fails to fulfil obligations under the rules.",
+    "topic": "worker_costs",
+    "relatedFieldKeys": [
+      "recruitment_cost",
+      "other_worker_charge"
+    ],
+    "ruleKind": "entitlement",
+    "evidenceClass": "binding_official_rule",
+    "jurisdiction": "PK",
+    "origin": "PK",
+    "destination": "AE",
+    "employmentRegime": "unknown",
+    "workerCategory": "unknown",
+    "responsibleParty": "pakistan_recruiter",
+    "conditions": [],
+    "exceptions": [],
+    "machineConditionKeys": [],
+    "effectiveFrom": null,
+    "effectiveTo": null,
+    "currentGuidanceVerifiedAt": null,
+    "primarySource": {
+      "_type": "reference",
+      "_ref": "source.pk-emigration-rules-1979.consolidated-2023"
+    },
+    "pinpoint": {
+      "label": "Rule 15(1A) and the proviso thereto — Service Charges, their distribution etc.",
+      "page": 12,
+      "quote": "The overseas employment promoter or, as the case may be, Corporation on whose behalf their service charges are deposited in the bank under sub-rule (1) shall, subject to the proviso hereto, be entitled to reimbursement of the service charges only on certification by the Protector of Emigrants to the extent that the employment abroad has been provided to the emigrant and he has duly joined the same after registration with the protector of emigrant: Provided that where the overseas employment promoter or, as the case may be, the Corporation fail to fulfil his or its obligations in accordance with these rules, the deposited amount shall be returned to the intending emigrant."
+    },
+    "plainEnglish": "In Pakistan, service charges paid through an overseas employment promoter must be deposited in a bank — not handed to the agent as cash — and the promoter is paid from that deposit only after the Protector of Emigrants certifies you were given and have joined the job. If the promoter does not deliver, the deposit is returned to you. Keep the bank certificate and every receipt for the payment you make.",
+    "sourceCheckedAt": "2026-09-29T00:00:00.000Z",
+    "reviewStatus": "approved",
+    "reviewedAt": "2026-09-30T00:00:00.000Z",
+    "reviewerCode": "owner-1",
+    "recordStatus": "current",
+    "schemaVersion": 1
+  }
+]

@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+# Deterministic checks only: lint, typecheck, unit tests, build.
+# No provider credentials, no Sanity access, no network-dependent suites.
+# Later phases must skip live-provider tests when their environment is absent.
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # npm ci is deterministic. The lockfile carries the Linux rollup native
+      # binary explicitly (root optionalDependencies) because npm prunes
+      # foreign-platform optional deps when the lockfile is authored on
+      # Windows (npm/cli#4828). Keep that entry in sync when rollup bumps.
+      - name: Install workspaces
+        run: npm ci
+
+      # sanity-studio keeps its own toolchain (not a root workspace); its
+      # deps are needed for the studio typecheck inside `npm run typecheck`.
+      - name: Install Sanity Studio deps
+        run: npm ci --prefix sanity-studio
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test
+        run: npm run test
+
+      - name: Build
+        run: npm run build

@@ -1,0 +1,24 @@
+{
+  "name": "wazeh-terms",
+  "private": true,
+  "description": "WazehTerms — employment-document review assistant (Pakistan → UAE). Monorepo for the Express API and React web client.",
+  "license": "UNLICENSED",
+  "type": "module",
+  "workspaces": [
+    "api",
+    "web"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "npm run dev --workspaces --if-present",
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present && tsc -p sanity-studio/tsconfig.json --noEmit",
+    "lint": "npm run lint --workspaces --if-present"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "^4.63.5"
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "name": "@wazeh-terms/api",
+  "version": "0.1.0",
+  "private": true,
+  "description": "WazehTerms Express API — validation, signed extraction handoff, deterministic comparison, report assembly.",
+  "license": "UNLICENSED",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "tsx watch --clear-screen=false src/server/index.ts",
+    "start": "tsx src/server/index.ts",
+    "live:sample": "tsx scripts/live-extraction.ts",
+    "generate:corpus": "tsx scripts/generate-corpus.ts",
+    "live:retrieval": "tsx scripts/live-retrieval-check.ts",
+    "validate:content": "tsx ../sanity-studio/scripts/validate-content.cli.mjs",
+    "seed:field-definitions": "tsx ../sanity-studio/scripts/build-field-definitions.ts",
+    "seed:build": "tsx ../sanity-studio/scripts/build-seed-records.ts",
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@google/genai": "^2.24.0",
+    "busboy": "^1.6.0",
+    "dotenv": "^16.4.5",
+    "express": "^5.1.0",
+    "pdf-lib": "^1.17.1",
+    "pdfjs-dist": "^6.3.289",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/busboy": "^1.5.4",
+    "@types/express": "^5.0.1",
+    "@types/node": "^22.15.0",
+    "@types/supertest": "^7.2.1",
+    "eslint": "^9.25.0",
+    "supertest": "^7.3.0",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.0",
+    "typescript-eslint": "^8.30.0",
+    "vitest": "^5.0.2"
+  }
+}
