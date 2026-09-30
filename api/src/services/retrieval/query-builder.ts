@@ -22,6 +22,16 @@ export interface RetrievalQuery {
 
 const QUERY_KEYS: readonly string[] = ['knowledgeBase', 'query', 'return', 'limit'];
 
+/**
+ * Code-owned keyword lines per topic (KB matching is exact-word; bare
+ * taxonomy tokens retrieve nothing). These are topic synonyms from the
+ * registry/trigger vocabulary — never document text, names, or identifiers.
+ */
+const TOPIC_KEYWORDS: Readonly<Record<RetrievalTopic, string>> = {
+  worker_costs: 'recruitment costs employer must not charge worker visa residency medical travel charges paid by worker',
+  pay: 'salary wages payment frequency monthly due date wage protection stated total basic pay',
+};
+
 export function buildRetrievalQuery(topic: RetrievalTopic, analysisDate: Date): RetrievalQuery {
   return {
     topic,
@@ -35,8 +45,8 @@ export function buildRetrievalQuery(topic: RetrievalTopic, analysisDate: Date): 
 
 /**
  * Search-tool arguments for a query. Matching is exact-word, so the keyword
- * line uses the controlled vocabulary tokens that appear in the projection
- * content. `return: 'entries'` so the gate can map ruleKey/revision labels.
+ * line leads with the topic's code-owned keywords. `return: 'entries'` so
+ * entries can be mapped back to rules by their reviewed pinpoint quote.
  */
 export function kbSearchArguments(
   query: RetrievalQuery,
@@ -44,7 +54,7 @@ export function kbSearchArguments(
 ): Record<string, unknown> {
   return {
     knowledgeBase: knowledgeBaseId,
-    query: `${query.topic} ${query.jurisdiction} ${query.employmentRegime} ${query.workerCategory} ${query.responsibleParty}`,
+    query: `${TOPIC_KEYWORDS[query.topic]} ${query.jurisdiction} ${query.employmentRegime} ${query.workerCategory} ${query.responsibleParty}`,
     return: 'entries',
     limit: 5,
   };

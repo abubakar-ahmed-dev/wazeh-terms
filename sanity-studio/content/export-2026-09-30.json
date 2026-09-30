@@ -596,6 +596,55 @@
     "valueKind": "text"
   },
   {
+    "_id": "rule.ae-recruitment-costs-employer-bears.r1",
+    "_type": "rule",
+    "claimText": "A UAE employer must not charge or collect recruitment and employment fees or costs from the worker, directly or indirectly.",
+    "conditions": [],
+    "destination": "AE",
+    "effectiveFrom": "2022-02-02",
+    "employmentRegime": "uae_mainland_private",
+    "evidenceClass": "binding_official_rule",
+    "exceptions": [],
+    "jurisdiction": "AE",
+    "machineConditionKeys": [
+      "worker_charge_class_present"
+    ],
+    "origin": "PK",
+    "pinpoint": {
+      "label": "Article (6) Recruitment and Employment of Workers, clause (4)",
+      "page": 8,
+      "quote": "The Employer is prohibited from charging the Worker the fees and costs of recruitment and employment or collecting them from him, whether directly or indirectly."
+    },
+    "plainEnglish": "Your employer must pay recruitment and employment costs. Any recruitment, visa, residency, medical, or travel charge you are asked to pay yourself should be questioned and confirmed with the employer and the Ministry before you sign.",
+    "recordStatus": "current",
+    "relatedFieldKeys": [
+      "recruitment_cost",
+      "visa_cost",
+      "residency_cost",
+      "medical_cost",
+      "travel_cost",
+      "other_worker_charge",
+      "deduction_item"
+    ],
+    "responsibleParty": "uae_employer",
+    "reviewStatus": "approved",
+    "reviewedAt": "2026-09-30T00:00:00.000Z",
+    "reviewerCode": "owner-1",
+    "revision": 1,
+    "ruleKey": "ae-recruitment-costs-employer-bears",
+    "ruleKind": "prohibition",
+    "schemaVersion": 1,
+    "sourceCheckedAt": "2026-09-29T00:00:00.000Z",
+    "title": "UAE employer must not charge the worker recruitment and employment costs",
+    "topic": "worker_costs",
+    "triggerKey": "worker_charge.payer_must_be_uae_employer",
+    "workerCategory": "non_domestic",
+    "primarySource": {
+      "_type": "reference",
+      "_ref": "source.uae-federal-decree-law-33-2021.base-text-2022"
+    }
+  },
+  {
     "_id": "rule.ae-salary-payment-due-monthly.r1",
     "_type": "rule",
     "claimText": "Salaries for the previous month are due on the first day of each Gregorian month, according to official UAE Government guidance on payment of wages.",

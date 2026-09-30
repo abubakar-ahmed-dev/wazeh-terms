@@ -57,3 +57,18 @@ draft import + post-import validation + publication + KB build 2026-09-30.
   gated source-backed concern remain open pending the 20/2023 + 9/2024
   amendment checks, Rule 1 approval/publication/KB indexing, and the full live
   gate run.
+
+## Rule 1 publication + completion evidence (2026-09-30, owner-approved)
+
+| # | Check | Result |
+| --- | --- | --- |
+| 17 | Rule 1 patch (approved state + strong primarySource) + publish | 1 document published |
+| 18 | 44-record published read-back gate | **44 published / 0 drafts / 0 weak refs**; gate **PASS, exit 0** (`published-readback-2026-09-30.json`) |
+| 19 | Dated export + KB projection regenerated | `export-2026-09-30.json` (44) + `kb-projection-2026-09-30.json` (44 entries incl. Rule 1) committed |
+| 20 | KB import + rebuild | import job `ctx-ingest-ec74cb7e…` **succeeded**; build job `ctx-build-…1790745561777` **succeeded** |
+| 21 | Full live retrieval (`live:retrieval`, no flags) | **PASS**: tools/list + KB mode verified; known-answer read mapped `ae-recruitment-costs-employer-bears` (2 entries); canonical read OK; eligibility gate → **eligible** with the complete citation |
+| 22 | Live orchestration end to end (real KB + real Content Lake; fictional worker-paid visa charge; no Gemini) | stage `completed`; **1 `source_backed_concern`** on `visa_cost` with the full Article 6(4) citation; wage-guidance rule correctly withheld (`trigger_unregistered` — guidance carries no trigger) |
+
+**Amendment check (final):** 14/2022 → Article 8 only; 20/2023 (Arabic official) → Article 54 only; 9/2024 (Arabic official) → Articles 54+60 only. **Article 6(4) remains in force** and supports the approved claim. Arabic PDFs are the official evidence; the base-law pinpoint text comes from the portal's official English translation, recorded as a translation.
+
+**Phase 09 status: COMPLETE against its documented exit criteria** (minimum curation gate §7 items satisfied and recorded; import ran the gate before publish; post-import validation recorded; dated export committed; owner browser verification recorded; fail-closed proven). Pending manual item MT-3 (Studio deploy) belongs to Phase 08, not this phase.

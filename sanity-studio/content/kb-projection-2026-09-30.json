@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-09-29T20:04:30.419Z",
-  "basis": "published approved/current records from 8g0kllu0/production (43 published; Rule 1 remains draft)",
+  "generatedAt": "2026-09-30T05:15:34.751Z",
+  "basis": "published approved/current records from 8g0kllu0/production (44 published incl. approved worker-charge rule)",
   "counts": {
     "authority": 2,
     "contractFieldDefinition": 33,
-    "rule": 2,
+    "rule": 3,
     "sourceDocument": 6
   },
   "records": [
@@ -314,6 +314,28 @@
       "valueKind": "text",
       "comparisonStrategyKey": "text_equality",
       "importantIfAbsent": false
+    },
+    {
+      "recordType": "rule",
+      "ruleKey": "ae-recruitment-costs-employer-bears",
+      "revision": 1,
+      "title": "UAE employer must not charge the worker recruitment and employment costs",
+      "claimText": "A UAE employer must not charge or collect recruitment and employment fees or costs from the worker, directly or indirectly.",
+      "topic": "worker_costs",
+      "conditions": [],
+      "exceptions": [],
+      "triggerKey": "worker_charge.payer_must_be_uae_employer",
+      "primarySource": {
+        "sourceKey": "uae-federal-decree-law-33-2021",
+        "versionKey": "base-text-2022",
+        "officialUrl": "https://uaelegislation.gov.ae/en/legislations/1541/download",
+        "evidenceClass": "binding_official_rule"
+      },
+      "pinpoint": {
+        "label": "Article (6) Recruitment and Employment of Workers, clause (4)",
+        "page": 8,
+        "quote": "The Employer is prohibited from charging the Worker the fees and costs of recruitment and employment or collecting them from him, whether directly or indirectly."
+      }
     },
     {
       "recordType": "rule",

@@ -5,7 +5,7 @@
  * of a working retrieval path is made.
  */
 import { initializeMcpClient, pickKbSearchTool } from './client.js';
-import { parseKbToolResult } from './candidates.js';
+import { mapEntryByPinpoint, type PinpointKey } from './candidates.js';
 import { kbSearchArguments } from './query-builder.js';
 import type { McpTransport } from './transport.js';
 
@@ -16,6 +16,8 @@ export interface KnownAnswerSeed {
   readonly expectRuleKey: string;
   /** Nonsecret KB id addressed by the search tool. */
   readonly knowledgeBaseId: string;
+  /** Approved pinpoints for entry→rule mapping (renderers drop key tokens). */
+  readonly knownRules: readonly PinpointKey[];
 }
 
 export type KnownAnswerResult =
@@ -54,8 +56,15 @@ export async function verifyKnownAnswer(
     return { ok: false, reason: 'unavailable' };
   }
 
-  const { candidates } = parseKbToolResult(result);
-  if (candidates.length === 0) return { ok: false, reason: 'no_entries' };
-  const found = candidates.some((candidate) => candidate.ruleKey === seed.expectRuleKey);
-  return found ? { ok: true, entryCount: candidates.length } : { ok: false, reason: 'rule_key_missing' };
+  const texts = (result as { content?: Array<{ text?: string }> })?.content
+    ?.map((item) => item.text ?? '')
+    .filter((text) => text.length > 0) ?? [];
+  if (texts.length === 0) return { ok: false, reason: 'no_entries' };
+  // Map rendered entries back to canonical rules by reviewed pinpoint quote
+  // (the same mapping the runtime orchestration uses).
+  const mappedRuleKeys = new Set(
+    texts.flatMap((text) => mapEntryByPinpoint(text, seed.knownRules).map((candidate) => candidate.ruleKey ?? '')),
+  );
+  const found = mappedRuleKeys.has(seed.expectRuleKey);
+  return found ? { ok: true, entryCount: mappedRuleKeys.size } : { ok: false, reason: 'rule_key_missing' };
 }

@@ -112,6 +112,39 @@ export function extractIdentityTokens(text: string): readonly string[] {
   return [...new Set(matches)];
 }
 
+export interface PinpointKey {
+  readonly ruleKey: string;
+  readonly revision: number;
+  readonly pinpointQuote: string;
+}
+
+const normalizeForMatch = (text: string): string =>
+  text
+    .toLowerCase()
+    .replace(/[‐-―]/g, '-')
+    .replace(/[‘’“”]/g, '"')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+/**
+ * Map a rendered KB entry back to canonical rules by their reviewed
+ * pinpoint quotes — exact reviewed passage, data-only containment against
+ * the normalized entry text. Renderers paraphrase metadata and drop stable
+ * key tokens, but the reviewed quote is the one string the entry must carry
+ * to stand for the claim at all.
+ */
+export function mapEntryByPinpoint(entryText: string, knownRules: readonly PinpointKey[]): readonly RuleCandidate[] {
+  const normalized = normalizeForMatch(entryText);
+  return knownRules
+    .filter((rule) => normalized.includes(normalizeForMatch(rule.pinpointQuote)))
+    .map((rule) => ({
+      entryId: `pinpoint-${hash(rule.ruleKey)}`,
+      ruleKey: rule.ruleKey,
+      revision: rule.revision,
+      snippet: entryText.slice(0, 2000),
+    }));
+}
+
 function hash(text: string): string {
   // Deterministic non-crypto tag for provenance display only.
   let value = 0;
