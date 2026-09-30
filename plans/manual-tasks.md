@@ -14,7 +14,8 @@ platform secret binding — never into plans, logs, chat, or source control.
 **DECIDED (owner, 2026-09-29): use the existing `production` dataset in project `8g0kllu0`.** The project is dedicated to WazehTerms reference content; no second dataset is created. Studio, the Phase 09 import, the canonical record reader, and the Knowledge Base configuration all stay aligned to `production`. Dataset visibility is not changed as part of Phase 08. Publish only reviewed reference records; never put worker documents in Sanity.
 
 ## MT-3 — Studio deploy → after Phase 08 schema lands
-**PENDING owner deployment.** Phase 08 code + tests + `sanity build` are complete; the owner will run `cd sanity-studio && npx sanity deploy` (interactive login) and supply the deployed Studio URL. Do not record Studio deployment as complete before then.
+**DONE (2026-09-30):** deployed by the agent via the signed-in Sanity CLI → **https://wazeh-terms.sanity.studio/** (project 8g0kllu0, Studio 6.16.0, auto-updates on). Published + draft records reviewable at that URL.
+ owner deployment.** Phase 08 code + tests + `sanity build` are complete; the owner will run `cd sanity-studio && npx sanity deploy` (interactive login) and supply the deployed Studio URL. Do not record Studio deployment as complete before then.
 
 **Editor invites:** none needed — the owner is the sole Sanity editor and reviewer at present; no collaborators to invite.
 
