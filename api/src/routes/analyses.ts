@@ -15,6 +15,7 @@ import {
 } from '../contracts/index.js';
 import type { AppConfig } from '../config.js';
 import { HttpError } from '../errors.js';
+import { logEvent } from '../logging.js';
 import { compareDocuments } from '../compare/index.js';
 import { InvalidCorrectionError, reconcileCorrections } from '../services/analysis/reconcile.js';
 import { assembleReport } from '../services/analysis/report.js';
@@ -43,6 +44,9 @@ export function analysesRouter(deps: RouteDeps): Router {
   });
 
   async function handleAnalyses(req: Request, res: Response): Promise<void> {
+    if (res.destroyed && !res.writableFinished) {
+      return;
+    }
     const body = ReviewRequestBodySchema.safeParse(req.body);
     if (!body.success) {
       throw new HttpError(400, 'BAD_REQUEST', 'The analysis request must carry an issued extraction, its proof, and corrections.');
@@ -118,6 +122,21 @@ export function analysesRouter(deps: RouteDeps): Router {
         })
       : undefined;
 
+    // Coarse ops signal (SECURITY.md §6 log rules: stage/result codes only —
+    // no rule text, topics, or document content). Explains partial reports
+    // whose rule concerns were withheld.
+    if (retrieval) {
+      logEvent('retrieval_outcome', {
+        requestId: res.locals.requestId as string,
+        stage: retrieval.stage,
+        sourceFindings: retrieval.sourceFindings.length,
+        withheldCount: retrieval.withheld.length,
+        ...(retrieval.withheld.length > 0
+          ? { withheldReasons: [...new Set(retrieval.withheld.map((entry) => entry.reason))] }
+          : {}),
+      });
+    }
+
     const report = assembleReport({
       issued,
       reconciliation,
@@ -129,6 +148,10 @@ export function analysesRouter(deps: RouteDeps): Router {
       ...(retrieval ? { retrieval } : {}),
       retrievalConfigured,
     });
+
+    if (res.destroyed && !res.writableFinished) {
+      return;
+    }
 
     res.status(200).json(report);
   }

@@ -74,6 +74,17 @@ rollback demonstrated once. No deploy happens before Phase 13 lands.
      KB-unavailable run degrades to explicit partial, never a fake pass.
    - Log audit: Cloud Logging shows only coarse structured entries — no
      bodies, quotes, filenames, prompts, proofs, secrets.
+   - **Same-origin/CORS check (ADR-008):** the SPA journey from the staging
+     URL completes with zero console CORS errors — same origin, so no
+     preflight occurs at all. `curl -i` confirms `/api/v1/*` responses
+     carry no `Access-Control-Allow-*` headers and an `OPTIONS` preflight
+     gets no CORS grant; sample PDFs load in iframes from the same origin
+     (CSP `frame-src 'self'` satisfied). Any CORS error on Cloud Run means
+     the one-origin topology was violated (split frontend/API hosts) —
+     treat as an architecture defect to fix, never a header to patch on.
+     Sanity Studio (separate origin) never calls the app API; cross-site
+     no-preflight posts stay bounded by the closed upload gate + Phase 13
+     admission control. Record the check in the release record.
 7. **Measured limits.** From staging runs: per-sample latency, memory/CPU
    observed, worst-case request size/time; set final
    `MAX_BYTES_PER_FILE`, `MAX_TOTAL_BYTES`, `MAX_PAGES_PER_PDF`,
@@ -114,7 +125,9 @@ checklist items that belong to deployment wording verified live.
 
 No CI/CD pipeline (manual gcloud this phase), no Cloud Build, no custom
 domain, no user analytics, no accounts/sessions/storage, no upload-gate
-change (MT-10 open), no autoscaling tuning beyond measured defaults.
+change (MT-10 open), no autoscaling tuning beyond measured defaults, no CORS
+middleware or cross-origin API grant (same-origin topology; a cross-origin
+consumer would need a superseding ADR with an explicit origin allowlist).
 
 ## Owner touchpoints (expected)
 

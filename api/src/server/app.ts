@@ -21,6 +21,8 @@ import { findSampleFile, readOnlyRouter } from '../routes/read-only.js';
 import type { GeminiExtractionService } from '../services/gemini/types.js';
 import type { RetrievalService } from '../services/analysis/retrieval.js';
 import type { SampleManifest } from '../content/samples-manifest.js';
+import { InMemoryRateLimiter, InMemoryConcurrencyLimiter } from './admission.js';
+import { securityHeadersMiddleware } from './security-headers.js';
 
 export interface AppDeps {
   readonly config: AppConfig;
@@ -28,12 +30,23 @@ export interface AppDeps {
   readonly manifest: SampleManifest;
   /** Phase 10: injected when the retrieval chain is configured. */
   readonly retrieval?: RetrievalService;
+  readonly rateLimiter?: InMemoryRateLimiter;
+  readonly concurrencyLimiter?: InMemoryConcurrencyLimiter;
 }
 
 export function buildApp(deps: AppDeps): Express {
   const app = express();
 
   app.disable('x-powered-by');
+  app.use(securityHeadersMiddleware());
+
+  const rateLimiter = deps.rateLimiter ?? new InMemoryRateLimiter({
+    max: deps.config.security.rateLimitMax,
+    windowMs: deps.config.security.rateLimitWindowMs,
+  });
+  const concurrencyLimiter = deps.concurrencyLimiter ?? new InMemoryConcurrencyLimiter({
+    maxConcurrent: deps.config.security.maxConcurrentExtractions,
+  });
 
   app.use((req: Request, res: Response, next: NextFunction) => {
     res.locals.requestId = `req_${randomUUID()}`;
@@ -55,6 +68,11 @@ export function buildApp(deps: AppDeps): Express {
     });
     next();
   });
+
+  // Admission control: rate limiter on sensitive endpoints; concurrency cap on extractions
+  app.use('/api/v1/extractions', rateLimiter.middleware());
+  app.use('/api/v1/extractions', concurrencyLimiter.middleware());
+  app.use('/api/v1/analyses', rateLimiter.middleware());
 
   // Analyses requests carry the full signed extraction; the bound is a
   // coarse ceiling until measured limits replace it (Phase 13/14).
@@ -123,6 +141,9 @@ export function buildApp(deps: AppDeps): Express {
 
   app.use((error: unknown, _req: Request, res: Response, _next: NextFunction) => {
     if (error instanceof HttpError) {
+      if (error.retryAfterSeconds) {
+        res.set('Retry-After', String(error.retryAfterSeconds));
+      }
       res.status(error.status).json(
         envelope(res, error.code, error.message, {
           retryable: error.retryable,
@@ -131,6 +152,14 @@ export function buildApp(deps: AppDeps): Express {
       );
       return;
     }
+
+    // Body parser payload too large (API.md §7 413 REQUEST_TOO_LARGE)
+    const errObj = error as { type?: string; status?: number } | null | undefined;
+    if (errObj?.status === 413 || errObj?.type === 'entity.too.large') {
+      res.status(413).json(envelope(res, 'REQUEST_TOO_LARGE', 'The request payload is too large.', { retryable: false }));
+      return;
+    }
+
     // Unexpected failure: safe envelope, no internals echoed.
     res.locals.errorClass = (error as Error)?.name ?? 'UnknownError';
     res.status(500).json(envelope(res, 'INTERNAL_ERROR', 'Something went wrong.', { retryable: false }));

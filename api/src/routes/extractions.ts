@@ -40,6 +40,9 @@ export function extractionsRouter(deps: RouteDeps): Router {
   });
 
   async function handleExtraction(req: Request, res: Response): Promise<void> {
+    if (res.destroyed && !res.writableFinished) {
+      return;
+    }
     const { config, gemini, manifest } = deps;
     const startedAt = Date.now();
 
@@ -56,8 +59,22 @@ export function extractionsRouter(deps: RouteDeps): Router {
 
     if (isMultipart) {
       // Custom-upload gate: closed means every arbitrary file is rejected
-      // before any parsing or buffering (docs/API.md §3).
+      // before any parsing or buffering (docs/API.md §3). The in-flight
+      // upload stream is drained (bounded) first, or the error response
+      // collides with the still-open upload and resets the client's
+      // connection instead of delivering the documented 403 envelope.
       if (!config.customUploadEnabled) {
+        await new Promise<void>((resolve) => {
+          if (req.readableEnded || req.destroyed) {
+            resolve();
+            return;
+          }
+          const timer = setTimeout(resolve, 2_000);
+          timer.unref();
+          req.once('close', resolve);
+          req.once('error', resolve);
+          req.resume();
+        });
         throw new HttpError(403, 'CUSTOM_UPLOAD_DISABLED', 'Personal document upload is not available right now.');
       }
 
@@ -120,6 +137,7 @@ export function extractionsRouter(deps: RouteDeps): Router {
       ];
 
       return runExtractionPipeline({
+        req,
         inputs,
         scope: parsed.scope,
         sourceMode: 'custom',
@@ -207,6 +225,7 @@ export function extractionsRouter(deps: RouteDeps): Router {
     ];
 
     return runExtractionPipeline({
+      req,
       inputs,
       scope: entry.scope,
       sourceMode: 'sample',
@@ -219,6 +238,7 @@ export function extractionsRouter(deps: RouteDeps): Router {
   }
 
   async function runExtractionPipeline(args: {
+    req: Request;
     inputs: Array<MapperDocumentInput & { bytes: Buffer }>;
     scope: Scope;
     sourceMode: 'sample' | 'custom';
@@ -228,23 +248,43 @@ export function extractionsRouter(deps: RouteDeps): Router {
     gemini: GeminiExtractionService;
     res: Response;
   }): Promise<void> {
-    const { inputs, scope, sourceMode, notices, startedAt, config, gemini, res } = args;
+    const { req, inputs, scope, sourceMode, notices, startedAt, config, gemini, res } = args;
 
-    // One bounded provider call for the pair (ADR-003).
-    const remainingDeadline = config.limits.applicationDeadlineMs - (Date.now() - startedAt);
-    const outcome = await gemini.extract({
-      documents: inputs.map((input) => ({
-        role: input.role,
-        pdfBase64: input.bytes.toString('base64'),
-      })),
-      deadlineMs: Math.max(1_000, remainingDeadline),
-    });
-    if (!outcome.ok) {
-      throw new HttpError(503, 'EXTRACTION_UNAVAILABLE', 'Extraction is temporarily unavailable.', {
-        retryable: true,
-        stage: 'extraction',
+    const abortController = new AbortController();
+    const onClose = () => {
+      if (!res.writableFinished) {
+        abortController.abort();
+      }
+    };
+    req.on('close', onClose);
+    res.on('close', onClose);
+
+    try {
+      if (abortController.signal.aborted || (res.destroyed && !res.writableFinished)) {
+        return;
+      }
+
+      // One bounded provider call for the pair (ADR-003).
+      const remainingDeadline = config.limits.applicationDeadlineMs - (Date.now() - startedAt);
+      const outcome = await gemini.extract({
+        documents: inputs.map((input) => ({
+          role: input.role,
+          pdfBase64: input.bytes.toString('base64'),
+        })),
+        deadlineMs: Math.max(1_000, remainingDeadline),
+        signal: abortController.signal,
       });
-    }
+
+      if (abortController.signal.aborted || (res.destroyed && !res.writableFinished)) {
+        return;
+      }
+
+      if (!outcome.ok) {
+        throw new HttpError(503, 'EXTRACTION_UNAVAILABLE', 'Extraction is temporarily unavailable.', {
+          retryable: true,
+          stage: 'extraction',
+        });
+      }
 
     let mapped;
     try {
@@ -295,6 +335,10 @@ export function extractionsRouter(deps: RouteDeps): Router {
       });
     }
 
+    if (abortController.signal.aborted || (res.destroyed && !res.writableFinished)) {
+      return;
+    }
+
     res.status(200).json({
       requestId: res.locals.requestId as string,
       status: mapped.status,
@@ -305,7 +349,11 @@ export function extractionsRouter(deps: RouteDeps): Router {
       },
       notices,
     });
+  } finally {
+    req.off('close', onClose);
+    res.off('close', onClose);
   }
+}
 
   return router;
 }

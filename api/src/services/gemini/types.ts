@@ -15,6 +15,8 @@ export interface GeminiExtractionRequest {
   readonly documents: readonly GeminiDocumentInput[];
   /** Remaining application deadline in milliseconds. */
   readonly deadlineMs: number;
+  /** Optional cancellation signal (e.g. client disconnect). */
+  readonly signal?: AbortSignal;
 }
 
 export type GeminiExtractionOutcome =
