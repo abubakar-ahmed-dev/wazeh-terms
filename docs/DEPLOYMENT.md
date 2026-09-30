@@ -95,12 +95,12 @@ Record actual live outputs, links to sanitized logs, case IDs, run dates, and re
 
 | Item | Actual value |
 | --- | --- |
-| Project, region, service URL, revision, image digest | Pending |
-| Commit, model/prompt, Sanity source release, KB release | Pending |
-| `privacyNoticeVersion`, provider account/API retention review | Pending |
-| Public flags, exact limits, Cloud Run resources/deadline, abuse controls | Pending |
-| Test report and five-case smoke run | Pending |
-| On-call/rollback owner and date | Pending |
+| Project, region, service URL, revision, image digest | `wazeh-terms`, `asia-south1`, https://wazehterms-957765366699.asia-south1.run.app , `wazehterms-00005-m7x`, `wazehterms@sha256:a80d10eb42e72d8985ed7cf0976feda692294ea6a655efa1a8a521005a3a31e5` |
+| Commit, model/prompt, Sanity source release, KB release | `phase-14-deployment` @ deploy commit (code of 0fd68b2 tree), model `gemini-3.5-flash-lite`, 44 approved published records, KB `kbynAP4r8P6m` (Phase 10 build) |
+| `privacyNoticeVersion`, provider account/API retention review | `2026-09-28-draft`; MT-10 still open — sample mode only, upload gate closed |
+| Public flags, exact limits, Cloud Run resources/deadline, abuse controls | sample ON, custom upload/image/Urdu OFF; 8 MB/file, 16 MB total, 15 pages, 100 corrections, 45 s app deadline, 15 s retrieval budget (staging-measured); 512Mi/1 vCPU, concurrency 40, timeout 120 s, max-instances 4; per-instance rate 60/min + concurrency 5 (`429`/`503` + `Retry-After`) |
+| Test report and five-case smoke run | 2026-09-30: all five samples extract 200 (TC-001/002/012/013/014); TC-001 signed complete; TC-012 live `source_backed_concern` with Article (6) clause (4) citation (rule `ae-recruitment-costs-employer-bears`, rev 1, `uae-federal-decree-law-33-2021` `base-text-2022`); arbitrary upload → clean `403 CUSTOM_UPLOAD_DISABLED`; headers/CSP/no-CORS verified; rollback drill passed (00004 ⇄ 00005). Withheld-rule reasons visible in `retrieval_outcome` log. Browser (Playwright) staging pass not yet run — curl-level only. |
+| On-call/rollback owner and date | Sole release operator: owner (abubakar.ahmed.dev@gmail.com), backup not assigned; 2026-09-30 |
 
 ## 5. Rollback, content releases, and incident controls
 
