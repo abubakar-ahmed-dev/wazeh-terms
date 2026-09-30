@@ -48,12 +48,43 @@ export function findSampleEntry(
   return manifest.entries.find((entry) => entry.sampleCaseId === sampleCaseId);
 }
 
-/** Repository-bundled manifest: the fictional TC-002 salary-change pair. */
+/** Repository-bundled manifest: the five production demo samples (Phase 07/11). */
 export function loadBundledSampleManifest(): SampleManifest {
   const rootDir = fileURLToPath(new URL('../../../fixtures/samples', import.meta.url));
+  const entry = (
+    sampleCaseId: string,
+    title: string,
+    description: string,
+    documents: ReadonlyArray<{ role: 'offer' | 'contract'; file: string }>,
+  ): SampleManifestEntry => ({
+    sampleCaseId,
+    title,
+    description,
+    scope: {
+      origin: 'PK',
+      destination: 'AE',
+      declaredRegime: 'uae_mainland_private',
+      declaredWorkerCategory: 'non_domestic',
+    },
+    documents: documents.map((document) => ({
+      role: document.role,
+      file: document.file,
+      previewUrl: `/samples/${sampleCaseId}/${document.file}`,
+    })),
+  });
+
   return {
     rootDir,
     entries: [
+      entry(
+        'TC-001',
+        'Fictional consistent pair',
+        'An offer and contract that agree on salary, hours, and benefits — fictional employer Desert Bloom Contracting LLC. A check with no flagged difference.',
+        [
+          { role: 'offer', file: 'offer.pdf' },
+          { role: 'contract', file: 'contract.pdf' },
+        ],
+      ),
       {
         sampleCaseId: 'TC-002',
         title: 'Fictional salary change',
@@ -70,6 +101,30 @@ export function loadBundledSampleManifest(): SampleManifest {
           { role: 'contract', file: 'sample-contract.pdf', previewUrl: '/samples/TC-002/sample-contract.pdf' },
         ],
       },
+      entry(
+        'TC-012',
+        'Fictional worker-charge question',
+        'Fictional employer Al Noor Technical Services LLC states recruitment and visa costs, and the two documents disagree about who pays them. When source checks are configured, this can also raise an official-source question.',
+        [
+          { role: 'offer', file: 'offer.pdf' },
+          { role: 'contract', file: 'contract.pdf' },
+        ],
+      ),
+      entry(
+        'TC-013',
+        'Fictional missing notice terms',
+        'A fictional pair from Meridian Gulf Catering LLC where the notice period is missing from both documents. Shows how a missing term is reported — absence is not a denial.',
+        [
+          { role: 'offer', file: 'offer.pdf' },
+          { role: 'contract', file: 'contract.pdf' },
+        ],
+      ),
+      entry(
+        'TC-014',
+        'Fictional single contract (abstention)',
+        'Only a fictional contract from Coastal Star General Trading LLC, and its salary page is unreadable. Shows an honest partial result instead of guessed answers.',
+        [{ role: 'contract', file: 'contract.pdf' }],
+      ),
     ],
   };
 }

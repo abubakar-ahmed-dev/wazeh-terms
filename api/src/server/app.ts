@@ -6,6 +6,9 @@
  */
 import express, { type Express, type NextFunction, type Request, type Response } from 'express';
 import { readFile } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 
 import type { ErrorCode, StageName } from '../contracts/index.js';
@@ -81,6 +84,38 @@ export function buildApp(deps: AppDeps): Express {
       res.type('application/pdf').status(200).send(bytes);
     })().catch(next);
   });
+
+  // Built React assets + SPA fallback (ADR-008): /api/*, /health, and
+  // /samples/* are reserved above; everything else falls back to index.html
+  // when the web build exists (API-only deployments keep the JSON 404).
+  const webDistCandidates = [
+    path.resolve(process.cwd(), 'web/dist'),
+    path.resolve(process.cwd(), '../web/dist'),
+    path.join(path.dirname(fileURLToPath(import.meta.url)), '../../../web/dist'),
+  ];
+  const webDist = webDistCandidates.find((candidate) => existsSync(candidate));
+  if (webDist) {
+    const serveIndex = (res: Response) => {
+      void readFile(path.join(webDist, 'index.html'))
+        .then((html) => {
+          res.set('Content-Type', 'text/html; charset=utf-8').status(200).send(html);
+        })
+        .catch(() => {
+          res.status(404).json(envelope(res, 'BAD_REQUEST', 'Not found.'));
+        });
+    };
+    app.use(express.static(webDist, { index: false, maxAge: '1h' }));
+    app.get('/', (_req: Request, res: Response) => {
+      serveIndex(res);
+    });
+    app.get('/*splat', (req: Request, res: Response) => {
+      if (req.path.startsWith('/api/') || req.path === '/health' || req.path.startsWith('/samples')) {
+        res.status(404).json(envelope(res, 'BAD_REQUEST', 'Not found.'));
+        return;
+      }
+      serveIndex(res);
+    });
+  }
 
   app.use((_req: Request, res: Response) => {
     res.status(404).json(envelope(res, 'BAD_REQUEST', 'Not found.'));
