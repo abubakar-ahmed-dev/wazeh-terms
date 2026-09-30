@@ -876,6 +876,111 @@ a:hover {
   outline: none;
 }
 
+/* Custom Document Upload */
+.upload-slots-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+@media (min-width: 768px) {
+  .upload-slots-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.upload-slot {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.upload-slot--filled {
+  border-color: rgba(212, 163, 89, 0.4);
+  background: var(--surface);
+}
+
+.upload-slot__header {
+  margin-bottom: 1.25rem;
+}
+
+.dropzone {
+  border: 2px dashed var(--rule);
+  border-radius: var(--radius-sm);
+  background: var(--surface-elevated);
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.dropzone:hover, .dropzone:focus-visible {
+  border-color: var(--primary);
+  background: rgba(212, 163, 89, 0.05);
+  outline: none;
+}
+
+.dropzone__icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.file-preview-card {
+  background: var(--surface-elevated);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
+  padding: 1rem 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.file-preview-card__info {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  min-width: 0;
+}
+
+.file-preview-card__icon {
+  font-size: 1.75rem;
+  flex-shrink: 0;
+}
+
+.file-preview-card__name {
+  display: block;
+  font-size: 0.95rem;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+@media (min-width: 500px) {
+  .file-preview-card__name {
+    max-width: 280px;
+  }
+}
+
+.file-preview-card__size {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--ink-secondary);
+  margin-top: 0.15rem;
+}
+
 /* Review Dual-Pane Workspace */
 .review-header-bar {
   display: flex;

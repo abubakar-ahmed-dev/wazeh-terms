@@ -1,11 +1,6 @@
-/**
- * App shell, view router, and the single in-memory case state (spec §2, §5).
- * Private case data lives in React state only — never in URLs or storage.
- * Phase 12: Elevated dark theme with interactive workflow stepper and sleek header.
- */
 import { useCallback, useEffect, useState } from 'react';
 
-import { ApiError, analyze, extractSample, getCapabilities, getSamples } from './lib/api';
+import { ApiError, analyze, extractCustom, extractSample, getCapabilities, getSamples } from './lib/api';
 import type {
   AnalysisResponse,
   Capabilities,
@@ -19,9 +14,10 @@ import { Findings } from './views/Findings';
 import { Home } from './views/Home';
 import { Review } from './views/Review';
 import { Samples } from './views/Samples';
+import { Upload } from './views/Upload';
 import { DocumentIcon, ErrorPanel, Notice } from './ui';
 
-type View = 'home' | 'examples' | 'start' | 'extracting' | 'review' | 'analyzing' | 'result';
+type View = 'home' | 'examples' | 'upload' | 'start' | 'extracting' | 'review' | 'analyzing' | 'result';
 
 const RELOAD_COPY = 'A reload cannot restore an in-progress review — private case data is never saved.';
 
@@ -29,8 +25,9 @@ function currentPath(): View {
   switch (window.location.pathname) {
     case '/examples':
       return 'examples';
+    case '/upload':
     case '/start':
-      return 'start';
+      return 'upload';
     case '/review':
       return 'review';
     case '/result':
@@ -48,6 +45,8 @@ export function App() {
   const [samples, setSamples] = useState<SampleEntry[]>([]);
   const [extractionError, setExtractionError] = useState<string | null>(null);
   const [busyCaseId, setBusyCaseId] = useState<string | null>(null);
+  const [busyUpload, setBusyUpload] = useState<boolean>(false);
+  const [customPreviewUrls, setCustomPreviewUrls] = useState<Array<{ role: 'offer' | 'contract'; url: string }>>([]);
   const [issued, setIssued] = useState<IssuedExtraction | null>(null);
   const [proof, setProof] = useState<Proof | null>(null);
   const [extractionStatus, setExtractionStatus] = useState<'complete' | 'partial' | null>(null);
@@ -98,6 +97,8 @@ export function App() {
   }, [loadCapabilities]);
 
   const resetCase = useCallback(() => {
+    customPreviewUrls.forEach((p) => URL.revokeObjectURL(p.url));
+    setCustomPreviewUrls([]);
     setIssued(null);
     setProof(null);
     setExtractionStatus(null);
@@ -108,10 +109,52 @@ export function App() {
     setAnalysisError(null);
     setActiveSample(null);
     navigate('home');
-  }, [navigate]);
+  }, [customPreviewUrls, navigate]);
+
+  const handleCustomUpload = useCallback(
+    (files: { offer?: File | null; contract?: File | null }) => {
+      setBusyUpload(true);
+      setExtractionError(null);
+      setActiveSample(null);
+
+      // Create blob URLs for local preview in Review
+      const urls: Array<{ role: 'offer' | 'contract'; url: string }> = [];
+      if (files.offer) {
+        urls.push({ role: 'offer', url: URL.createObjectURL(files.offer) });
+      }
+      if (files.contract) {
+        urls.push({ role: 'contract', url: URL.createObjectURL(files.contract) });
+      }
+      setCustomPreviewUrls(urls);
+
+      navigate('extracting');
+      void extractCustom(files)
+        .then((response: ExtractionResponse) => {
+          setIssued(response.issuedExtraction);
+          setProof(response.proof);
+          setExtractionStatus(response.status);
+          setExtractionNotices(response.notices);
+          setCorrections([]);
+          navigate('review');
+        })
+        .catch((error: unknown) => {
+          const message =
+            error instanceof ApiError && error.status === 422
+              ? 'No usable text could be read from your document(s). Please ensure your PDF is not an image-only scan or encrypted.'
+              : error instanceof ApiError
+                ? error.message
+                : 'The document upload and extraction failed.';
+          setExtractionError(message);
+        })
+        .finally(() => setBusyUpload(false));
+    },
+    [navigate],
+  );
 
   const startSample = useCallback(
     (sampleCaseId: string) => {
+      customPreviewUrls.forEach((p) => URL.revokeObjectURL(p.url));
+      setCustomPreviewUrls([]);
       const sample = samples.find((entry) => entry.sampleCaseId === sampleCaseId) ?? null;
       setActiveSample(sample);
       setBusyCaseId(sampleCaseId);
@@ -137,7 +180,7 @@ export function App() {
         })
         .finally(() => setBusyCaseId(null));
     },
-    [navigate, samples],
+    [customPreviewUrls, navigate, samples],
   );
 
   const continueToAnalysis = useCallback(() => {
@@ -171,10 +214,13 @@ export function App() {
     );
   }, []);
 
-  const previewUrls = (activeSample?.documents ?? []).map((document) => ({
-    role: document.role,
-    url: document.previewUrl,
-  }));
+  const previewUrls =
+    customPreviewUrls.length > 0
+      ? customPreviewUrls
+      : (activeSample?.documents ?? []).map((document) => ({
+          role: document.role,
+          url: document.previewUrl,
+        }));
 
   const inReviewFlow = view === 'extracting' || view === 'review' || view === 'analyzing' || view === 'result';
 
@@ -211,6 +257,14 @@ export function App() {
             >
               Home
             </button>
+            {capabilities?.customUploadEnabled !== false ? (
+              <button
+                className={`nav-link ${view === 'upload' ? 'nav-link--active' : ''}`}
+                onClick={() => navigate('upload')}
+              >
+                Upload & Review
+              </button>
+            ) : null}
             <button
               className={`nav-link ${view === 'examples' ? 'nav-link--active' : ''}`}
               onClick={() => navigate('examples')}
@@ -241,7 +295,7 @@ export function App() {
           <div className="workflow-bar__inner">
             <ol className="workflow-steps">
               <li className="workflow-step workflow-step--done">
-                <span>1. Choose Sample</span>
+                <span>{activeSample ? '1. Choose Sample' : '1. Upload Documents'}</span>
                 <span className="workflow-sep" aria-hidden="true">→</span>
               </li>
               <li className={`workflow-step ${view === 'extracting' ? 'workflow-step--active' : view === 'review' || view === 'analyzing' || view === 'result' ? 'workflow-step--done' : ''}`}>
@@ -260,6 +314,10 @@ export function App() {
               <span className="chip chip--scenario">
                 {activeSample.title}
               </span>
+            ) : customPreviewUrls.length > 0 ? (
+              <span className="chip chip--scenario">
+                Personal Document Review
+              </span>
             ) : null}
           </div>
         </aside>
@@ -270,32 +328,26 @@ export function App() {
           <Home
             capabilityState={capabilityState}
             sampleModeEnabled={capabilities?.sampleModeEnabled ?? null}
+            customUploadEnabled={capabilities?.customUploadEnabled ?? null}
             onTrySample={() => navigate('examples')}
+            onUploadClick={() => navigate('upload')}
             onRetryCapabilities={loadCapabilities}
+          />
+        ) : null}
+
+        {view === 'upload' || view === 'start' ? (
+          <Upload
+            onUpload={handleCustomUpload}
+            onTrySample={() => navigate('examples')}
+            busy={busyUpload}
+            maxBytesPerFile={capabilities?.maxBytesPerFile}
+            maxPagesPerPdf={capabilities?.maxPagesPerPdf}
+            customUploadEnabled={capabilities?.customUploadEnabled}
           />
         ) : null}
 
         {view === 'examples' ? (
           <Samples samples={samples} onStart={startSample} busyCaseId={busyCaseId} />
-        ) : null}
-
-        {view === 'start' ? (
-          <div className="view">
-            <div className="view__inner">
-              <h1 tabIndex={-1}>Personal document review</h1>
-              <Notice kind="incomplete" title="Personal document upload is not available yet.">
-                <p>
-                  This public demo works with fictional samples only. When upload passes its privacy and testing
-                  gates, this page will offer a personal review.
-                </p>
-              </Notice>
-              <p>
-                <button className="button" onClick={() => navigate('examples')}>
-                  Try a fictional sample instead
-                </button>
-              </p>
-            </div>
-          </div>
         ) : null}
 
         {view === 'extracting' ? (
@@ -306,13 +358,13 @@ export function App() {
                 Reading the documents
               </h1>
               <p role="status">
-                {activeSample ? activeSample.title : 'Your sample'} is being read…
+                {activeSample ? activeSample.title : 'Your document(s)'} being read…
               </p>
               <p>Extracting 33 material components across salary, dates, benefits, and clauses.</p>
               {extractionError ? (
                 <ErrorPanel message={extractionError}>
-                  <button className="button" onClick={() => navigate('examples')}>
-                    Choose another sample
+                  <button className="button" onClick={() => (customPreviewUrls.length > 0 ? navigate('upload') : navigate('examples'))}>
+                    {customPreviewUrls.length > 0 ? 'Try uploading again' : 'Choose another sample'}
                   </button>
                 </ErrorPanel>
               ) : null}
@@ -354,8 +406,8 @@ export function App() {
               <Notice kind="incomplete" role="status">
                 <p>{RELOAD_COPY}</p>
               </Notice>
-              <button className="button" onClick={() => navigate('examples')}>
-                Choose a sample
+              <button className="button" onClick={() => (capabilities?.customUploadEnabled ? navigate('upload') : navigate('examples'))}>
+                {capabilities?.customUploadEnabled ? 'Upload documents' : 'Choose a sample'}
               </button>
             </div>
           </div>
@@ -373,7 +425,7 @@ export function App() {
               </p>
               {analysisError ? (
                 <ErrorPanel message={analysisError}>
-                  <button className="button" onClick={() => navigate('examples')}>
+                  <button className="button" onClick={() => (customPreviewUrls.length > 0 ? navigate('upload') : navigate('examples'))}>
                     Start a fresh review
                   </button>
                 </ErrorPanel>
@@ -383,7 +435,11 @@ export function App() {
         ) : null}
 
         {view === 'result' && report ? (
-          <Findings report={report} onReviewAnother={() => navigate('examples')} onReset={resetCase} />
+          <Findings
+            report={report}
+            onReviewAnother={() => (capabilities?.customUploadEnabled ? navigate('upload') : navigate('examples'))}
+            onReset={resetCase}
+          />
         ) : null}
 
         {view === 'result' && !report ? (
