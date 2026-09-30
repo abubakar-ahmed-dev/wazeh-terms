@@ -35,20 +35,26 @@ Header on desktop: WazehTerms wordmark at left; **How it works**, **Privacy**, a
 
 ## 3. Visual direction and layout tokens
 
-Use a calm, practical service style: warm off-white canvas, white reading surfaces, dark ink, restrained deep teal actions, and an amber treatment for incomplete checks. Do not use alarm-red for every mismatch; reserve it for an actual form or system error. Use one restrained document illustration on the homepage, labelled fictional, and small functional icons elsewhere. Do not reproduce official UAE/Pakistan seals or visual marks that imply government affiliation.
+Use a **quiet editorial document-review style** (design direction in `docs/UI_UX_DESIGN_DIRECTION.md`): warm paper canvas, solid white reading surfaces, dark botanical ink, restrained clay accents, generous margins, and precise evidence annotation. It should feel like carefully reading two important documents with a helpful guide — not an AI dashboard or a government portal. No gradients, glass panels, translucent layers, decorative chat bubbles, government seals, or colored legal-risk scores. Reserve error red for actual form or system errors. Use one restrained document illustration on the homepage, labelled fictional, and small functional icons elsewhere.
 
-| Token | Initial specification | Usage |
+| Token | Value | Usage |
 | --- | --- | --- |
-| Canvas / surface | `#F7F8F4` / `#FFFFFF` | Page and cards. |
-| Text / secondary text | `#173438` / `#435B60` | Main reading and metadata; test each actual pairing. |
-| Primary / primary-on | `#075E57` / `#FFFFFF` | Main button, links with visible affordance, focus treatment. |
-| Source-information surface / text | `#EAF4F0` / `#164D50` | Clearly labelled official-source information; color alone carries no meaning. |
-| Incomplete surface / text | `#FFF4DB` / `#70460C` | Partial review or pending verification. |
-| Error surface / text | `#FFF0ED` / `#9B2C2C` | Blocking input/technical errors. |
-| Radius and spacing | 10–14 px corners; 4/8/12/16/24/32 px spacing scale. | Consistent grouping without dense dashboards. |
-| Typography | Bundled or system sans-serif with a readable fallback; 16 px minimum body; approximately 1.5 line height; 28–40 px responsive hero headline. | Avoid long all-caps labels, tiny footnotes, justified text, or text over illustrations. |
+| Canvas | `#F5F1E8` | Warm paper background. |
+| Main surface | `#FFFEFA` | Reading and editing areas; solid fill. |
+| Main ink | `#24362E` | Body text, headings. |
+| Secondary ink | `#34473D` | Supporting text and metadata; avoid low-opacity text. |
+| Primary action | `#254D3A` (on `#FFFFFF`) | Buttons, links, selected controls with white text. |
+| Warm accent | `#A54C2A` (on `#FFFFFF`) | Small chapter markers, rules, important callouts; sparing use. |
+| Rule / divider | `#D8D7C9` | Borders and page separators; test non-text contrast where a border conveys a control boundary. |
+| Source note | `#E6EDE1` / `#234534` | Labelled official-source details; never an implied government endorsement. |
+| Incomplete note | `#F7E9C8` / `#574112` | Partial result, uncertain transcription, or omitted checks. |
+| Error note | `#FFF0ED` / `#A13B31` | Validation and technical failures only. |
+| Focus | `#A54C2A` outer ring with light separation | Visible keyboard focus on every surface; adjust after rendered inspection. |
+| Geometry | 8 px spacing rhythm (4/12 px exceptions); 12 px card radius; 1 px dividers; minimal shadow. | Max reading width ~720 px; work area ~1,160–1,200 px. Document excerpts may carry a slim vertical rule plus an explicit label such as **Offer · Page 2**. |
 
-The proposed foreground/background text pairs above pass a preliminary contrast calculation above 4.5:1; verify final hover, disabled, border, focus, and icon pairs in the actual rendered UI. Aim for [WCAG 2.2 AA](https://www.w3.org/TR/WCAG22/) and accessible form guidance. Use text labels and shapes as well as color for every state.
+The proposed pairs were calculated above 4.5:1 (ink/canvas 11.34:1; white/primary 9.54:1; white/accent 5.73:1); that is a color-pair calculation, **not** an accessibility certification. Verify final hover, disabled, border, focus, and icon pairs in the rendered UI. Aim for [WCAG 2.2 AA](https://www.w3.org/TR/WCAG22/) and accessible form guidance. Use text labels and shapes as well as color for every state.
+
+**Typography:** self-host **Fraunces** for the wordmark and large page headings only; **Source Sans 3** for navigation, buttons, forms, evidence, and long reading. Fallbacks: `Georgia, serif` and `system-ui, sans-serif`. Body starts at 16–18 px with 1.5–1.6 line height; home heading ~40–52 px desktop and ~32–38 px mobile, smaller scale on work screens. Keep paragraphs to roughly 60–75 characters. Avoid serif body paragraphs, ornamental italics, all-caps blocks, tiny legal footnotes, justified text, and text over illustrations. If Urdu is enabled later, choose and test a suitable Urdu font and right-to-left layout separately.
 
 At approximately `min-width: 900px`, the home hero and intake page may use two columns; review uses a resizable or fixed **document pane ~55% / field pane ~45%**, with each pane scrollable without trapping keyboard focus. Constrain normal reading content to ~1,160 px and text paragraphs to comfortable line lengths. Between ~600 and 899 px, prefer stacked panels or a selectable preview pane rather than cramped half-width PDF text. Under ~600 px, use a single column with 16 px side padding and large buttons; do not force horizontal page scrolling. Allow the browser to zoom to 200% and reflow without hiding evidence or actions. Breakpoints are design starting points; adjust after device and zoom tests.
 
