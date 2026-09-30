@@ -9,6 +9,7 @@ interface UploadProps {
   busy: boolean;
   maxBytesPerFile?: number;
   maxPagesPerPdf?: number;
+  customUploadEnabled?: boolean | null;
 }
 
 export function Upload({
@@ -17,6 +18,7 @@ export function Upload({
   busy,
   maxBytesPerFile = 8 * 1024 * 1024,
   maxPagesPerPdf = 15,
+  customUploadEnabled,
 }: UploadProps) {
   const [offerFile, setOfferFile] = useState<File | null>(null);
   const [contractFile, setContractFile] = useState<File | null>(null);
@@ -88,6 +90,19 @@ export function Upload({
       {error ? (
         <Notice kind="error" role="alert" title="Upload Notice">
           <p>{error}</p>
+        </Notice>
+      ) : null}
+
+      {customUploadEnabled === false ? (
+        <Notice kind="incomplete" role="status" title="Personal document upload is currently closed on this deployment">
+          <p>
+            The backend server is currently configured with <code>CUSTOM_UPLOAD_ENABLED=false</code>.
+            To enable document analysis, set <code>CUSTOM_UPLOAD_ENABLED=true</code> in <code>api/.env</code>.
+            In the meantime, you can explore the complete verification flow using our fictional samples.
+          </p>
+          <button type="button" className="button button--secondary" onClick={onTrySample} style={{ marginTop: '0.5rem' }}>
+            Explore fictional samples
+          </button>
         </Notice>
       ) : null}
 

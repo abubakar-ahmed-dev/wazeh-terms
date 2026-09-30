@@ -26,9 +26,8 @@ function currentPath(): View {
     case '/examples':
       return 'examples';
     case '/upload':
-      return 'upload';
     case '/start':
-      return 'start';
+      return 'upload';
     case '/review':
       return 'review';
     case '/result':
@@ -258,7 +257,7 @@ export function App() {
             >
               Home
             </button>
-            {capabilities?.customUploadEnabled ? (
+            {capabilities?.customUploadEnabled !== false ? (
               <button
                 className={`nav-link ${view === 'upload' ? 'nav-link--active' : ''}`}
                 onClick={() => navigate('upload')}
@@ -336,37 +335,19 @@ export function App() {
           />
         ) : null}
 
-        {view === 'upload' ? (
+        {view === 'upload' || view === 'start' ? (
           <Upload
             onUpload={handleCustomUpload}
             onTrySample={() => navigate('examples')}
             busy={busyUpload}
             maxBytesPerFile={capabilities?.maxBytesPerFile}
             maxPagesPerPdf={capabilities?.maxPagesPerPdf}
+            customUploadEnabled={capabilities?.customUploadEnabled}
           />
         ) : null}
 
         {view === 'examples' ? (
           <Samples samples={samples} onStart={startSample} busyCaseId={busyCaseId} />
-        ) : null}
-
-        {view === 'start' ? (
-          <div className="view">
-            <div className="view__inner">
-              <h1 tabIndex={-1}>Personal document review</h1>
-              <Notice kind="incomplete" title="Personal document upload is not available yet.">
-                <p>
-                  This public demo works with fictional samples only. When upload passes its privacy and testing
-                  gates, this page will offer a personal review.
-                </p>
-              </Notice>
-              <p>
-                <button className="button" onClick={() => navigate('examples')}>
-                  Try a fictional sample instead
-                </button>
-              </p>
-            </div>
-          </div>
         ) : null}
 
         {view === 'extracting' ? (
