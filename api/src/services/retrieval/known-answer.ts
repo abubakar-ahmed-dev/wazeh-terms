@@ -4,8 +4,8 @@
  * surface an entry carrying the expected canonical ruleKey before any claim
  * of a working retrieval path is made.
  */
-import { initializeMcpClient } from './client.js';
-import { parseKbToolResult } from './candidates.js';
+import { initializeMcpClient, pickKbSearchTool } from './client.js';
+import { mapEntryByPinpoint, type PinpointKey } from './candidates.js';
 import { kbSearchArguments } from './query-builder.js';
 import type { McpTransport } from './transport.js';
 
@@ -14,6 +14,10 @@ export interface KnownAnswerSeed {
   readonly query: string;
   /** The canonical ruleKey the result must carry. */
   readonly expectRuleKey: string;
+  /** Nonsecret KB id addressed by the search tool. */
+  readonly knowledgeBaseId: string;
+  /** Approved pinpoints for entry→rule mapping (renderers drop key tokens). */
+  readonly knownRules: readonly PinpointKey[];
 }
 
 export type KnownAnswerResult =
@@ -37,19 +41,30 @@ export async function verifyKnownAnswer(
     responsibleParty: 'uae_employer' as const,
     effectiveDate: new Date().toISOString().slice(0, 10),
   };
-  // The seed query replaces the fact-derived keyword line; filters stay fact-only.
-  const args = kbSearchArguments(facts);
+  // The seed query replaces the fact-derived keyword line; the payload stays
+  // inside the closed search-tool shape.
+  const args = kbSearchArguments(facts, seed.knowledgeBaseId);
   args.query = seed.query;
 
   let result: unknown;
   try {
-    result = await transport.request('tools/call', { name: init.kbTools[0]!.name, arguments: args });
+    result = await transport.request('tools/call', {
+      name: pickKbSearchTool(init.kbTools)!.name,
+      arguments: args,
+    });
   } catch {
     return { ok: false, reason: 'unavailable' };
   }
 
-  const { candidates } = parseKbToolResult(result);
-  if (candidates.length === 0) return { ok: false, reason: 'no_entries' };
-  const found = candidates.some((candidate) => candidate.ruleKey === seed.expectRuleKey);
-  return found ? { ok: true, entryCount: candidates.length } : { ok: false, reason: 'rule_key_missing' };
+  const texts = (result as { content?: Array<{ text?: string }> })?.content
+    ?.map((item) => item.text ?? '')
+    .filter((text) => text.length > 0) ?? [];
+  if (texts.length === 0) return { ok: false, reason: 'no_entries' };
+  // Map rendered entries back to canonical rules by reviewed pinpoint quote
+  // (the same mapping the runtime orchestration uses).
+  const mappedRuleKeys = new Set(
+    texts.flatMap((text) => mapEntryByPinpoint(text, seed.knownRules).map((candidate) => candidate.ruleKey ?? '')),
+  );
+  const found = mappedRuleKeys.has(seed.expectRuleKey);
+  return found ? { ok: true, entryCount: mappedRuleKeys.size } : { ok: false, reason: 'rule_key_missing' };
 }

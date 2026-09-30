@@ -1,0 +1,375 @@
+{
+  "generatedAt": "2026-09-30",
+  "basis": "seed records (drafts) — PREVIEW ONLY; rebuild from published approved records after Studio review + publish",
+  "counts": [
+    [
+      "sourceDocument",
+      6
+    ],
+    [
+      "rule",
+      1
+    ],
+    [
+      "contractFieldDefinition",
+      33
+    ]
+  ],
+  "records": [
+    {
+      "recordType": "sourceDocument",
+      "sourceKey": "uae-federal-decree-law-33-2021",
+      "versionKey": "base-text-2022",
+      "officialUrl": "https://uaelegislation.gov.ae/en/legislations/1541/download"
+    },
+    {
+      "recordType": "sourceDocument",
+      "sourceKey": "uae-cabinet-resolution-1-2022",
+      "versionKey": "executive-regulation-2022",
+      "officialUrl": "https://uaelegislation.gov.ae/en/legislations/1547/download"
+    },
+    {
+      "recordType": "sourceDocument",
+      "sourceKey": "uae-payment-of-wages",
+      "versionKey": "web-2026-09-28",
+      "officialUrl": "https://u.ae/en/information-and-services/jobs/Sector-of-employment/employment-in-the-private-sector/payment-of-wages"
+    },
+    {
+      "recordType": "sourceDocument",
+      "sourceKey": "uae-laws-overview",
+      "versionKey": "web-2026-09-28",
+      "officialUrl": "https://u.ae/en/information-and-services/jobs/Sector-of-employment/employment-in-the-private-sector/employment-laws-and-regulations-in-the-private-sector"
+    },
+    {
+      "recordType": "sourceDocument",
+      "sourceKey": "pk-emigration-rules-1979",
+      "versionKey": "consolidated-2023",
+      "officialUrl": "https://beoe.gov.pk/files/legal-framework/Emigration_Rules_1979_Updated_2023.pdf"
+    },
+    {
+      "recordType": "sourceDocument",
+      "sourceKey": "pk-fee-structure",
+      "versionKey": "web-2026-09-28",
+      "officialUrl": "https://beoe.gov.pk/fee-structure-emigrant"
+    },
+    {
+      "recordType": "rule",
+      "ruleKey": "ae-salary-payment-due-monthly",
+      "revision": 1,
+      "title": "Official guidance: salaries for the previous month fall due on the first of each month",
+      "claimText": "Salaries for the previous month are due on the first day of each Gregorian month, according to official UAE Government guidance on payment of wages.",
+      "topic": "pay",
+      "conditions": [],
+      "exceptions": [],
+      "triggerKey": null,
+      "primarySource": {
+        "sourceKey": "uae-payment-of-wages",
+        "versionKey": "web-2026-09-28",
+        "officialUrl": "https://u.ae/en/information-and-services/jobs/Sector-of-employment/employment-in-the-private-sector/payment-of-wages",
+        "evidenceClass": "official_guidance"
+      },
+      "pinpoint": {
+        "label": "When Should Employers Pay Salaries?",
+        "page": 1,
+        "quote": "salaries for the previous month are due on the first day of each Gregorian month"
+      }
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "employer_name",
+      "groupKey": "employer",
+      "label": "Employer name",
+      "valueKind": "text",
+      "comparisonStrategyKey": "text_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "job_title",
+      "groupKey": "occupation",
+      "label": "Job title or occupation",
+      "valueKind": "text",
+      "comparisonStrategyKey": "text_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "work_location",
+      "groupKey": "location",
+      "label": "Work location",
+      "valueKind": "text",
+      "comparisonStrategyKey": "text_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "basic_salary",
+      "groupKey": "pay",
+      "label": "Basic salary",
+      "valueKind": "money",
+      "comparisonStrategyKey": "money_equality",
+      "importantIfAbsent": true
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "allowance_item",
+      "groupKey": "pay",
+      "label": "Allowance item",
+      "valueKind": "money",
+      "comparisonStrategyKey": "money_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "stated_total_pay",
+      "groupKey": "pay",
+      "label": "Stated total pay",
+      "valueKind": "money",
+      "comparisonStrategyKey": "money_equality",
+      "importantIfAbsent": true
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "payment_frequency",
+      "groupKey": "pay",
+      "label": "Payment frequency",
+      "valueKind": "text",
+      "comparisonStrategyKey": "text_equality",
+      "importantIfAbsent": true
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "start_date",
+      "groupKey": "term",
+      "label": "Start date",
+      "valueKind": "date",
+      "comparisonStrategyKey": "date_equality",
+      "importantIfAbsent": true
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "contract_duration",
+      "groupKey": "term",
+      "label": "Contract duration",
+      "valueKind": "duration",
+      "comparisonStrategyKey": "duration_equality",
+      "importantIfAbsent": true
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "renewal_terms",
+      "groupKey": "term",
+      "label": "Renewal wording",
+      "valueKind": "text",
+      "comparisonStrategyKey": "text_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "probation_period",
+      "groupKey": "probation",
+      "label": "Probation period",
+      "valueKind": "duration",
+      "comparisonStrategyKey": "duration_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "ordinary_hours",
+      "groupKey": "working_time",
+      "label": "Ordinary working hours",
+      "valueKind": "text",
+      "comparisonStrategyKey": "text_equality",
+      "importantIfAbsent": true
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "overtime_terms",
+      "groupKey": "working_time",
+      "label": "Overtime wording",
+      "valueKind": "text",
+      "comparisonStrategyKey": "text_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "notice_terms",
+      "groupKey": "ending_terms",
+      "label": "Notice terms",
+      "valueKind": "text",
+      "comparisonStrategyKey": "text_equality",
+      "importantIfAbsent": true
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "termination_terms",
+      "groupKey": "ending_terms",
+      "label": "Termination wording",
+      "valueKind": "text",
+      "comparisonStrategyKey": "text_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "deduction_item",
+      "groupKey": "deductions",
+      "label": "Deduction item",
+      "valueKind": "money",
+      "comparisonStrategyKey": "money_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "other_worker_charge",
+      "groupKey": "deductions",
+      "label": "Other worker charge",
+      "valueKind": "money",
+      "comparisonStrategyKey": "money_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "recruitment_cost",
+      "groupKey": "recruitment_and_travel_costs",
+      "label": "Recruitment cost",
+      "valueKind": "money",
+      "comparisonStrategyKey": "money_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "visa_cost",
+      "groupKey": "recruitment_and_travel_costs",
+      "label": "Visa or residency charge",
+      "valueKind": "money",
+      "comparisonStrategyKey": "money_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "residency_cost",
+      "groupKey": "recruitment_and_travel_costs",
+      "label": "Residency cost",
+      "valueKind": "money",
+      "comparisonStrategyKey": "money_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "medical_cost",
+      "groupKey": "recruitment_and_travel_costs",
+      "label": "Medical cost",
+      "valueKind": "money",
+      "comparisonStrategyKey": "money_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "travel_cost",
+      "groupKey": "recruitment_and_travel_costs",
+      "label": "Travel cost",
+      "valueKind": "money",
+      "comparisonStrategyKey": "money_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "accommodation_benefit",
+      "groupKey": "benefits",
+      "label": "Accommodation benefit",
+      "valueKind": "benefit_state",
+      "comparisonStrategyKey": "benefit_state_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "food_benefit",
+      "groupKey": "benefits",
+      "label": "Food benefit",
+      "valueKind": "benefit_state",
+      "comparisonStrategyKey": "benefit_state_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "transport_benefit",
+      "groupKey": "benefits",
+      "label": "Transport benefit",
+      "valueKind": "benefit_state",
+      "comparisonStrategyKey": "benefit_state_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "medical_benefit",
+      "groupKey": "benefits",
+      "label": "Medical coverage benefit",
+      "valueKind": "benefit_state",
+      "comparisonStrategyKey": "benefit_state_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "return_ticket_benefit",
+      "groupKey": "benefits",
+      "label": "Travel or return ticket benefit",
+      "valueKind": "benefit_state",
+      "comparisonStrategyKey": "benefit_state_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "document_language",
+      "groupKey": "document_details",
+      "label": "Document language",
+      "valueKind": "text",
+      "comparisonStrategyKey": "text_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "signature_presence",
+      "groupKey": "document_details",
+      "label": "Signature presence",
+      "valueKind": "boolean",
+      "comparisonStrategyKey": "boolean_equality",
+      "importantIfAbsent": true
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "document_date",
+      "groupKey": "document_details",
+      "label": "Document date",
+      "valueKind": "date",
+      "comparisonStrategyKey": "date_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "document_reference",
+      "groupKey": "document_details",
+      "label": "Document reference",
+      "valueKind": "reference_text",
+      "comparisonStrategyKey": "reference_text_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "verification_reference",
+      "groupKey": "document_details",
+      "label": "Verification reference",
+      "valueKind": "reference_text",
+      "comparisonStrategyKey": "reference_text_equality",
+      "importantIfAbsent": false
+    },
+    {
+      "recordType": "contractFieldDefinition",
+      "fieldKey": "annex_reference",
+      "groupKey": "document_details",
+      "label": "Annex or policy reference",
+      "valueKind": "reference_text",
+      "comparisonStrategyKey": "reference_text_equality",
+      "importantIfAbsent": false
+    }
+  ]
+}

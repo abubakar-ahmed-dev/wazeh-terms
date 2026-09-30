@@ -25,10 +25,12 @@ export interface ParsedToolResult {
 }
 
 /**
- * Parse a KB tool result. Accepts a JSON array of structured entries or a
- * single text body; a bare text body yields one candidate with only a
- * snippet, which the gate will treat as unmappable unless the text carries a
- * labelled ruleKey/revision pair (data-only scan of the retrieved text).
+ * Parse a KB tool result. Accepts a JSON array of structured entries or text
+ * bodies. KB renderers prose-ify records, so for text bodies we scan —
+ * data-only, deterministic — for stable identity tokens (`ae-…`/`pk-…` key
+ * shapes) and emit one candidate per token. Every candidate is still mapped
+ * through the canonical reader + gate; a token that is not a rule key simply
+ * fails the canonical read. Multiple tokens never merge into one claim.
  */
 export function parseKbToolResult(result: unknown): ParsedToolResult {
   const texts = extractTexts(result);
@@ -45,13 +47,26 @@ export function parseKbToolResult(result: unknown): ParsedToolResult {
       }
       continue;
     }
-    const parsed = RuleCandidateSchema.safeParse({
-      entryId: `text-${hash(text)}`,
-      ...extractLabelledIdentity(text),
-      snippet: text.slice(0, 2000),
-    });
-    if (parsed.success && parsed.data.snippet.trim().length > 0) candidates.push(parsed.data);
-    else dropped += 1;
+
+    const identity = extractIdentityTokens(text);
+    if (identity.length === 0) {
+      const parsed = RuleCandidateSchema.safeParse({
+        entryId: `text-${hash(text)}`,
+        snippet: text.slice(0, 2000),
+      });
+      if (parsed.success && parsed.data.snippet.trim().length > 0) candidates.push(parsed.data);
+      else dropped += 1;
+      continue;
+    }
+    for (const ruleKey of identity) {
+      const parsed = RuleCandidateSchema.safeParse({
+        entryId: `text-${hash(text)}#${ruleKey}`,
+        ruleKey,
+        snippet: text.slice(0, 2000),
+      });
+      if (parsed.success) candidates.push(parsed.data);
+      else dropped += 1;
+    }
   }
 
   return { candidates, dropped };
@@ -87,14 +102,47 @@ function tryParseJsonArray(text: string): readonly unknown[] | null {
   }
 }
 
-/** Data-only scan for labelled identity fields inside retrieved prose. */
-function extractLabelledIdentity(text: string): { ruleKey?: string; revision?: number } {
-  const ruleKey = /\bruleKey\s*[:=]\s*"?([a-z0-9][a-z0-9._-]{0,99})"?/i.exec(text)?.[1];
-  const revision = /\brevision\s*[:=]\s*"?(\d{1,4})"?/i.exec(text)?.[1];
-  return {
-    ...(ruleKey ? { ruleKey } : {}),
-    ...(revision ? { revision: Number.parseInt(revision, 10) } : {}),
-  };
+/**
+ * Data-only scan for stable key tokens in retrieved prose (seed keys look
+ * like `ae-recruitment-costs-employer-bears`). Word-bounded, lowercase
+ * hyphenated ids with an `ae-`/`pk-` prefix; deduplicated in first-seen order.
+ */
+export function extractIdentityTokens(text: string): readonly string[] {
+  const matches = text.match(/\b(?:ae|pk)-[a-z0-9]+(?:-[a-z0-9]+)*\b/g) ?? [];
+  return [...new Set(matches)];
+}
+
+export interface PinpointKey {
+  readonly ruleKey: string;
+  readonly revision: number;
+  readonly pinpointQuote: string;
+}
+
+const normalizeForMatch = (text: string): string =>
+  text
+    .toLowerCase()
+    .replace(/[‐-―]/g, '-')
+    .replace(/[‘’“”]/g, '"')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+/**
+ * Map a rendered KB entry back to canonical rules by their reviewed
+ * pinpoint quotes — exact reviewed passage, data-only containment against
+ * the normalized entry text. Renderers paraphrase metadata and drop stable
+ * key tokens, but the reviewed quote is the one string the entry must carry
+ * to stand for the claim at all.
+ */
+export function mapEntryByPinpoint(entryText: string, knownRules: readonly PinpointKey[]): readonly RuleCandidate[] {
+  const normalized = normalizeForMatch(entryText);
+  return knownRules
+    .filter((rule) => normalized.includes(normalizeForMatch(rule.pinpointQuote)))
+    .map((rule) => ({
+      entryId: `pinpoint-${hash(rule.ruleKey)}`,
+      ruleKey: rule.ruleKey,
+      revision: rule.revision,
+      snippet: entryText.slice(0, 2000),
+    }));
 }
 
 function hash(text: string): string {

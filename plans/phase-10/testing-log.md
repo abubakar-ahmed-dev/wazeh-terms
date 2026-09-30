@@ -44,3 +44,28 @@ standing rule: no ad-hoc live API runs):
    seeded ruleKey; one canonical read gates to an eligible citation.
 3. Until then `source_backed_concern` remains disclosed-partial (D8); the
    capability flag reports the real unconfigured state.
+
+## Full live verification + completion evidence (2026-09-30)
+
+| # | Check | Result |
+| --- | --- | --- |
+| 1 | Full `live:retrieval` (tools + known-answer + gated citation) | **PASS** — tools/list + KB-mode verified; known-answer mapped the worker-charge rule via its reviewed pinpoint; canonical read OK; gate → **eligible**, citation complete (rule r1 → `uae-federal-decree-law-33-2021/base-text-2022`, Article 6(4), officialUrl, dates, party) |
+| 2 | End-to-end orchestration against live KB + live Content Lake (fictional worker-paid visa charge; no Gemini call) | `source_backed_concern` produced through the real code path (`runRetrieval` → pinpoint mapping → canonical read → gate); wage-guidance rule withheld with `trigger_unregistered` (no trigger on guidance — fail-closed confirmed) |
+| 3 | KB stayed in sync | new projection import + rebuild succeeded before the live runs |
+| 4 | Regression | api 276/276; lint 0; typecheck clean |
+
+**Retrieval-quality fixes required by the live KB (all offline-tested):** KB
+renderers paraphrase records and may drop stable key tokens → entries map
+back to canonical rules by reviewed **pinpoint quote containment** (one
+canonical listing per run); bare taxonomy-token queries retrieve nothing (KB
+matching is exact-word) → queries now lead with **code-owned per-topic
+keyword lines** (no document text, no identifiers); unmappable entries are
+recorded as withheld, never silently dropped.
+
+**Phase 10 status: COMPLETE against its documented exit criteria** — with the
+live endpoint: tools/list verified, known-answer read passes, and a demo case
+yields a gated `source_backed_concern` whose pinpoint opens to supporting
+text (canonical record + official URL + reviewed quote). Without endpoint:
+honest partial (Phase 06 tests unchanged). `source_backed_concern` is
+reported complete per D8. The full HTTP user journey with Gemini extraction
+is Phase 11 (web) / Phase 14 (staging design check), per the master plan.

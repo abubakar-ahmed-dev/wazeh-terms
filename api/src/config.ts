@@ -43,6 +43,8 @@ export interface AppConfig {
     readonly organizationToken: string | null;
     readonly projectId: string | null;
     readonly dataset: string | null;
+    /** Nonsecret KB id addressed by retrieval queries (SANITY_KB_ID). */
+    readonly knowledgeBaseId: string | null;
     /** Optional minimum-privilege read token for the canonical-record reader. */
     readonly readToken: string | null;
   };
@@ -103,6 +105,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
       organizationToken: get('SANITY_ORGANIZATION_TOKEN') ?? null,
       projectId: get('SANITY_PROJECT_ID') ?? null,
       dataset: get('SANITY_DATASET') ?? null,
+      knowledgeBaseId: get('SANITY_KB_ID') ?? null,
       readToken: get('SANITY_READ_TOKEN') ?? null,
     },
     retrieval: {
@@ -138,6 +141,7 @@ export function configSourceSummary(config: AppConfig): string[] {
     `SANITY_ORGANIZATION_TOKEN=${config.sanity.organizationToken ? 'set' : 'missing'}`,
     `SANITY_PROJECT_ID=${config.sanity.projectId ?? 'missing'}`,
     `SANITY_DATASET=${config.sanity.dataset ?? 'missing'}`,
+    `SANITY_KB_ID=${config.sanity.knowledgeBaseId ?? 'missing'}`,
     `SANITY_READ_TOKEN=${config.sanity.readToken ? 'set' : 'missing'}`,
     `PRIVACY_NOTICE_VERSION=${config.privacyNoticeVersion}`,
     `PORT=${config.port}`,

@@ -1,8 +1,11 @@
 /**
  * `rule` — one narrow reviewed proposition at one revision
  * (docs/DATABASE_SCHEMA.md §6). `ruleKey`+`revision` unique; trigger keys
- * restricted to the code-owned allowlist; claimable scope fields exclude
- * `unknown` (a claimable rule must be explicit).
+ * restricted to the code-owned allowlist. Scope values come from the full
+ * controlled vocabularies; the strict claimable scope (mainland,
+ * non-domestic, explicit party) is enforced only when a trigger is present —
+ * informational rules (no trigger) may record `unknown` regime/category.
+ * The programmatic content gate re-checks all of this server-side.
  */
 import { defineField, defineType } from 'sanity';
 
@@ -16,13 +19,27 @@ import {
   enumField,
   schemaVersionField,
 } from './enums';
+import { EMPLOYMENT_REGIME, WORKER_CATEGORY } from './registry-mirror';
 import { TRIGGER_KEY_VALUES } from './trigger-keys';
 
 const referenceTo = (type: string) => [{ type }];
 
-const EMPLOYMENT_REGIME_CLAIMABLE = ['uae_mainland_private'] as const;
-const WORKER_CATEGORY_CLAIMABLE = ['non_domestic'] as const;
 const PARTY_CLAIMABLE = ['worker', 'uae_employer', 'pakistan_recruiter', 'other'] as const;
+
+/**
+ * Studio-side mirror of the gate's claimable-scope check: a rule carrying a
+ * `triggerKey` must target the claimable scope; informational rules may use
+ * any controlled value.
+ */
+const claimableScopeCheck =
+  (expected: string, label: string) =>
+  (value: unknown, context: unknown): string | true => {
+    const document = (context as { document?: Record<string, unknown> } | undefined)?.document;
+    if (document?.triggerKey && value !== expected) {
+      return `Claimable (trigger-carrying) rules must target ${label} "${expected}".`;
+    }
+    return true;
+  };
 
 export default defineType({
   name: 'rule',
@@ -51,15 +68,16 @@ export default defineType({
       name: 'employmentRegime',
       title: 'Employment regime',
       type: 'string',
-      options: { list: EMPLOYMENT_REGIME_CLAIMABLE.map((value) => ({ title: value, value })) } as never,
-      validation: (rule) => rule.required(),
+      options: { list: EMPLOYMENT_REGIME.map((value) => ({ title: value, value })) } as never,
+      validation: (rule) =>
+        rule.required().custom(claimableScopeCheck('uae_mainland_private', 'employment regime') as never),
     }),
     defineField({
       name: 'workerCategory',
       title: 'Worker category',
       type: 'string',
-      options: { list: WORKER_CATEGORY_CLAIMABLE.map((value) => ({ title: value, value })) } as never,
-      validation: (rule) => rule.required(),
+      options: { list: WORKER_CATEGORY.map((value) => ({ title: value, value })) } as never,
+      validation: (rule) => rule.required().custom(claimableScopeCheck('non_domestic', 'worker category') as never),
     }),
     defineField({
       name: 'responsibleParty',

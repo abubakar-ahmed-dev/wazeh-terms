@@ -1,0 +1,37 @@
+[
+  {
+    "_id": "authority.uae-federal-government",
+    "_type": "authority",
+    "authorityKey": "uae-federal-government",
+    "name": "Government of the United Arab Emirates (federal)",
+    "shortName": "UAE Federal Government",
+    "jurisdiction": "AE",
+    "authorityType": "government",
+    "officialDomains": [
+      "uaelegislation.gov.ae",
+      "u.ae"
+    ],
+    "officialHomepage": "https://uaelegislation.gov.ae",
+    "reviewStatus": "approved",
+    "reviewedAt": "2026-09-29T00:00:00.000Z",
+    "reviewerCode": "owner-1",
+    "schemaVersion": 1
+  },
+  {
+    "_id": "authority.beoe",
+    "_type": "authority",
+    "authorityKey": "beoe",
+    "name": "Bureau of Emigration and Overseas Employment (Pakistan)",
+    "shortName": "BEOE",
+    "jurisdiction": "PK",
+    "authorityType": "government",
+    "officialDomains": [
+      "beoe.gov.pk"
+    ],
+    "officialHomepage": "https://beoe.gov.pk",
+    "reviewStatus": "approved",
+    "reviewedAt": "2026-09-29T00:00:00.000Z",
+    "reviewerCode": "owner-1",
+    "schemaVersion": 1
+  }
+]

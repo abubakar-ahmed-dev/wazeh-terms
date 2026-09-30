@@ -25,6 +25,7 @@ import { FIELD_DEFINITIONS } from '../../api/src/contracts/field-registry.js';
 import {
   AUTHORITY_TYPE,
   EVIDENCE_CLASS,
+  EMPLOYMENT_REGIME,
   JURISDICTION,
   MEDIA_TYPE,
   PARTY,
@@ -34,6 +35,7 @@ import {
   SOURCE_KIND,
   STUDIO_COMPARISON_STRATEGIES,
   STUDIO_FIELD_KEYS,
+  WORKER_CATEGORY,
 } from '../schemaTypes/registry-mirror.js';
 import { TRIGGER_KEY_VALUES } from '../schemaTypes/trigger-keys.js';
 
@@ -188,8 +190,16 @@ export function validateContent(input: unknown): GateResult {
         }
         if (!enumOk(record.jurisdiction, JURISDICTION)) fail('enum', 'rule.jurisdiction invalid.');
         if (record.origin !== 'PK' || record.destination !== 'AE') fail('route', 'rule must be PK→AE.');
-        if (record.employmentRegime !== 'uae_mainland_private') fail('scope', 'Claimable rules must target uae_mainland_private.');
-        if (record.workerCategory !== 'non_domestic') fail('scope', 'Claimable rules must target non_domestic workers.');
+        // docs/DATABASE_SCHEMA.md §2/§6: "no unknown for a claimable rule" —
+        // the strict scope applies to trigger-carrying (claimable) rules;
+        // informational rules without a trigger may use the wider values.
+        if (triggerKey) {
+          if (record.employmentRegime !== 'uae_mainland_private') fail('scope', 'Claimable rules must target uae_mainland_private.');
+          if (record.workerCategory !== 'non_domestic') fail('scope', 'Claimable rules must target non_domestic workers.');
+        } else {
+          if (!enumOk(record.employmentRegime, EMPLOYMENT_REGIME)) fail('enum', 'employmentRegime invalid.');
+          if (!enumOk(record.workerCategory, WORKER_CATEGORY)) fail('enum', 'workerCategory invalid.');
+        }
         if (!enumOk(record.responsibleParty, PARTY)) fail('enum', 'responsibleParty invalid.');
         if (record.responsibleParty === 'unknown') fail('scope', 'responsibleParty must be explicit.');
         const primarySource = refId(record.primarySource);

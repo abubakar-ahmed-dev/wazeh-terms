@@ -5,26 +5,29 @@
  *
  *   SANITY_CONTEXT_MCP_URL=… SANITY_ORGANIZATION_TOKEN=… \
  *   SANITY_PROJECT_ID=… SANITY_DATASET=… \
- *   LIVE_KNOWN_ANSWER_QUERY="recruitment costs employer" \
- *   LIVE_KNOWN_ANSWER_RULE_KEY=ae-recruitment-costs-employer-bears \
- *   npm run live:retrieval -w api
+ *   LIVE_KNOWN_ANSWER_QUERY="…" LIVE_KNOWN_ANSWER_RULE_KEY=… \
+ *   npm run live:retrieval -w api            # full: tools + known-answer + gate
+ *   npm run live:retrieval -w api -- --tools-only   # tools + known-answer only
  *
- * Steps: tools/list + mode verification → known-answer read → gate a demo
- * candidate end to end. Output records pass/fail per step; nothing from the
- * endpoint is echoed beyond counts and verdicts.
+ * `--tools-only` reports the endpoint/KB checks separately from the gated
+ * source-backed concern test (owner instruction 2026-09-30): guidance-only
+ * content must not be counted as a gated-concern pass. Output records
+ * pass/fail per step; nothing from the endpoint is echoed beyond counts and
+ * verdicts.
  */
 import { loadConfig } from '../src/config.js';
-import { readCanonicalRule } from '../src/services/canonical/reader.js';
+import { listApprovedRulePinpoints, readCanonicalRule } from '../src/services/canonical/reader.js';
 import { gateCandidate } from '../src/services/eligibility/gate.js';
 import { verifyKnownAnswer } from '../src/services/retrieval/known-answer.js';
 import { createFetchMcpTransport } from '../src/services/retrieval/transport.js';
 
 async function main(): Promise<void> {
+  const toolsOnly = process.argv.includes('--tools-only');
   const config = loadConfig();
   const { sanity, retrieval } = config;
 
-  if (!sanity.contextMcpUrl || !sanity.projectId || !sanity.dataset) {
-    console.error('FAIL setup: SANITY_CONTEXT_MCP_URL / SANITY_PROJECT_ID / SANITY_DATASET are required.');
+  if (!sanity.contextMcpUrl || !sanity.projectId || !sanity.dataset || !sanity.knowledgeBaseId) {
+    console.error('FAIL setup: SANITY_CONTEXT_MCP_URL / SANITY_PROJECT_ID / SANITY_DATASET / SANITY_KB_ID are required.');
     process.exitCode = 1;
     return;
   }
@@ -45,12 +48,36 @@ async function main(): Promise<void> {
     return;
   }
 
-  const knownAnswer = await verifyKnownAnswer(transport, { query, expectRuleKey });
+  const knownRules = await listApprovedRulePinpoints({
+    projectId: sanity.projectId,
+    dataset: sanity.dataset,
+    readToken: sanity.readToken,
+    timeoutMs: retrieval.timeoutMs,
+  });
+  if (!Array.isArray(knownRules) || knownRules.length === 0) {
+    console.error('FAIL setup: no approved+current rules readable from the canonical dataset (check SANITY_READ_TOKEN).');
+    process.exitCode = 1;
+    transport.close();
+    return;
+  }
+
+  const knownAnswer = await verifyKnownAnswer(transport, {
+    query,
+    expectRuleKey,
+    knowledgeBaseId: sanity.knowledgeBaseId ?? '',
+    knownRules,
+  });
   if (knownAnswer.ok) {
     console.log(`PASS tools/list + mode verification + known-answer read (${knownAnswer.entryCount} entries).`);
   } else {
     console.error(`FAIL known-answer: ${knownAnswer.reason}.`);
     process.exitCode = 1;
+    transport.close();
+    return;
+  }
+
+  if (toolsOnly) {
+    console.log('SKIPPED gated source-backed concern test (--tools-only). A guidance-only KB does not count as a gated-concern pass.');
     transport.close();
     return;
   }

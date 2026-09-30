@@ -148,6 +148,10 @@ describe('withholding matrix', () => {
     expectWithheld('trigger_unregistered', CANDIDATE, ruleWith({ triggerKey: 'salary.invented_trigger' }), SOURCE);
   });
 
+  it('null triggerKey (informational record) never backs an automated concern', () => {
+    expectWithheld('trigger_unregistered', CANDIDATE, ruleWith({ triggerKey: null }), SOURCE);
+  });
+
   it('evidence-class mismatch between rule and source; international never cites', () => {
     expectWithheld(
       'evidence_class_mismatch',
@@ -160,7 +164,6 @@ describe('withholding matrix', () => {
       CANDIDATE,
       ruleWith({
         evidenceClass: 'international_guidance',
-        triggerKey: null,
         jurisdiction: 'AE',
       }),
       sourceWith({ evidenceClass: 'international_guidance', jurisdiction: 'international' }),

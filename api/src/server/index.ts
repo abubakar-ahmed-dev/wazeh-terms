@@ -46,6 +46,12 @@ const retrieval =
             ruleKey,
             revision,
           ),
+        readerOptions: {
+          projectId: config.sanity.projectId,
+          dataset: config.sanity.dataset,
+          readToken: config.sanity.readToken,
+          timeoutMs: config.retrieval.timeoutMs,
+        },
       })
     : undefined;
 

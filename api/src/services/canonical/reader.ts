@@ -120,6 +120,43 @@ const RULE_BY_KEY_AND_REVISION_QUERY = /* groq */ `*[
   reviewStatus == "approved" && recordStatus == "current"
 ][0...2] ${RULE_PROJECTION}`;
 
+export interface ApprovedRulePinpoint {
+  readonly ruleKey: string;
+  readonly revision: number;
+  readonly topic: string;
+  readonly pinpointQuote: string;
+}
+
+/**
+ * Listing of approved+current rule pinpoints (bounded). Knowledge Base
+ * renderers paraphrase records and may drop stable key tokens, so entries
+ * are mapped back to canonical rules by their reviewed pinpoint quote —
+ * exact reviewed passage, data-only containment match.
+ */
+export async function listApprovedRulePinpoints(options: ReaderOptions): Promise<ApprovedRulePinpoint[] | CanonicalReadFailed> {
+  const raw = await runQuery(
+    options,
+    /* groq */ `*[
+  _type == "rule" && reviewStatus == "approved" && recordStatus == "current"
+] | order(ruleKey asc)[0...50] { ruleKey, revision, topic, "pinpointQuote": pinpoint.quote }`,
+    {},
+  );
+  if (!raw.ok) return raw;
+  return raw.result
+    .map((row) => {
+      const parsed = z
+        .object({
+          ruleKey: z.string().min(1),
+          revision: z.number().int().min(1),
+          topic: z.string().min(1),
+          pinpointQuote: z.string().min(1),
+        })
+        .safeParse(row);
+      return parsed.success ? parsed.data : null;
+    })
+    .filter((row): row is ApprovedRulePinpoint => row !== null);
+}
+
 /**
  * Read the one approved current revision for a candidate mapping. A pinned
  * revision that no longer matches an approved current record fails as

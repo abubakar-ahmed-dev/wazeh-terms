@@ -41,6 +41,8 @@ export interface GateContext {
   /** Retrieval runs only for a supported mainland route; anything else never reaches here. */
   readonly sourceCheckMaxAgeDays: number;
   readonly machineConditions: MachineConditionContext;
+  /** Topic the retrieval query asked about; a rule must match it. */
+  readonly expectedTopic?: string;
 }
 
 export function gateCandidate(
@@ -68,9 +70,12 @@ export function gateCandidate(
     return withheld('schema_version_unsupported');
   }
 
-  // 3. Trigger + evidence-class compatibility.
-  const trigger = rule.triggerKey ? triggerDefinition(rule.triggerKey) : undefined;
-  if (rule.triggerKey && !trigger) return withheld('trigger_unregistered');
+  // 3. Trigger + evidence-class compatibility. A null triggerKey marks an
+  // informational/guidance record (docs/DATABASE_SCHEMA.md §6) — it can
+  // never back an automated concern.
+  if (!rule.triggerKey) return withheld('trigger_unregistered');
+  const trigger = triggerDefinition(rule.triggerKey);
+  if (!trigger) return withheld('trigger_unregistered');
   if (rule.evidenceClass !== source.evidenceClass) return withheld('evidence_class_mismatch');
   // International guidance can never produce a national-law citation
   // (docs/API.md §6: the citation's evidenceClass is binding-or-official).
@@ -88,11 +93,14 @@ export function gateCandidate(
 
   // 5. Scope: the rule's own applicability fields must match the analysis
   //    context (mainland non-domestic UAE route; the gate is only reached in
-  //    that scope, so any other rule value is a mismatch).
+  //    that scope, so any other rule value is a mismatch). The rule's topic
+  //    must also match the topic the query asked about — a key token found in
+  //    an unrelated entry never becomes a claim.
   if (
     rule.jurisdiction !== 'AE' ||
     rule.employmentRegime !== 'uae_mainland_private' ||
-    rule.workerCategory !== 'non_domestic'
+    rule.workerCategory !== 'non_domestic' ||
+    (context.expectedTopic !== undefined && rule.topic !== context.expectedTopic)
   ) {
     return withheld('scope_mismatch');
   }

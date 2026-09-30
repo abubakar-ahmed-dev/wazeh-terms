@@ -72,6 +72,19 @@ describe('programmatic content gate (docs/DATABASE_SCHEMA.md §9)', () => {
     expect(codes(result)).toContain('registry');
   });
 
+  it('catches a claimable (trigger-carrying) rule with unknown scope values', () => {
+    const result = run('invalid-claimable-unknown-regime.json');
+    expect(result.ok).toBe(false);
+    expect(codes(result)).toContain('scope');
+  });
+
+  it('allows unknown scope values only for informational (no-trigger) rules', () => {
+    // valid-seed.json carries a fictional PK informational rule with
+    // employmentRegime "unknown"; the seed passing cleanly is the assertion.
+    const result = run('valid-seed.json');
+    expect(result.ok, JSON.stringify(result.findings)).toBe(true);
+  });
+
   it('rejects non-array input', () => {
     const result = validateContent({ nope: true });
     expect(result.ok).toBe(false);

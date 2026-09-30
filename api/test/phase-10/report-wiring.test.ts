@@ -25,6 +25,7 @@ function configuredConfig(): AppConfig {
       organizationToken: 'org-token',
       projectId: '8g0kllu0',
       dataset: 'production',
+      knowledgeBaseId: 'kbTest123',
       readToken: null,
     },
   };

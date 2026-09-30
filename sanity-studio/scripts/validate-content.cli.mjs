@@ -1,7 +1,8 @@
 /**
  * CLI for the programmatic content gate. Offline mode (default): validates a
- * fixture file. `--from-dataset` (Phase 09): reads published records via
- * @sanity/client using SANITY_PROJECT_ID/SANITY_DATASET [+ token].
+ * fixture file. `--from-dataset` (Phase 09): reads records via @sanity/client
+ * using SANITY_PROJECT_ID/SANITY_DATASET [+ token]. Add `--published` to read
+ * the published perspective only (post-publish validation; drafts excluded).
  */
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
@@ -12,11 +13,13 @@ import { validateContent } from './validate-content.ts';
 
 const here = path.dirname(new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1'));
 const defaultFixture = path.join(here, 'fixtures/valid-seed.json');
-const arg = process.argv[2];
-const fixturePath = arg && !arg.startsWith('--') ? path.resolve(arg) : defaultFixture;
+const flags = process.argv.slice(2);
+const positional = flags.find((value) => !value.startsWith('--'));
+const fixturePath = positional ? path.resolve(positional) : defaultFixture;
+const publishedOnly = flags.includes('--published');
 
 let documents;
-if (arg === '--from-dataset') {
+if (flags.includes('--from-dataset')) {
   const require_ = createRequire(import.meta.url);
   const { createClient } = require_('@sanity/client');
   const projectId = process.env.SANITY_PROJECT_ID;
@@ -34,8 +37,12 @@ if (arg === '--from-dataset') {
   });
   documents = await client.fetch(
     '*[_type in ["authority", "sourceDocument", "rule", "contractFieldDefinition", "resolutionNote"]]',
+    {},
+    publishedOnly ? { perspective: 'published' } : {},
   );
-  console.error(`fetched ${documents.length} records from ${projectId}/${dataset}`);
+  console.error(
+    `fetched ${documents.length} records from ${projectId}/${dataset}${publishedOnly ? ' (published perspective)' : ''}`,
+  );
 } else {
   documents = JSON.parse(readFileSync(fixturePath, 'utf8'));
   console.error(`validating ${fixturePath}`);

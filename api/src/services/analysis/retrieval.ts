@@ -12,11 +12,13 @@ import type { AppConfig } from '../../config.js';
 import type { FindingDraft } from '../../compare/compare.js';
 import type { ScopeApplicability, SourceCitation } from '../../contracts/index.js';
 import type { CanonicalRead, CanonicalReadFailed } from '../canonical/reader.js';
+import type { ReaderOptions } from '../canonical/reader.js';
+import { listApprovedRulePinpoints } from '../canonical/reader.js';
 import { gateCandidate, type WithholdReason } from '../eligibility/gate.js';
 import { evaluateTriggers, type TriggerEvaluation } from '../eligibility/triggers.js';
 import { triggerDefinition, type MachineConditionContext } from '../eligibility/trigger-keys.js';
-import { parseKbToolResult, type RuleCandidate } from '../retrieval/candidates.js';
-import { initializeMcpClient, callKbTool } from '../retrieval/client.js';
+import { mapEntryByPinpoint, parseKbToolResult, type RuleCandidate } from '../retrieval/candidates.js';
+import { initializeMcpClient, callKbTool, pickKbSearchTool } from '../retrieval/client.js';
 import { buildRetrievalQuery, kbSearchArguments } from '../retrieval/query-builder.js';
 import { McpTransportError, type McpTransport } from '../retrieval/transport.js';
 import type { Reconciliation } from './reconcile.js';
@@ -47,6 +49,8 @@ export interface RetrievalServiceOptions {
   /** Injected transport — tests use a fake; production uses the fetch client. */
   readonly transport: McpTransport | null;
   readonly reader: ((ruleKey: string, revision: number | null) => Promise<CanonicalRead | CanonicalReadFailed>) | null;
+  /** Required for the pinpoint listing in production; optional in tests. */
+  readonly readerOptions?: ReaderOptions;
 }
 
 interface TriggeredTopic {
@@ -59,7 +63,8 @@ export function createRetrievalService(options: RetrievalServiceOptions): Retrie
   return {
     async run(input): Promise<RetrievalOutcome> {
       const { config } = options;
-      const unconfigured = !options.transport || !options.reader || !config.sanity.contextMcpUrl;
+      const unconfigured =
+        !options.transport || !options.reader || !config.sanity.contextMcpUrl || !config.sanity.knowledgeBaseId;
       if (unconfigured || input.scopeApplicability !== 'supported') {
         // Unconfigured is reported upstream (stage not_started + limitation);
         // unsupported scope keeps rules withheld without any retrieval call.
@@ -88,9 +93,33 @@ export function createRetrievalService(options: RetrievalServiceOptions): Retrie
 
       const deadlineAt = Date.now() + input.deadlineMs;
       const toolBudget = config.retrieval.maxToolCalls;
-      let toolCalls = 0;
+      const searchTool = pickKbSearchTool(init.kbTools)!.name;
+      // One canonical listing per run: KB renderers paraphrase records and
+      // may drop key tokens, so entries map back to rules by reviewed
+      // pinpoint quote (docs/DATABASE_SCHEMA.md §9 unambiguous mapping).
+      const pinpoints = options.readerOptions
+        ? await listApprovedRulePinpoints(options.readerOptions)
+        : [];
+      if (options.readerOptions && !Array.isArray(pinpoints)) {
+        return {
+          stage: 'failed',
+          sourceFindings: [],
+          withheld: [],
+          disclosure: 'The approved-rule records could not be read, so no rule-backed concerns were checked.',
+        };
+      }
+      if (!Array.isArray(pinpoints)) {
+        return {
+          stage: 'failed',
+          sourceFindings: [],
+          withheld: [],
+          disclosure: 'The approved-rule records could not be read, so no rule-backed concerns were checked.',
+        };
+      }
+      let toolCalls = 1;
       const sourceFindings: FindingDraft[] = [];
       const withheld: Array<{ ruleKey: string | null; reason: WithholdReason }> = [];
+      const seenRuleKeys = new Set<string>();
 
       for (const topic of topics) {
         if (toolCalls >= toolBudget || Date.now() >= deadlineAt) break;
@@ -98,7 +127,7 @@ export function createRetrievalService(options: RetrievalServiceOptions): Retrie
         const query = buildRetrievalQuery(topic.topic, input.analysisDate);
         let result: unknown;
         try {
-          result = await callKbTool(options.transport, init.kbTools[0]!.name, kbSearchArguments(query));
+          result = await callKbTool(options.transport, searchTool, kbSearchArguments(query, config.sanity.knowledgeBaseId!));
           toolCalls += 1;
         } catch (error) {
           if (error instanceof McpTransportError && error.reason === 'timeout') break;
@@ -110,9 +139,31 @@ export function createRetrievalService(options: RetrievalServiceOptions): Retrie
           };
         }
 
-        const { candidates } = parseKbToolResult(result);
+        // Map entries to canonical rules by pinpoint quote; key tokens found
+        // in the prose are a secondary mapping. Deduplicated per ruleKey —
+        // one claim per rule per analysis.
+        const texts = (result as { content?: Array<{ text?: string }> })?.content
+          ?.map((item) => item.text ?? '')
+          .filter((text) => text.length > 0) ?? [];
+        const mapped = new Map<string, RuleCandidate>();
+        for (const text of texts) {
+          for (const candidate of [
+            ...mapEntryByPinpoint(text, pinpoints),
+            ...parseKbToolResult({ content: [{ type: 'text', text }] }).candidates,
+          ]) {
+            if (!mapped.has(candidate.ruleKey ?? '')) mapped.set(candidate.ruleKey ?? '', candidate);
+          }
+        }
+        const candidates = [...mapped.values()].filter((candidate) => candidate.ruleKey);
+        if (candidates.length === 0) {
+          // Entries that map to no canonical rule are recorded, not silently
+          // dropped — the report shows retrieval did look.
+          withheld.push({ ruleKey: null, reason: 'unmappable_candidate' });
+        }
         for (const candidate of candidates.slice(0, 4)) {
           if (toolCalls >= toolBudget || Date.now() >= deadlineAt) break;
+          if (seenRuleKeys.has(candidate.ruleKey!)) continue;
+          seenRuleKeys.add(candidate.ruleKey!);
           const canonical = await readCanonicalRecord(options, candidate, deadlineAt);
           toolCalls += canonical.reads;
           if (!canonical.read) {
@@ -123,6 +174,7 @@ export function createRetrievalService(options: RetrievalServiceOptions): Retrie
             analysisDate: input.analysisDate,
             sourceCheckMaxAgeDays: config.retrieval.sourceCheckMaxAgeDays,
             machineConditions: triggers.machineConditions as MachineConditionContext,
+            expectedTopic: topic.topic,
           });
           if (verdict.verdict === 'withheld') {
             withheld.push({ ruleKey: canonical.read.rule.ruleKey, reason: verdict.reason });

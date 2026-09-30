@@ -73,6 +73,11 @@ export function isDatasetOnlyTool(name: string): boolean {
   return DATASET_TOOL_PATTERN.test(name) && !KB_TOOL_PATTERN.test(name);
 }
 
+/** The KB tool that answers fact queries — the search surface, not the reader. */
+export function pickKbSearchTool(tools: readonly McpToolSummary[]): McpToolSummary | undefined {
+  return tools.find((tool) => /search/i.test(tool.name)) ?? tools[0];
+}
+
 /** Bounded tools/call wrapper: names must come from the verified listing. */
 export async function callKbTool(
   transport: McpTransport,

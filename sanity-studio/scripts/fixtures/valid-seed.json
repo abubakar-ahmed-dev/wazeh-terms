@@ -131,6 +131,74 @@
     "recordStatus": "current"
   },
   {
+    "_id": "source.pk-rules.1979-consolidated",
+    "_type": "sourceDocument",
+    "sourceKey": "pk-emigration-rules-1979",
+    "versionKey": "consolidated-2023",
+    "title": "Pakistan Emigration Rules 1979, consolidated 2023 (fictional seed record)",
+    "issuer": {
+      "_type": "reference",
+      "_ref": "authority.beoe"
+    },
+    "jurisdiction": "PK",
+    "evidenceClass": "binding_official_rule",
+    "officialUrl": "https://beoe.gov.pk/files/legal-framework/Emigration_Rules_1979_Updated_2023.pdf",
+    "sourceKind": "law",
+    "mediaType": "pdf",
+    "retrievedAt": "2026-09-01T00:00:00.000Z",
+    "lastVerifiedAt": "2026-09-01T00:00:00.000Z",
+    "applicableRegimes": [
+      "uae_mainland_private"
+    ],
+    "applicableCategories": [
+      "non_domestic"
+    ],
+    "recordStatus": "current",
+    "reviewStatus": "approved",
+    "reviewedAt": "2026-09-01T00:00:00.000Z",
+    "reviewerCode": "REV-1",
+    "schemaVersion": 1
+  },
+  {
+    "_id": "rule.pk-informational.r1",
+    "_type": "rule",
+    "ruleKey": "pk-informational-seed",
+    "revision": 1,
+    "title": "Pakistan-side informational record (fictional seed)",
+    "claimText": "Fictional seed claim: Pakistan-side recruitment matters are recorded for context only and never raise an automated concern.",
+    "topic": "worker_costs",
+    "relatedFieldKeys": [
+      "recruitment_cost"
+    ],
+    "ruleKind": "entitlement",
+    "evidenceClass": "binding_official_rule",
+    "jurisdiction": "PK",
+    "origin": "PK",
+    "destination": "AE",
+    "employmentRegime": "unknown",
+    "workerCategory": "unknown",
+    "responsibleParty": "pakistan_recruiter",
+    "conditions": [],
+    "exceptions": [
+      "Fictional seed: informational rules carry no triggerKey and can never back an automated concern."
+    ],
+    "primarySource": {
+      "_type": "reference",
+      "_ref": "source.pk-rules.1979-consolidated"
+    },
+    "pinpoint": {
+      "label": "Rule 1 (fictional seed)",
+      "quote": "Fictional seed passage — replaced by the verified passage in Phase 09."
+    },
+    "plainEnglish": "Fictional seed explanation; replaced by reviewed content in Phase 09.",
+    "sourceCheckedAt": "2026-09-01T00:00:00.000Z",
+    "reviewStatus": "approved",
+    "reviewedAt": "2026-09-01T00:00:00.000Z",
+    "reviewerCode": "REV-1",
+    "schemaVersion": 1,
+    "recordStatus": "current"
+  },
+  {
     "_id": "field.employer_name",
     "_type": "contractFieldDefinition",
     "fieldKey": "employer_name",
