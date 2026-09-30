@@ -1,6 +1,7 @@
 /**
  * App shell, view router, and the single in-memory case state (spec §2, §5).
  * Private case data lives in React state only — never in URLs or storage.
+ * Phase 12: Elevated dark theme with interactive workflow stepper and sleek header.
  */
 import { useCallback, useEffect, useState } from 'react';
 
@@ -18,7 +19,7 @@ import { Findings } from './views/Findings';
 import { Home } from './views/Home';
 import { Review } from './views/Review';
 import { Samples } from './views/Samples';
-import { ErrorPanel, Notice } from './ui';
+import { DocumentIcon, ErrorPanel, Notice } from './ui';
 
 type View = 'home' | 'examples' | 'start' | 'extracting' | 'review' | 'analyzing' | 'result';
 
@@ -175,29 +176,58 @@ export function App() {
     url: document.previewUrl,
   }));
 
+  const inReviewFlow = view === 'extracting' || view === 'review' || view === 'analyzing' || view === 'result';
+
   return (
     <>
       <a className="skip-link" href="#main">
         Skip to content
       </a>
+
       <header className="app-header">
         <div className="app-header__inner">
-          <a
-            className="wordmark"
-            href="/"
-            onClick={(event) => {
-              event.preventDefault();
-              resetCase();
-            }}
-          >
-            WazehTerms
-          </a>
-          <nav className="app-nav" aria-label="Site">
+          <div className="brand-group">
             <a
+              className="wordmark"
               href="/"
               onClick={(event) => {
                 event.preventDefault();
                 resetCase();
+              }}
+            >
+              <DocumentIcon className="wordmark__icon" />
+              <span>WazehTerms</span>
+            </a>
+            <span className="brand-badge">Demo</span>
+          </div>
+
+          <nav className="app-nav" aria-label="Main Navigation">
+            <button
+              className={`nav-link ${view === 'home' ? 'nav-link--active' : ''}`}
+              onClick={() => {
+                if (inReviewFlow) resetCase();
+                else navigate('home');
+              }}
+            >
+              Home
+            </button>
+            <button
+              className={`nav-link ${view === 'examples' ? 'nav-link--active' : ''}`}
+              onClick={() => navigate('examples')}
+            >
+              Fictional Samples
+            </button>
+            <a
+              className="nav-link"
+              href="/#how-it-works"
+              onClick={(event) => {
+                if (view !== 'home') {
+                  event.preventDefault();
+                  navigate('home');
+                  setTimeout(() => {
+                    document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' });
+                  }, 50);
+                }
               }}
             >
               How it works
@@ -205,6 +235,35 @@ export function App() {
           </nav>
         </div>
       </header>
+
+      {inReviewFlow ? (
+        <aside className="workflow-bar" aria-label="Review Progress">
+          <div className="workflow-bar__inner">
+            <ol className="workflow-steps">
+              <li className="workflow-step workflow-step--done">
+                <span>1. Choose Sample</span>
+                <span className="workflow-sep" aria-hidden="true">→</span>
+              </li>
+              <li className={`workflow-step ${view === 'extracting' ? 'workflow-step--active' : view === 'review' || view === 'analyzing' || view === 'result' ? 'workflow-step--done' : ''}`}>
+                <span>2. Extraction</span>
+                <span className="workflow-sep" aria-hidden="true">→</span>
+              </li>
+              <li className={`workflow-step ${view === 'review' ? 'workflow-step--active' : view === 'analyzing' || view === 'result' ? 'workflow-step--done' : ''}`}>
+                <span>3. Verify Terms</span>
+                <span className="workflow-sep" aria-hidden="true">→</span>
+              </li>
+              <li className={`workflow-step ${view === 'result' ? 'workflow-step--active' : ''}`}>
+                <span>4. Findings Report</span>
+              </li>
+            </ol>
+            {activeSample ? (
+              <span className="chip chip--scenario">
+                {activeSample.title}
+              </span>
+            ) : null}
+          </div>
+        </aside>
+      ) : null}
 
       <main id="main">
         {view === 'home' ? (
@@ -216,42 +275,48 @@ export function App() {
           />
         ) : null}
 
-        {view === 'examples' ? <Samples samples={samples} onStart={startSample} busyCaseId={busyCaseId} /> : null}
+        {view === 'examples' ? (
+          <Samples samples={samples} onStart={startSample} busyCaseId={busyCaseId} />
+        ) : null}
 
         {view === 'start' ? (
-          <div className="view__inner">
-            <h1 tabIndex={-1}>Personal document review</h1>
-            <Notice kind="incomplete" title="Personal document upload is not available yet.">
+          <div className="view">
+            <div className="view__inner">
+              <h1 tabIndex={-1}>Personal document review</h1>
+              <Notice kind="incomplete" title="Personal document upload is not available yet.">
+                <p>
+                  This public demo works with fictional samples only. When upload passes its privacy and testing
+                  gates, this page will offer a personal review.
+                </p>
+              </Notice>
               <p>
-                This public demo works with fictional samples only. When upload passes its privacy and testing
-                gates, this page will offer a personal review.
+                <button className="button" onClick={() => navigate('examples')}>
+                  Try a fictional sample instead
+                </button>
               </p>
-            </Notice>
-            <p>
-              <button className="button" onClick={() => navigate('examples')}>
-                Try a fictional sample instead
-              </button>
-            </p>
+            </div>
           </div>
         ) : null}
 
         {view === 'extracting' ? (
-          <div className="view__inner pending-panel">
-            <h1 tabIndex={-1}>
-              Reading the documents
-            </h1>
-            <p>
-              <span className="spinner" aria-hidden="true" />
-              <span role="status">{activeSample ? activeSample.title : 'Your sample'} is being read…</span>
-            </p>
-            <p>The next step is your review of what we read.</p>
-            {extractionError ? (
-              <ErrorPanel message={extractionError}>
-                <button className="button" onClick={() => navigate('examples')}>
-                  Choose another sample
-                </button>
-              </ErrorPanel>
-            ) : null}
+          <div className="view">
+            <div className="view__inner pending-panel">
+              <div className="spinner" aria-hidden="true" />
+              <h1 tabIndex={-1}>
+                Reading the documents
+              </h1>
+              <p role="status">
+                {activeSample ? activeSample.title : 'Your sample'} is being read…
+              </p>
+              <p>Extracting 33 material components across salary, dates, benefits, and clauses.</p>
+              {extractionError ? (
+                <ErrorPanel message={extractionError}>
+                  <button className="button" onClick={() => navigate('examples')}>
+                    Choose another sample
+                  </button>
+                </ErrorPanel>
+              ) : null}
+            </div>
           </div>
         ) : null}
 
@@ -259,7 +324,7 @@ export function App() {
           <>
             {extractionStatus === 'partial' ? (
               <div className="view" style={{ paddingBottom: 0 }}>
-                <div className="view__inner">
+                <div className="view__inner view__inner--wide">
                   <Notice kind="incomplete" role="status" title="Partial extraction">
                     {extractionNotices.map((notice) => (
                       <p key={notice}>{notice}</p>
@@ -281,35 +346,39 @@ export function App() {
         ) : null}
 
         {view === 'review' && !issued ? (
-          <div className="view__inner">
-            <h1 tabIndex={-1}>
-              Nothing to review yet
-            </h1>
-            <Notice kind="incomplete" role="status">
-              <p>{RELOAD_COPY}</p>
-            </Notice>
-            <button className="button" onClick={() => navigate('examples')}>
-              Choose a sample
-            </button>
+          <div className="view">
+            <div className="view__inner">
+              <h1 tabIndex={-1}>
+                Nothing to review yet
+              </h1>
+              <Notice kind="incomplete" role="status">
+                <p>{RELOAD_COPY}</p>
+              </Notice>
+              <button className="button" onClick={() => navigate('examples')}>
+                Choose a sample
+              </button>
+            </div>
           </div>
         ) : null}
 
         {view === 'analyzing' ? (
-          <div className="view__inner pending-panel">
-            <h1 tabIndex={-1}>
-              Comparing written terms and checking sources
-            </h1>
-            <p>
-              <span className="spinner" aria-hidden="true" />
-              <span role="status">This usually takes a moment…</span>
-            </p>
-            {analysisError ? (
-              <ErrorPanel message={analysisError}>
-                <button className="button" onClick={() => navigate('examples')}>
-                  Start a fresh review
-                </button>
-              </ErrorPanel>
-            ) : null}
+          <div className="view">
+            <div className="view__inner pending-panel">
+              <div className="spinner" aria-hidden="true" />
+              <h1 tabIndex={-1}>
+                Comparing written terms and checking sources
+              </h1>
+              <p role="status">
+                Analyzing explicit terms deterministically and querying official labor rules…
+              </p>
+              {analysisError ? (
+                <ErrorPanel message={analysisError}>
+                  <button className="button" onClick={() => navigate('examples')}>
+                    Start a fresh review
+                  </button>
+                </ErrorPanel>
+              ) : null}
+            </div>
           </div>
         ) : null}
 
@@ -318,27 +387,39 @@ export function App() {
         ) : null}
 
         {view === 'result' && !report ? (
-          <div className="view__inner">
-            <h1 tabIndex={-1}>
-              No report to show
-            </h1>
-            <Notice kind="incomplete" role="status">
-              <p>{RELOAD_COPY}</p>
-            </Notice>
-            <button className="button" onClick={() => navigate('examples')}>
-              Choose a sample
-            </button>
+          <div className="view">
+            <div className="view__inner">
+              <h1 tabIndex={-1}>
+                No report to show
+              </h1>
+              <Notice kind="incomplete" role="status">
+                <p>{RELOAD_COPY}</p>
+              </Notice>
+              <button className="button" onClick={() => navigate('examples')}>
+                Choose a sample
+              </button>
+            </div>
           </div>
         ) : null}
       </main>
 
       <footer className="app-footer">
         <div className="app-footer__inner">
-          <p>
-            WazehTerms reviews written terms only. It does not verify employers, visas, or documents, and it is not
-            legal advice — official help may still be needed. Findings cite approved official sources; personal
-            document upload stays closed until its release gates pass.
-          </p>
+          <div className="footer-copy">
+            <p>
+              <strong>WazehTerms</strong> reviews written employment terms before signing. It does not verify employers, visas, or documents, and it is not
+              legal advice — official help may still be needed. Findings cite approved official sources; personal
+              document upload stays closed until its release gates pass.
+            </p>
+          </div>
+          <div className="footer-links">
+            <a href="https://console.cloud.google.com/terms/data-processing" target="_blank" rel="noreferrer">
+              Privacy & Provider
+            </a>
+            <a href="https://www.sanity.io/docs" target="_blank" rel="noreferrer">
+              Source Policy
+            </a>
+          </div>
         </div>
       </footer>
     </>

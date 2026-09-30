@@ -2,6 +2,7 @@
  * Review (spec §4.5): 12 groups / all active components, three provenance
  * layers, per-kind correction editor, expiry warning, fields-first mobile with
  * a full-screen page panel and focus restoration.
+ * Phase 12: Modern dark mode dual-pane workspace with refined visual hierarchy.
  */
 import { useEffect, useRef, useState } from 'react';
 
@@ -48,9 +49,32 @@ export function Review({ issued, previewUrls, corrections, onCorrect, onUndoCorr
 
   return (
     <div className="view">
-      <div className="view__inner" style={{ maxWidth: 'none' }}>
-        <h1 tabIndex={-1}>Check what we read</h1>
-        <p>Compare each value with the original page. Your changes remain labelled as yours.</p>
+      <div className="view__inner view__inner--wide">
+        <header className="review-header-bar">
+          <div>
+            <span className="eyebrow">Step 3 of 4: Document Verification</span>
+            <h1 tabIndex={-1}>Check what we read</h1>
+            <p style={{ margin: 0 }}>
+              Compare each value with the original page. Your changes remain labelled as yours.
+            </p>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+            <span className="chip" role="status">
+              <span aria-hidden="true">⏱️</span> {expiry}
+            </span>
+            {needsCount > 0 ? (
+              <span className="needs-check">
+                {needsCount} field{needsCount === 1 ? '' : 's'} need your check
+              </span>
+            ) : (
+              <span className="chip chip--state-found">
+                <span aria-hidden="true">✓</span> Clean extraction
+              </span>
+            )}
+          </div>
+        </header>
+
         {expired ? (
           <Notice kind="error" role="alert" title="This review can no longer be continued.">
             <p>The time window for this extraction ended. Start again to get a fresh review.</p>
@@ -60,17 +84,21 @@ export function Review({ issued, previewUrls, corrections, onCorrect, onUndoCorr
           </Notice>
         ) : (
           <>
-            <p role="status">{expiry}</p>
             {needsCount > 0 ? (
               <Notice kind="incomplete" role="status" title={`${needsCount} field${needsCount === 1 ? '' : 's'} need your check`}>
-                Unclear or unreadable values are marked below; correcting them is optional but helps the analysis.
+                <p>
+                  Unclear or unreadable values are marked below; correcting them is optional but helps the comparison engine produce accurate findings.
+                </p>
               </Notice>
             ) : null}
             {unreadablePages.length > 0 ? (
               <Notice kind="incomplete" role="status" title="Some pages could not be read.">
-                {unreadablePages.join(', ')} — fields on those pages may be incomplete.
+                <p>
+                  {unreadablePages.join(', ')} — fields on those pages may be incomplete.
+                </p>
               </Notice>
             ) : null}
+
             <ReviewBody
               issued={issued}
               previewUrls={previewUrls}
@@ -78,16 +106,16 @@ export function Review({ issued, previewUrls, corrections, onCorrect, onUndoCorr
               onCorrect={onCorrect}
               onUndoCorrection={onUndoCorrection}
             />
-            <p>
-              <button className="button button--full" onClick={onContinue}>
-                Continue to findings
+
+            <div style={{ marginTop: '2.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem' }}>
+              <button className="button button--full" onClick={onContinue} style={{ maxWidth: '28rem' }}>
+                <span>Continue to findings</span>
+                <span aria-hidden="true">→</span>
               </button>
-            </p>
-            <p>
               <button className="link-button" onClick={onReset}>
                 Start over with a different document
               </button>
-            </p>
+            </div>
           </>
         )}
       </div>
@@ -121,7 +149,6 @@ function ReviewBody({
 
   const closePane = () => {
     setPaneOpen(false);
-    // Restore focus to the triggering control (spec §7).
     window.setTimeout(() => paneTrigger.current?.focus(), 0);
   };
 
@@ -134,32 +161,48 @@ function ReviewBody({
 
   return (
     <div className="review-layout">
+      {/* Left Pane: Sticky Document Viewer */}
       <div className="doc-pane" hidden={!paneOpen}>
         <div className="doc-pane__toolbar">
-          {previewUrls.map((entry) => (
-            <button
-              key={entry.role}
-              className="button button--secondary"
-              aria-pressed={activeRole === entry.role}
-              onClick={() => {
-                setActiveRole(entry.role);
-                setPageNumber(1);
-              }}
-            >
-              {roleLabel(entry.role)}
-            </button>
-          ))}
-          <span>Page {pageNumber}</span>
-          <button className="link-button" onClick={closePane} ref={paneClose}>
-            Back to this field
+          <div style={{ display: 'flex', gap: '0.4rem' }}>
+            {previewUrls.map((entry) => (
+              <button
+                key={entry.role}
+                className={`button ${activeRole === entry.role ? 'button--secondary' : 'button--ghost'}`}
+                style={{ padding: '0.35rem 0.8rem', minHeight: '38px', fontSize: '0.88rem' }}
+                aria-pressed={activeRole === entry.role}
+                onClick={() => {
+                  setActiveRole(entry.role);
+                  setPageNumber(1);
+                }}
+              >
+                {roleLabel(entry.role)}
+              </button>
+            ))}
+          </div>
+
+          <span className="chip" style={{ marginLeft: 'auto' }}>Page {pageNumber}</span>
+
+          <button className="link-button" onClick={closePane} ref={paneClose} style={{ fontSize: '0.85rem' }}>
+            Close viewer
           </button>
         </div>
-        {urlWithPage ? <iframe title={`${roleLabel(activeRole)} document, page ${pageNumber}`} src={urlWithPage} /> : null}
+        {urlWithPage ? (
+          <iframe
+            title={`${roleLabel(activeRole)} document, page ${pageNumber}`}
+            src={urlWithPage}
+          />
+        ) : null}
       </div>
+
       {!paneOpen ? (
-        <div className="doc-pane">
-          <p>Original wording lives one click away: each field has a “View page” control.</p>
-          <div className="doc-pane__toolbar">
+        <div className="doc-pane" style={{ textAlign: 'center', padding: '2rem 1.5rem' }}>
+          <span style={{ fontSize: '2rem', display: 'block', marginBottom: '0.5rem' }} aria-hidden="true">📄</span>
+          <h3 style={{ margin: '0 0 0.5rem', color: 'var(--ink)' }}>Original Document View</h3>
+          <p style={{ fontSize: '0.92rem', marginBottom: '1.25rem' }}>
+            Original wording lives one click away: click any field's “View page” control, or open a document below.
+          </p>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
             {previewUrls.map((entry) => (
               <button
                 key={entry.role}
@@ -177,6 +220,7 @@ function ReviewBody({
         </div>
       ) : null}
 
+      {/* Right Pane: Extracted Fields by Group */}
       <div className="review-layout__fields">
         {FIELD_GROUPS.map((group, index) => {
           const groupFields = issued.documents.flatMap((document) =>
@@ -193,7 +237,11 @@ function ReviewBody({
                   <strong>{group.heading}</strong>{' '}
                   <span className="sr-only">— {groupFields.length} fields</span>
                 </span>
-                {groupNeeds > 0 ? <span className="needs-check">{groupNeeds} need your check</span> : <span className="chip">{groupFields.length}</span>}
+                {groupNeeds > 0 ? (
+                  <span className="needs-check">{groupNeeds} need your check</span>
+                ) : (
+                  <span className="chip">{groupFields.length}</span>
+                )}
               </summary>
               {groupFields.map(({ document, field }) => (
                 <FieldCard
@@ -237,6 +285,7 @@ function FieldCard({
   const [editing, setEditing] = useState(false);
   const firstPage = field.evidence[0]?.page;
   const label = FIELD_LABELS[field.fieldKey] ?? field.fieldKey;
+
   return (
     <div className="fieldcard">
       <div className="fieldcard__head">
@@ -246,17 +295,25 @@ function FieldCard({
         </span>
         <span className={STATE_CHIP_CLASS[field.state]}>{STATE_LABELS[field.state]}</span>
       </div>
-      <span className="chip">{roleLabel(document.role)}</span>
+
+      <div style={{ marginBottom: '0.4rem' }}>
+        <span className={`chip ${document.role === 'offer' ? 'chip--offer' : 'chip--contract'}`}>
+          {roleLabel(document.role)}
+        </span>
+      </div>
+
       {field.rawText ? (
         <p className="typed-value">
           <strong>Original wording: </strong> {field.rawText}
         </p>
       ) : null}
+
       {field.value && field.state === 'present' ? (
         <p className="typed-value">
           <strong>What we read: </strong> {formatValue(field.value)}
         </p>
       ) : null}
+
       {correctedKey ? (
         <CorrectionQuote>
           {correctedKey.value ? formatValue(correctedKey.value) : STATE_LABELS[correctedKey.state]}{' '}
@@ -268,16 +325,21 @@ function FieldCard({
           </button>
         </CorrectionQuote>
       ) : null}
+
       {field.evidence.map((evidence) => (
         <EvidenceQuote key={`${evidence.documentId}:${evidence.page}:${evidence.quote.slice(0, 12)}`} evidence={evidence} />
       ))}
+
       {field.qualityNotes.length > 0 ? (
-        <p className="evidence__label">Notes: {field.qualityNotes.join(', ')}</p>
+        <p className="evidence__label" style={{ color: 'var(--incomplete-ink)' }}>
+          Notes: {field.qualityNotes.join(', ')}
+        </p>
       ) : null}
-      <div className="doc-pane__toolbar">
+
+      <div className="doc-pane__toolbar" style={{ marginTop: '0.75rem' }}>
         {firstPage ? (
-                  <button className="link-button" onClick={() => onViewPage(firstPage)}>
-            View page {firstPage}
+          <button className="link-button" onClick={() => onViewPage(firstPage)}>
+            <span aria-hidden="true">🔍</span> View page {firstPage}
           </button>
         ) : null}
         {!correctedKey && field.state !== 'unreadable' ? (
@@ -286,6 +348,7 @@ function FieldCard({
           </button>
         ) : null}
       </div>
+
       {editing ? (
         <CorrectionEditor
           field={field}
@@ -327,6 +390,13 @@ function CorrectionEditor({
 
   return (
     <form
+      style={{
+        marginTop: '0.85rem',
+        padding: '1rem',
+        background: 'var(--surface-elevated)',
+        borderRadius: 'var(--radius-sm)',
+        border: '1px solid var(--rule)',
+      }}
       onSubmit={(event) => {
         event.preventDefault();
         save();
@@ -341,15 +411,17 @@ function CorrectionEditor({
         </select>
       </label>
       {state === 'present' ? <ValueEditor value={value} onChange={setValue} /> : null}
-      <div className="doc-pane__toolbar">
-        <button className="button" type="submit">
+      <div className="doc-pane__toolbar" style={{ marginTop: '0.75rem' }}>
+        <button className="button" type="submit" style={{ minHeight: '38px', padding: '0.4rem 1rem' }}>
           Save correction
         </button>
-        <button className="button button--secondary" type="button" onClick={onCancel}>
+        <button className="button button--secondary" type="button" onClick={onCancel} style={{ minHeight: '38px', padding: '0.4rem 1rem' }}>
           Cancel
         </button>
       </div>
-      <p className="evidence__label">Saved separately from the original. The page evidence above stays as extracted.</p>
+      <p className="evidence__label" style={{ marginTop: '0.5rem', marginBottom: 0 }}>
+        Saved separately from the original. The page evidence above stays as extracted.
+      </p>
     </form>
   );
 }
@@ -411,12 +483,10 @@ function ValueEditor({ value, onChange }: { value: NormalizedValue | null; onCha
       );
     case 'duration':
       return (
-        <>
-          <label className="field">
-            <span className="field__label">Amount</span>
-            <input className="input" value={value.amount} onChange={(event) => onChange({ ...value, amount: event.target.value })} />
-          </label>
-        </>
+        <label className="field">
+          <span className="field__label">Amount</span>
+          <input className="input" value={value.amount} onChange={(event) => onChange({ ...value, amount: event.target.value })} />
+        </label>
       );
     case 'benefit_state':
       return (
@@ -449,12 +519,4 @@ function ValueEditor({ value, onChange }: { value: NormalizedValue | null; onCha
         </label>
       );
   }
-}
-
-export function reviewDocumentRoles(issued: IssuedExtraction): string[] {
-  return issued.documents.map((document) => document.role);
-}
-
-export function documentOf(issued: IssuedExtraction, role: string): IssuedDocument | undefined {
-  return issued.documents.find((document) => document.role === role);
 }

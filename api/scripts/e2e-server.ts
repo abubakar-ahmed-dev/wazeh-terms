@@ -12,7 +12,7 @@
  * case context needs to leak through the Gemini service interface.
  */
 import { createHash } from 'node:crypto';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -24,7 +24,12 @@ import type { GeminiExtractionRequest, GeminiExtractionService } from '../src/se
 import { logStartup } from '../src/logging.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-const corpusDir = path.resolve(here, '../../../test-corpus');
+const corpusDirCandidates = [
+  path.resolve(here, '../../test-corpus'),
+  path.resolve(here, '../../../test-corpus'),
+  path.resolve(process.cwd(), 'test-corpus'),
+];
+const corpusDir = corpusDirCandidates.find((dir) => existsSync(dir)) ?? path.resolve(here, '../../test-corpus');
 
 function fixtureSha256(file: string): string {
   return createHash('sha256').update(readFileSync(file)).digest('hex');
