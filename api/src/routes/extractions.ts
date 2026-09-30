@@ -59,8 +59,22 @@ export function extractionsRouter(deps: RouteDeps): Router {
 
     if (isMultipart) {
       // Custom-upload gate: closed means every arbitrary file is rejected
-      // before any parsing or buffering (docs/API.md §3).
+      // before any parsing or buffering (docs/API.md §3). The in-flight
+      // upload stream is drained (bounded) first, or the error response
+      // collides with the still-open upload and resets the client's
+      // connection instead of delivering the documented 403 envelope.
       if (!config.customUploadEnabled) {
+        await new Promise<void>((resolve) => {
+          if (req.readableEnded || req.destroyed) {
+            resolve();
+            return;
+          }
+          const timer = setTimeout(resolve, 2_000);
+          timer.unref();
+          req.once('close', resolve);
+          req.once('error', resolve);
+          req.resume();
+        });
         throw new HttpError(403, 'CUSTOM_UPLOAD_DISABLED', 'Personal document upload is not available right now.');
       }
 
