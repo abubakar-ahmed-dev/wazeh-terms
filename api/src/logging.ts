@@ -35,3 +35,8 @@ export function logRequest(entry: RequestLogEntry): void {
 export function logStartup(fields: Record<string, unknown>): void {
   emit('info', 'startup', fields);
 }
+
+/** Coarse operational event (stage/result codes only — never content). */
+export function logEvent(event: string, fields: Record<string, unknown>): void {
+  emit('info', event, fields);
+}

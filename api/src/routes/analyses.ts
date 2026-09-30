@@ -15,6 +15,7 @@ import {
 } from '../contracts/index.js';
 import type { AppConfig } from '../config.js';
 import { HttpError } from '../errors.js';
+import { logEvent } from '../logging.js';
 import { compareDocuments } from '../compare/index.js';
 import { InvalidCorrectionError, reconcileCorrections } from '../services/analysis/reconcile.js';
 import { assembleReport } from '../services/analysis/report.js';
@@ -120,6 +121,21 @@ export function analysesRouter(deps: RouteDeps): Router {
           deadlineMs: deps.config.retrieval.timeoutMs,
         })
       : undefined;
+
+    // Coarse ops signal (SECURITY.md §6 log rules: stage/result codes only —
+    // no rule text, topics, or document content). Explains partial reports
+    // whose rule concerns were withheld.
+    if (retrieval) {
+      logEvent('retrieval_outcome', {
+        requestId: res.locals.requestId as string,
+        stage: retrieval.stage,
+        sourceFindings: retrieval.sourceFindings.length,
+        withheldCount: retrieval.withheld.length,
+        ...(retrieval.withheld.length > 0
+          ? { withheldReasons: [...new Set(retrieval.withheld.map((entry) => entry.reason))] }
+          : {}),
+      });
+    }
 
     const report = assembleReport({
       issued,
