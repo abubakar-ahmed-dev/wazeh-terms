@@ -7,12 +7,16 @@ import { Notice } from '../ui';
 export function Home({
   capabilityState,
   sampleModeEnabled,
+  customUploadEnabled,
   onTrySample,
+  onUploadClick,
   onRetryCapabilities,
 }: {
   capabilityState: 'loading' | 'ready' | 'error';
   sampleModeEnabled: boolean | null;
+  customUploadEnabled?: boolean | null;
   onTrySample: () => void;
+  onUploadClick?: () => void;
   onRetryCapabilities: () => void;
 }) {
   return (
@@ -24,7 +28,7 @@ export function Home({
           </span>
           <h1>Understand your job offer before you sign</h1>
           <p className="hero__lead">
-            WazehTerms reads the written terms in a fictional job offer and contract, shows you the exact wording it
+            WazehTerms reads the written terms in a job offer and contract, shows you the exact wording it
             found, and lists differences and questions to check — with references to approved official sources where
             they apply.
           </p>
@@ -35,7 +39,17 @@ export function Home({
                 <p>Please wait a moment.</p>
               </Notice>
             ) : capabilityState === 'ready' ? (
-              sampleModeEnabled ? (
+              customUploadEnabled ? (
+                <>
+                  <button className="button" onClick={onUploadClick}>
+                    <span>Review your documents</span>
+                    <span aria-hidden="true">→</span>
+                  </button>
+                  <button className="button button--secondary" onClick={onTrySample}>
+                    Try a sample review
+                  </button>
+                </>
+              ) : sampleModeEnabled ? (
                 <>
                   <button className="button" onClick={onTrySample}>
                     <span>Try a sample review</span>
@@ -71,9 +85,15 @@ export function Home({
           <p className="hero__sub">
             No account needed.
           </p>
-          <p className="hero__sub">
-            Personal document upload is not available yet — this public demo works with fictional samples only.
-          </p>
+          {customUploadEnabled ? (
+            <p className="hero__sub">
+              Custom PDF upload is enabled — upload your offer, contract, or both for automated verification.
+            </p>
+          ) : (
+            <p className="hero__sub">
+              Personal document upload is not available yet — this public demo works with fictional samples only.
+            </p>
+          )}
 
           {/* Interactive Offer vs Contract Preview Mockup */}
           <div className="hero-mockup" aria-label="Visual demonstration of offer versus contract comparison">

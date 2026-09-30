@@ -64,6 +64,29 @@ export function extractSample(sampleCaseId: string, signal?: AbortSignal): Promi
   });
 }
 
+export function extractCustom(
+  files: { offer?: File | null; contract?: File | null },
+  scope?: object,
+  signal?: AbortSignal,
+): Promise<ExtractionResponse> {
+  const formData = new FormData();
+  if (scope) {
+    formData.append('scope', JSON.stringify(scope));
+  }
+  if (files.offer) {
+    formData.append('offer', files.offer, files.offer.name);
+  }
+  if (files.contract) {
+    formData.append('contract', files.contract, files.contract.name);
+  }
+
+  return request<ExtractionResponse>('/api/v1/extractions', {
+    method: 'POST',
+    body: formData,
+    signal,
+  });
+}
+
 export function analyze(
   issuedExtraction: IssuedExtraction,
   proof: Proof,

@@ -25,6 +25,8 @@ export const ScopeSchema = z.strictObject({
   declaredRegime: DeclaredRegimeSchema,
   declaredWorkerCategory: DeclaredWorkerCategorySchema,
 });
+export type Scope = z.infer<typeof ScopeSchema>;
+
 
 export const DocumentRoleSchema = z.enum(['offer', 'contract']);
 export const ExtractionStatusSchema = z.enum(['completed', 'partial', 'failed']);

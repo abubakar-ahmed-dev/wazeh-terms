@@ -1,7 +1,8 @@
 /**
  * POST /api/v1/extractions — the first step of the documented flow
- * (docs/API.md §4): admit, extract through Gemini, validate, sign. While
- * `customUploadEnabled` is false, every arbitrary upload is rejected with
+ * (docs/API.md §4): admit, extract through Gemini, validate, sign. Supports
+ * allowlisted synthetic samples (JSON) and custom document uploads (multipart).
+ * While `customUploadEnabled` is false, every arbitrary upload is rejected with
  * `403 CUSTOM_UPLOAD_DISABLED` before anything is read or buffered.
  */
 import { Router, type Request, type Response } from 'express';
@@ -9,7 +10,7 @@ import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { z } from 'zod';
 
-import { signIssuedExtraction, verifyIssuedExtraction } from '../contracts/index.js';
+import { signIssuedExtraction, verifyIssuedExtraction, type Scope } from '../contracts/index.js';
 import { isWellFormedSampleCaseId, findSampleEntry, type SampleManifest } from '../content/samples-manifest.js';
 import { HttpError } from '../errors.js';
 import type { AppConfig } from '../config.js';
@@ -17,6 +18,7 @@ import type { GeminiExtractionService } from '../services/gemini/types.js';
 import { NothingUsableError, mapModelExtraction, type MapperDocumentInput } from '../services/extraction/mapper.js';
 import { PdfStructureError, inspectPdf } from '../services/pdf-structure.js';
 import { extractPdfPageTexts } from '../services/evidence/pdf-text.js';
+import { parseMultipartUpload } from '../services/multipart.js';
 
 const SampleRequestBodySchema = z.strictObject({
   sampleCaseId: z.string().min(1).max(32),
@@ -41,13 +43,95 @@ export function extractionsRouter(deps: RouteDeps): Router {
     const { config, gemini, manifest } = deps;
     const startedAt = Date.now();
 
-    // Custom-upload gate: closed means every arbitrary file is rejected
-    // before any parsing or buffering (docs/API.md §3).
     const contentType = String(req.headers['content-type'] ?? '');
-    if (!config.customUploadEnabled && contentType.includes('multipart/form-data')) {
-      throw new HttpError(403, 'CUSTOM_UPLOAD_DISABLED', 'Personal document upload is not available right now.');
+    const isMultipart = contentType.includes('multipart/form-data');
+
+    const hmacSecret = config.hmac.secret;
+    // Missing server-side credentials fail closed before any provider call.
+    if (!config.gemini.apiKey || !hmacSecret) {
+      throw new HttpError(503, 'EXTRACTION_UNAVAILABLE', 'Extraction is temporarily unavailable.', {
+        retryable: true,
+      });
     }
 
+    if (isMultipart) {
+      // Custom-upload gate: closed means every arbitrary file is rejected
+      // before any parsing or buffering (docs/API.md §3).
+      if (!config.customUploadEnabled) {
+        throw new HttpError(403, 'CUSTOM_UPLOAD_DISABLED', 'Personal document upload is not available right now.');
+      }
+
+      const parsed = await parseMultipartUpload(req, {
+        maxBytesPerFile: config.limits.maxBytesPerFile,
+        maxTotalBytes: config.limits.maxTotalBytes,
+      });
+
+      const inputs: Array<MapperDocumentInput & { bytes: Buffer }> = [];
+      let totalBytes = 0;
+      for (const file of parsed.files) {
+        const bytes = file.buffer;
+        totalBytes += bytes.byteLength;
+        if (bytes.byteLength > config.limits.maxBytesPerFile) {
+          throw new HttpError(413, 'FILE_TOO_LARGE', `Uploaded ${file.role} exceeds the configured size limit.`);
+        }
+        if (totalBytes > config.limits.maxTotalBytes) {
+          throw new HttpError(413, 'REQUEST_TOO_LARGE', 'The request exceeds the configured total size limit.');
+        }
+        if (bytes.byteLength < MAGIC_PDF.byteLength || !bytes.subarray(0, MAGIC_PDF.byteLength).equals(MAGIC_PDF)) {
+          throw new HttpError(415, 'UNSUPPORTED_MEDIA_TYPE', `The uploaded ${file.role} file is not a readable PDF.`);
+        }
+
+        let structure;
+        try {
+          structure = await inspectPdf(bytes);
+        } catch (error) {
+          if (error instanceof PdfStructureError) {
+            if (error.kind === 'encrypted') {
+              throw new HttpError(415, 'UNSUPPORTED_MEDIA_TYPE', `The uploaded ${file.role} file is password protected.`);
+            }
+            throw new HttpError(422, 'UNREADABLE_DOCUMENT', `The uploaded ${file.role} file could not be read.`);
+          }
+          throw error;
+        }
+
+        if (structure.pageCount > config.limits.maxPagesPerPdf) {
+          throw new HttpError(413, 'TOO_MANY_PAGES', `The uploaded ${file.role} exceeds the configured page limit.`);
+        }
+
+        let pageTexts: Array<string | null>;
+        try {
+          pageTexts = await extractPdfPageTexts(bytes, { maxPages: config.limits.maxPagesPerPdf });
+        } catch {
+          pageTexts = Array.from({ length: structure.pageCount }, () => null);
+        }
+
+        inputs.push({
+          role: file.role,
+          pdfBytes: bytes,
+          pageCount: structure.pageCount,
+          pageTexts,
+          bytes,
+        });
+      }
+
+      const notices = [
+        'Documents were processed transiently in memory for extraction.',
+        'No documents or personal identifiers are stored by WazehTerms.',
+      ];
+
+      return runExtractionPipeline({
+        inputs,
+        scope: parsed.scope,
+        sourceMode: 'custom',
+        notices,
+        startedAt,
+        config,
+        gemini,
+        res,
+      });
+    }
+
+    // Sample mode:
     if (!config.sampleModeEnabled) {
       throw new HttpError(503, 'EXTRACTION_UNAVAILABLE', 'Sample review is not available on this deployment.', {
         retryable: true,
@@ -66,14 +150,6 @@ export function extractionsRouter(deps: RouteDeps): Router {
       throw new HttpError(400, 'BAD_REQUEST', 'Unknown sample.');
     }
 
-    // Missing server-side credentials fail closed before any provider call.
-    if (!config.gemini.apiKey || !config.hmac.secret) {
-      throw new HttpError(503, 'EXTRACTION_UNAVAILABLE', 'Extraction is temporarily unavailable.', {
-        retryable: true,
-      });
-    }
-
-    // Load and admit the fixture bytes.
     const inputs: Array<MapperDocumentInput & { bytes: Buffer }> = [];
     let totalBytes = 0;
     for (const document of entry.documents) {
@@ -109,9 +185,6 @@ export function extractionsRouter(deps: RouteDeps): Router {
         throw new HttpError(413, 'TOO_MANY_PAGES', 'The sample exceeds the configured page limit.');
       }
 
-      // Text layer for evidence corroboration (Phase 04). Extracted once,
-      // bounded by the admitted page count; failure degrades to all-null
-      // pages rather than blocking extraction.
       let pageTexts: Array<string | null>;
       try {
         pageTexts = await extractPdfPageTexts(bytes, { maxPages: config.limits.maxPagesPerPdf });
@@ -128,6 +201,35 @@ export function extractionsRouter(deps: RouteDeps): Router {
       });
     }
 
+    const notices = [
+      'These are fictional synthetic sample documents; all names and figures are invented.',
+      'Documents are sent to the configured model provider for extraction.',
+    ];
+
+    return runExtractionPipeline({
+      inputs,
+      scope: entry.scope,
+      sourceMode: 'sample',
+      notices,
+      startedAt,
+      config,
+      gemini,
+      res,
+    });
+  }
+
+  async function runExtractionPipeline(args: {
+    inputs: Array<MapperDocumentInput & { bytes: Buffer }>;
+    scope: Scope;
+    sourceMode: 'sample' | 'custom';
+    notices: string[];
+    startedAt: number;
+    config: AppConfig;
+    gemini: GeminiExtractionService;
+    res: Response;
+  }): Promise<void> {
+    const { inputs, scope, sourceMode, notices, startedAt, config, gemini, res } = args;
+
     // One bounded provider call for the pair (ADR-003).
     const remainingDeadline = config.limits.applicationDeadlineMs - (Date.now() - startedAt);
     const outcome = await gemini.extract({
@@ -143,11 +245,6 @@ export function extractionsRouter(deps: RouteDeps): Router {
         stage: 'extraction',
       });
     }
-
-    const notices = [
-      'These are fictional synthetic sample documents; all names and figures are invented.',
-      'Documents are sent to the configured model provider for extraction.',
-    ];
 
     let mapped;
     try {
@@ -168,21 +265,28 @@ export function extractionsRouter(deps: RouteDeps): Router {
       schemaVersion: 1 as const,
       issuedAt: issuedAt.toISOString(),
       expiresAt: expiresAt.toISOString(),
-      scope: entry.scope,
-      sourceMode: 'sample' as const,
+      scope,
+      sourceMode,
       documents: mapped.documents.map((entry2) => entry2.document),
     };
 
+    const secret = config.hmac.secret;
+    if (!secret) {
+      throw new HttpError(503, 'EXTRACTION_UNAVAILABLE', 'Extraction is temporarily unavailable.', {
+        retryable: true,
+      });
+    }
+
     const proof = signIssuedExtraction(issuedExtraction, {
       keyId: config.hmac.keyId,
-      secret: config.hmac.secret,
+      secret,
     });
 
     // Self-check: the proof must verify against the exact returned payload.
     const selfCheck = verifyIssuedExtraction(
       issuedExtraction,
       proof,
-      [{ keyId: config.hmac.keyId, secret: config.hmac.secret }],
+      [{ keyId: config.hmac.keyId, secret }],
       Date.now(),
     );
     if (!selfCheck.ok) {

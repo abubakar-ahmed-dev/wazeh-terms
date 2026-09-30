@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@google/genai": "^2.24.0",
+    "busboy": "^1.6.0",
     "dotenv": "^16.4.5",
     "express": "^5.1.0",
     "pdf-lib": "^1.17.1",
@@ -31,6 +32,7 @@
     "zod": "^4.0.0"
   },
   "devDependencies": {
+    "@types/busboy": "^1.5.4",
     "@types/express": "^5.0.1",
     "@types/node": "^22.15.0",
     "@types/supertest": "^7.2.1",
