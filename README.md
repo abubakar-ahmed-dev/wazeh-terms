@@ -1,208 +1,230 @@
 # WazehTerms
 
-**Understand the terms before you sign.**
+**Understand your job offer before you sign.**
 
-WazehTerms is an employment-document review assistant for people in Pakistan considering private-sector work in the United Arab Emirates. It helps a worker read a job offer and employment contract, compare what each document says, and identify terms that deserve a question before signing.
+WazehTerms is an evidence-first employment document review app for people in Pakistan who are considering private-sector work in the United Arab Emirates. It reads a job offer and/or employment contract, extracts the written terms, shows the exact wording it found, compares the documents, and highlights differences or questions that deserve clarification before signing.
 
-The project is in **active development**. This README describes the accepted target MVP, not a claim that its routes, integrations, tests, or public deployment already work. Implementation proceeds phase by phase under `plans/` from the contracts in `docs/`; inspect the actual repository, its phase logs, and its test results before assuming any capability exists.
+The app is built for one careful use case: Pakistan to UAE mainland private-sector employment terms. It is not a lawyer, recruiter, visa checker, employer verifier, or fraud detector. Its job is narrower and practical: help a worker see what the documents actually say, where the wording comes from, and which points may need a question.
 
-## What the application does
+![WazehTerms homepage](public/images/homepage.png)
 
-A user can provide an offer, a contract, or both. WazehTerms is designed to:
+## Current Status
 
-1. Extract key employment terms with the page and exact passage supporting each value.
-2. Let the user review and correct the extracted terms.
-3. Compare an offer and contract field by field using application logic.
-4. Retrieve relevant official material from a curated knowledge base when a rule-based concern needs support.
-5. Present differences, unresolved wording, and source-backed concerns in plain language, with questions the user can ask the employer or recruitment intermediary.
+**WazehTerms is deployed and serving the public sample-only demo at <https://wazehterms-957765366699.asia-south1.run.app>** (Cloud Run, `asia-south1`, single origin for web + API per ADR-008; release record in `docs/DEPLOYMENT.md` §4).
 
-A single document can yield a summary of terms and questions to ask. A comparison requires two sufficiently readable documents. WazehTerms provides information for review; it does not verify an employer, authenticate a document, certify legal compliance, or replace advice from a qualified professional or relevant authority.
+As of September 30, 2026, the repository contains the complete MVP implementation:
 
-## Current scope
+- React/Vite web app with the Phase 12 dark visual design, guided navigation, fictional samples, upload/review flow, extraction review, findings dashboard, and responsive/accessibility checks.
+- Express/TypeScript API with signed extraction handoff, deterministic term comparison, Sanity-backed source retrieval checks, HMAC proof validation, structured errors, cancellation handling, and security headers.
+- Five allowlisted fictional sample cases for public demonstration and automated testing — all five verified on the live deployment.
+- Custom PDF upload implementation with streaming multipart parsing and in-memory previews.
+- Security hardening for rate limits, concurrency admission, log redaction, no persistent upload storage, CSP, same-origin API behavior, and zero-temp-file test coverage.
+- Live deployment: multi-stage Dockerfile, Cloud Run service with pinned Secret Manager bindings, staging-measured limits (45 s deadline, 15 s retrieval budget), rollback drill passed, and a verified source-backed concern on the live path — the worker-charge sample raises the official Article (6)(4) citation of UAE Federal Decree-Law 33/2021 (`docs/DEPLOYMENT.md` §4).
 
-| Area | Initial boundary |
+The runtime stays gated to the fictional-sample demo: `SAMPLE_MODE_ENABLED=true` and `CUSTOM_UPLOAD_ENABLED=false` in the deployed configuration. Upload support exists in the codebase, but enabling it for real documents waits on the provider data-handling review, privacy-notice approval, and remaining release gates (MT-10 in `plans/manual-tasks.md`); the public runtime advertises and enforces exactly what `/api/v1/capabilities` reports.
+
+## What It Does
+
+WazehTerms supports a simple review journey:
+
+1. Choose one of the fictional samples, or upload a job offer and/or employment contract when the runtime enables custom uploads.
+2. The API extracts important terms from the PDF documents.
+3. The review screen shows every extracted value with the page and quoted wording that supports it.
+4. The user can correct a misread value without overwriting the original signed extraction.
+5. The analysis step compares offer and contract terms with deterministic application logic.
+6. The report lists document mismatches, missing information, unclear wording, and source-backed concerns where approved official references apply.
+
+The app is designed to avoid false reassurance. If extraction, retrieval, citation verification, or applicability checks are incomplete, the result is explicitly partial. It should not tell a user that everything is fine when important checks did not finish.
+
+![WazehTerms sample cases](public/images/sample-page.jpg)
+
+## Review Scope
+
+The MVP focuses on readable English PDF documents for Pakistan-to-UAE mainland private-sector employment.
+
+It reviews terms such as:
+
+- Employer name, job title, location, start date, and contract duration.
+- Basic salary, allowances, total stated compensation, currency, and frequency.
+- Accommodation, transport, meals, medical coverage, travel, or return ticket wording.
+- Recruitment fees, visa or residency costs, medical costs, travel costs, deductions, and the stated payer.
+- Probation, working hours, overtime, notice, termination wording, signatures, dates, and annex references.
+
+It does not currently cover:
+
+- Domestic work, government work, free-zone-specific rules, or other destination countries.
+- Employer reputation, document authenticity, visa status, identity checks, or complaint filing.
+- Image uploads, Urdu explanation, or arbitrary public uploads until those flags pass their independent gates.
+- Broad legal compliance conclusions beyond the specific evidence-backed checks implemented.
+
+## Evidence-First Design
+
+WazehTerms treats evidence as a product requirement, not a cosmetic detail.
+
+Every extracted field has a state: `present`, `absent`, `unclear`, or `unreadable`. A present value needs a document ID, page number, and supporting quote. A correction records both the original extraction and the corrected value. The report must show which value was used.
+
+Findings are separated into clear categories:
+
+| Category | Meaning |
 | --- | --- |
-| Employment route | Pakistan to the UAE |
-| Worker category | UAE mainland private-sector, non-domestic employment, when the category can be established |
-| Decision point | Reviewing terms before signing |
-| Inputs | Readable PDF documents; image support requires its own extraction and quality checks |
-| Language | English analysis; other languages require separate validation before they are presented as supported |
-| Output | Document comparison, questions to ask, and carefully sourced rule concerns |
-| Data retention | Transient analysis; no account or archive of personal documents in the initial product |
-| Public starting mode | Five server-allowlisted fictional samples; arbitrary files are rejected until the custom-upload gate passes |
+| Document mismatch | Two readable explicit terms differ in a meaningful way. |
+| Source-backed concern | An approved official source supports a specific concern about a term. |
+| Missing information | A material term cannot be located in a sufficiently readable document. |
+| Needs clarification | Wording is conditional, incomplete, or points to an unseen annex/policy. |
+| Unable to determine | The relevant text, document, or source support is not available. |
 
-The initial system does not cover domestic workers, government employment, free-zone-specific regimes, other destination countries, employer reputation, identity or visa verification, filing complaints, or broad legal compliance assessment. A document outside the supported category can still show extracted terms and direct document differences where those are readable; it must not receive a rule conclusion that assumes the wrong regime.
+Language models help with extraction and wording. They do not get to invent a mismatch, create a rule concern without source support, or hide uncertainty.
 
-The user supplies the intended employment category and destination. The application checks the documents for conflicting clues and treats uncertain or contradictory category information as unresolved. A logo, company name, or address alone is insufficient proof of the governing regime.
+## User Experience
 
-Readable English PDF and English reporting are the assured paths **after validation**. JPG/PNG and Urdu explanation each require separate testing before the UI advertises them. The deployed capabilities endpoint, not an earlier project plan, determines what the public can submit.
+The interface is built around a small number of focused screens:
 
-## Terms reviewed
+- Home page: introduces the app and shows a concrete salary mismatch example.
+- Upload and review: lets a user provide a job offer, an employment contract, or both when enabled.
+- Fictional samples: provides five invented cases for safe testing and demonstration.
+- How it works: explains the three-step flow and the privacy/evidence principles.
+- Review workspace: displays extracted terms, page quotes, user corrections, and analysis status.
+- Findings report: shows differences, questions to ask, and citations where source-backed checks apply.
 
-The document model covers these groups. Each extracted value needs its original wording and location; a model-produced summary by itself is insufficient evidence.
+![WazehTerms upload screen](public/images/upload-page.jpg)
 
-| Group | Examples |
-| --- | --- |
-| Parties and role | Employer name, job title, work location |
-| Pay | Basic salary, each allowance, stated total, currency, payment frequency |
-| Benefits | Accommodation, meals, transport, medical coverage, travel or return ticket |
-| Worker costs | Recruitment charges, visa or residency charges, medical and travel costs, deductions, and the named payer |
-| Working terms | Start date, duration, probation, ordinary hours, overtime, notice, termination wording |
-| Completeness | Dates, signatures, document identifiers, references to annexes or policies |
+## Architecture
 
-Basic salary, allowances, and total compensation are distinct fields. Conditional benefits are represented as conditional; a reference to a separate policy is not assumed to grant or remove a benefit. Pakistan-side processing fees and UAE-side employer charges are also distinct categories, with separate actors and sources.
+WazehTerms is a monorepo with a React web client, Express API, Sanity-backed reference content, and a one-service Cloud Run deployment target.
 
-## Documented v1 review flow
+| Layer | Technology | Role |
+| --- | --- | --- |
+| Web | React 19, TypeScript, Vite | Public UI, sample selection, upload/review flow, findings display. |
+| API | Node.js 22, Express 5, TypeScript | Validation, extraction orchestration, signed handoff, comparison, report assembly. |
+| Extraction | Gemini document understanding | Reads bounded PDF input and returns structured fields validated by schemas. |
+| Knowledge | Sanity Content Lake and Sanity Context MCP | Curated official references, approved rules, and retrieval candidates. |
+| Deployment | Docker and Cloud Run | One public service for built web assets, `/api/v1/*`, and `/health`. |
 
-```mermaid
-flowchart TD
-    A["Allowlisted sample or gated upload"] --> B["Extract and sign original"]
-    B --> C["Review page evidence and corrections"]
-    C --> D["Analyze written terms and sources"]
-    D --> E{"Relevant checks complete?"}
-    E -->|"Yes"| F["Evidence-based report"]
-    E -->|"No"| G["Explicit partial report"]
+The browser holds selected files and signed extraction payloads in memory. The API does not create user accounts, worker databases, or permanent document archives. The knowledge system stores official/reference material only, not uploaded worker documents.
+
+## Repository Layout
+
+```text
+.
+|-- api/                 Express API, extraction, comparison, tests, fixtures
+|-- web/                 React/Vite frontend
+|-- sanity-studio/       Sanity schemas and content validation scripts
+|-- docs/                Product, API, security, testing, deployment, and blog docs
+|-- plans/               Phase plans, logs, implementation evidence, release notes
+|-- deploy/              Cloud Run environment and deploy script
+|-- public/images/       App screenshots used by documentation and blog content
+|-- Dockerfile           Production image build
+`-- package.json         Workspace scripts
 ```
 
-The UI reads `GET /api/v1/capabilities` and `GET /api/v1/samples`. If `customUploadEnabled` is false, the server rejects **every arbitrary user file** with `403 CUSTOM_UPLOAD_DISABLED`, even one described as fictional. A sample is selected only by an allowlisted `sampleCaseId`. In the target runtime, sample PDFs also go through Gemini extraction; hand-authored extractions belong in deterministic test fixtures, not an unlabelled runtime fallback.
+## Local Development
 
-`POST /api/v1/extractions` validates the PDF, processes bounded content inline through Gemini, and returns the original `IssuedExtractionV1` plus an HMAC proof and expiry. The browser holds that signed payload and the selected-file preview only in memory. The user checks the original page passages and records separate corrections. `POST /api/v1/analyses` receives the **unchanged original payload and proof** plus correction deltas. There is no application case database, server review session, or report-by-ID read; refreshing loses the review.
+Requirements:
 
-Application code validates, normalizes, and compares explicit terms. Basic salary, each allowance, stated total, currency, and frequency remain distinct. A language model may phrase an established finding, but cannot create a mismatch, change its category, or manufacture supporting evidence. A correction without documentary support remains labelled user supplied and cannot establish a confirmed mismatch alone.
+- Node.js 22 or newer
+- npm
+- Server-side credentials for live extraction/retrieval tests when running provider-backed flows
 
-Rule review is separate from document comparison. The server queries an application-facing **Knowledge Base-only Sanity Context MCP endpoint** for candidate material, then reads a matching approved, current canonical Sanity rule and exact source version/pinpoint. A concern is displayed only when the official passage, jurisdiction, worker category, responsible party, conditions, and dates are checked. If source retrieval is unavailable or applicability remains uncertain, substantiated document differences remain usable in an explicitly `partial` report, while the rule claim is withheld. `GET /health` is a minimal root-level probe; the public API is same-origin under `/api/v1` and returns `Cache-Control: no-store`.
+Install dependencies:
 
-### Finding categories
-
-| Category | When it applies |
-| --- | --- |
-| **Document mismatch** | Two readable, explicit terms differ in a meaningful way. Show both passages and pages. |
-| **Source-backed concern** | An applicable official source supports a specific concern about a document term. Show the source, pinpoint reference, scope, and date. |
-| **Missing information** | A material term cannot be located in a document that has been read sufficiently to make that observation. |
-| **Needs clarification** | Wording is conditional, incomplete, refers to an unseen annex, or admits multiple readings. |
-| **Unable to determine** | The relevant text is unreadable, a required document is missing, or source applicability cannot be established. |
-
-These categories can coexist. Absence in one document does not automatically prove a contradiction. Only after relevant checks complete without a flagged concern may the report say **“No concern detected in the fields checked.”** A partial report must identify omitted checks and cannot use that line as a whole-review reassurance.
-
-## Evidence contract
-
-The evidence model is a core product requirement. Implementation details may change, but these invariants should remain:
-
-- Each extracted field has a state: `present`, `absent`, `unclear`, or `unreadable`. A present value includes the document ID, page number, and verbatim passage. Absence is recorded only after the relevant readable pages have been checked.
-- Normalized values keep the original text. Monetary values carry amount, currency, frequency, and whether they are basic pay, an allowance, a total, or a charge. Costs also carry the stated payer.
-- A user correction records both the original extraction and the corrected value. The report shows which value was used for comparison.
-- Every mismatch identifies the fields compared, each document's evidence, and the comparison rule used. A missing term is never silently converted into an adverse term.
-- Every rule concern carries an internal rule ID, issuing authority, official URL, exact clause or page, jurisdiction, applicable worker category and actor, effective period where known, and source-check date. Unverified or superseded material cannot support a current definitive claim.
-- Retrieval text is treated as untrusted input. Instructions embedded in uploaded documents, web pages, or knowledge-base entries must not change the analysis policy or authorize tool use.
-- If a citation opens to a page that does not support the claim, the claim is withheld. A source's general reputation is not a substitute for a matching passage.
-
-The exact runtime schemas belong to `API.md`. A shortened view of one original field is:
-
-```ts
-type FieldState = "present" | "absent" | "unclear" | "unreadable";
-
-type EvidenceVerification = "matched_text" | "model_transcription";
-
-interface ExtractedField {
-  fieldKey: string;
-  instanceId: string;
-  state: FieldState;
-  rawText: string | null;
-  value: NormalizedValue | null; // discriminated union in API.md
-  evidence: Array<{
-    documentId: string;
-    page: number; // one-based
-    quote: string;
-    verification: EvidenceVerification;
-  }>;
-  qualityNotes: string[];
-}
+```powershell
+npm install
 ```
 
-Corrections are separate request objects keyed by existing `documentId` + `fieldKey` + `instanceId`; they do **not** live inside or overwrite the signed original. The 12 field groups contain **33 distinct component keys**; repeated allowances and deductions have distinct `instanceId` values. Money uses a decimal **string**, not a JavaScript float, with currency, frequency, component, and stated payer where established. A `model_transcription` passage is not an independently matched PDF quote. HMAC is an integrity check, not encryption, user authentication, or protection against replay within its short lifetime.
+Run the API and web client in development:
 
-## System design
+```powershell
+npm run dev
+```
 
-The intended application uses:
+Run validation:
 
-- **Web:** React, TypeScript, Vite, Tailwind CSS, and shadcn/ui for uploads, extraction review, and an evidence-first report.
-- **API:** Node.js, TypeScript, and Express for validation, orchestration, comparison, and report assembly.
-- **Document extraction:** Gemini document understanding with structured output. Model output is schema validated before it enters comparison logic.
-- **Knowledge:** Sanity Content Lake for curated source and rule records; a Sanity Knowledge Base exposed through Sanity Context MCP for agent retrieval.
-- **Hosting:** Built React assets and the Express API in one Cloud Run service under one origin; Sanity Studio is a separate editor surface.
+```powershell
+npm run typecheck
+npm run lint
+npm run test
+npm run build
+```
 
-The knowledge layer stores public or otherwise authorized reference material and its metadata. It must not receive uploaded offers, contracts, personal identifiers, or raw analysis logs. The Context MCP is a read-only retrieval interface; the application owns the model calls, tool orchestration, applicability checks, and user-facing decisions.
+Useful workspace scripts:
 
-The intended application Context MCP endpoint has **Knowledge Base sources only**. A filtered projection of approved dataset records may *feed the Knowledge Base*, but the dataset source must not be attached directly to the agent endpoint: that would switch it to GROQ mode. The coding editor's Sanity MCP connection is distinct from this runtime endpoint. Verify the runtime endpoint's tools and a live known-answer read before claiming source retrieval works. Knowledge Base entries can change after a rebuild; the curated rule record and exact official pinpoint still need independent verification.
+```powershell
+npm run dev -w api
+npm run dev -w web
+npm run live:sample -w api
+npm run live:retrieval -w api
+npm run validate:content -w api
+```
 
-### Reference content
+Provider-backed scripts require the relevant environment variables. Do not put secrets in client-side Vite variables or commit `.env` files.
 
-The knowledge model separates:
+## Runtime Configuration
 
-- `authority`: issuer name, official domain, and jurisdiction.
-- `sourceDocument`: official URL or authorized file, title, issuer, publication and effective dates, scope, status, and last checked date.
-- `rule`: narrowly phrased claim, topic, responsible actor, jurisdiction, worker category, conditions, effective period, source ID, and pinpoint clause or page.
-- `contractFieldDefinition`: canonical field name, common labels, expected type, comparison behavior, and relevant rule topics.
-- `resolutionNote`: documented handling of conflicting or superseded sources.
+The deployment contract is documented in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md). Key settings include:
 
-Official Pakistan and UAE sources should be recorded separately. The links in `SOURCES.md` are **research candidates**, not automatically approved rules. Some BEOE material was inaccessible to automated fetches during planning and needs manual inspection of the real official page/PDF and supporting passage before approval. International material can provide clearly labelled supplementary guidance; it does not become binding national law because it appears in a Knowledge Base. Source changes require reviewing affected versioned rules and refreshing or rebuilding the KB, then checking the live retrieved entry.
-
-## Privacy, security, and reliability
-
-Employment documents often include sensitive personal information. The interface should ask users to redact identity numbers, signatures, addresses, and other unnecessary identifiers before upload. Public samples must use fictional people and employers and be visibly marked as synthetic. Real arbitrary uploads remain disabled until the provider account/API behavior, privacy notice, cleanup, logging, consent, and limits are reviewed and tested.
-
-The API should enforce content-type and file-signature checks, measured size and page limits, bounded processing time, throttling, and controlled concurrency. Credentials stay server-side. Do not log raw text, identifiers, quotes, signed extractions, prompts, or secrets, and remove any local temporary files on success, failure, cancellation, and timeout. The MVP sends bounded PDFs **inline** to Gemini, without the provider Files API; inline processing still has provider-specific data-handling behavior and must not be advertised as zero retention. Adding provider-side uploads needs a new lifecycle, deletion handling, notice, tests, and architectural review.
-
-If extraction, source retrieval, or explanation fails, the report must say which part could not be completed. A partial result must not be presented as a complete review. The service should never use an overall "safe", "fraudulent", or "legal" badge.
-
-## Sample data and evaluation
-
-The planned corpus has **15 labelled synthetic cases**: four consistent pairs, six mismatch pairs, three costs/deductions or missing-term cases, and two low-quality/incomplete/adversarial cases. Five are reproducible public demonstration samples. Public job listings may inform plausible attributes but are neither signed offers nor contracts. Real worker documents require a separate consent and data-handling process before evaluation.
-
-Each case should carry a machine-readable expected result, including extracted values, seeded differences, expected finding categories, relevant source IDs, and expected abstentions. Representative cases include:
-
-- Matching offer and contract terms.
-- An explicit salary or benefit change, with both source passages.
-- A stated worker-paid charge whose treatment depends on the payer and applicable jurisdiction.
-- A missing or conditional benefit that requires a question rather than an invented comparison.
-- An unreadable, unsupported, or out-of-scope document that triggers a limited result.
-- A document containing instructions aimed at the model, which must be treated as document text.
-
-Evaluation should separately record extraction correctness, mismatch detection, unsupported claims, citation support, latency, and appropriate abstention. Report achieved counts and denominators, rather than presenting the targets in `PRD.md` as results. A document-only partial demonstration is an implementation milestone; full MVP acceptance also requires live Sanity retrieval and approved-rule verification.
-
-## Implementation and local development
-
-Implementation lands phase by phase under `plans/`. Inspect the **actual** source tree, package scripts, phase plan, and Git state before running or changing it; no install command, CI job, environment template, or public URL is claimed here without verification. Add tested setup/build/test/deployment commands and observed integration status as phases complete. Follow the phase plan under the repository's plans directory, using its on-disk casing.
-
-The target server-side configuration includes a Gemini credential, a Sanity **organization** token with Context Viewer access, a Knowledge Base-backed Context MCP URL, a separate canonical read credential when necessary, and an HMAC signing key. `DEPLOYMENT.md` gives proposed settings; actual variable names and limits must match the running code. Studio setup alone does not prove a working KB endpoint or runtime token. None of these secrets belongs in the client or source control. A missing Gemini connection cannot be masked by a prewritten sample extraction; a later source outage may still allow substantiated document-only results marked `partial`.
-
-## Documentation map
-
-| File | Governs |
+| Setting | Purpose |
 | --- | --- |
-| `PRD.md` | User, scope, product acceptance, and independent release gates. |
-| `ADR.md` | Accepted decisions and how to supersede one. |
-| `TECHNICAL_ARCHITECTURE.md` | Boundaries, signed two-step flow, and failures. |
-| `DATABASE_SCHEMA.md` | Versioned Sanity reference records and active field keys. |
-| `SOURCES.md` | Candidate official material, rule approval, and ongoing source review. |
-| `API.md` | Exact v1 routes, payloads, proof, correction, report, and error shapes. |
-| `FRONTEND_SPECIFICATION.md` | Screens, capability gates, evidence display, and accessibility. |
-| `SECURITY.md` | Data handling, trust boundaries, and privacy gates. |
-| `TESTING.md` | Corpus, test layers, metric denominators, and release evidence. |
-| `DEPLOYMENT.md` | One-service topology, configuration, smoke checks, and rollback. |
+| `GEMINI_API_KEY` | Server-side document extraction credential. |
+| `SANITY_ORGANIZATION_TOKEN` | Sanity Context MCP access. |
+| `SANITY_READ_TOKEN` | Canonical approved-rule/source read path where required. |
+| `REVIEW_HMAC_SECRET` | Signs extraction handoff payloads. |
+| `SAMPLE_MODE_ENABLED` | Enables the fictional sample flow. |
+| `CUSTOM_UPLOAD_ENABLED` | Enables or rejects arbitrary user uploads. |
+| `IMAGE_INPUT_ENABLED` | Controls image input support. |
+| `URDU_EXPLANATION_ENABLED` | Controls Urdu explanation support. |
+| `APPLICATION_DEADLINE_MS` | End-to-end API deadline below the platform timeout. |
+| `RATE_LIMIT_MAX`, `MAX_CONCURRENT_EXTRACTIONS` | Abuse and resource controls. |
 
-## Source and platform references
+The frontend should trust the capabilities endpoint, not hardcoded assumptions. If the API says custom upload is disabled, arbitrary multipart uploads must return `403 CUSTOM_UPLOAD_DISABLED`.
 
-The following are starting points for source curation and integration. Each individual rule still needs a dated, pinpointed source record and review before it is used in a report.
+## Security and Privacy
 
-- [Bureau of Emigration and Overseas Employment: Emigration Rules](https://beoe.gov.pk/files/legal-framework/Emigration_Rules_1979_Updated_2023.pdf)
-- [UAE Government: job offers and the employment process](https://u.ae/en/information-and-services/jobs/employment-in-the-private-sector/job-offers-and-work-permits-and-contracts/expatriates-employment-in-private-sector)
-- [UAE Government: employment laws and regulations](https://u.ae/en/information-and-services/jobs/employment-in-the-private-sector/employment-laws-and-regulations-in-the-private-sector)
-- [Sanity Context and Knowledge Bases](https://www.sanity.io/docs/ai/sanity-context)
-- [Sanity Context retrieval modes](https://www.sanity.io/docs/ai/sanity-context-retrieval-modes)
-- [Gemini document understanding](https://ai.google.dev/gemini-api/docs/document-processing)
-- [Gemini structured output](https://ai.google.dev/gemini-api/docs/structured-output)
+WazehTerms is designed for sensitive employment documents, so the implementation is intentionally conservative:
+
+- No worker accounts or permanent document database in the MVP.
+- Browser-only in-memory file preview.
+- Server-side signed extraction proof with short expiry.
+- No raw document text, quotes, prompts, identifiers, secrets, or signed payloads in logs.
+- Rate limits, concurrency limits, application deadlines, and cancellation cleanup.
+- Same-origin API deployment with strict security headers and CSP.
+- Public samples are fictional and visibly marked as synthetic.
+
+Real public custom uploads should stay disabled until provider data handling, privacy notice, retention behavior, measured limits, and production smoke evidence are reviewed and recorded.
+
+## Latest Verification Snapshot
+
+Recent phase logs record the following successful checks:
+
+- Phase 12 UI polish: typecheck, lint, API tests, web tests, build, desktop/mobile visual validation, accessibility/focus checks.
+- Security hardening: lint, typecheck, build, 314 API tests, 5 web tests, HMAC abuse tests, parser hardening, security headers, redaction, and cancellation cleanup.
+- Phase 13 custom uploads: streaming multipart upload behavior and in-memory previews.
+- Phase 14 deployment: production build, local Express runtime probe, Docker image build/run/policy probes, Cloud setup/secrets/IAM, and the live deployment smoke (2026-09-30):
+  - Health, capabilities, samples, SPA, and sample PDFs return 200 on one origin; CSP/frame-ancestors/referrer headers present; zero CORS grants.
+  - All five fictional samples extract successfully; TC-001 completes with a signed extraction.
+  - TC-012 raises the live source-backed concern with the official Article (6)(4) pinpoint of UAE Federal Decree-Law 33/2021 — Phase 10 retrieval verified in production.
+  - Arbitrary upload returns a clean `403 CUSTOM_UPLOAD_DISABLED`; withheld rule reasons appear in the coarse `retrieval_outcome` log.
+  - Rollback drill passed (traffic shifted to the previous revision and back); secrets resolve from pinned versions.
+  - Full results: `plans/phase-14/testing-log.md` and `docs/DEPLOYMENT.md` §4.
+
+Not yet recorded as complete:
+
+- Full Playwright browser journey against the live URL (smoke so far is HTTP-level).
+- Corpus evaluation metrics (Phase 15): field accuracy, mismatch recall, citation support, latency.
+- Final approval to enable public custom uploads (MT-10).
+
+## Documentation
+
+Important project documents:
+
+- [docs/PRD.md](docs/PRD.md): product scope and acceptance gates.
+- [docs/API.md](docs/API.md): API routes, payloads, proof, corrections, and errors.
+- [docs/TECHNICAL_ARCHITECTURE.md](docs/TECHNICAL_ARCHITECTURE.md): application boundaries and flow.
+- [docs/SECURITY.md](docs/SECURITY.md): privacy, trust boundaries, and security gates.
+- [docs/TESTING.md](docs/TESTING.md): corpus, test layers, metrics, and launch evidence.
+- [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md): Cloud Run deployment and release runbook.
+- [docs/BLOG.md](docs/BLOG.md): simple product blog article with screenshots.
+- [plans/](plans/): phase plans, logs, implementation evidence, and remaining release notes.
 
 ## License
 
-A license has not been selected. Until one is added, the repository does not grant reuse rights beyond those otherwise provided by law.
+This repository is currently `UNLICENSED`. No reuse rights are granted beyond those provided by law unless a license is added later.
