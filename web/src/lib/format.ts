@@ -21,7 +21,9 @@ export const EVIDENCE_LABELS: Readonly<Record<Evidence['verification'], string>>
 };
 
 export function roleLabel(role: string): string {
-  return role === 'offer' ? 'Offer' : 'Contract';
+  if (role === 'offer') return 'Offer';
+  if (role === 'contract') return 'Contract';
+  return 'Document';
 }
 
 export function formatValue(value: NormalizedValue): string {

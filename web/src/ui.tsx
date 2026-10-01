@@ -58,12 +58,20 @@ export function ErrorPanel({ message, children }: { message: string; children?: 
   );
 }
 
-export function EvidenceQuote({ evidence }: { evidence: Evidence }) {
-  const documentRole = evidence.documentId.includes('offer')
-    ? 'offer'
-    : evidence.documentId.includes('contract')
-      ? 'contract'
-      : 'document';
+export function EvidenceQuote({
+  evidence,
+  role,
+}: {
+  evidence: Evidence;
+  role?: 'offer' | 'contract' | 'document';
+}) {
+  const documentRole =
+    role ??
+    (evidence.documentId.includes('offer')
+      ? 'offer'
+      : evidence.documentId.includes('contract')
+        ? 'contract'
+        : 'document');
   return (
     <figure className={`evidence evidence--origin-${documentRole}`}>
       <span className="evidence__label">
