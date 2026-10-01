@@ -52,6 +52,12 @@ platform secret binding — never into plans, logs, chat, or source control.
 2. License choice (README notes none selected).
 
 ## MT-10 — Provider data-handling review → before ANY custom-upload gate change
-1. Record the actual Gemini account/API data-handling behavior for the deployed path (per `docs/SECURITY.md` §2 / ADR-003).
-2. Approve the public provider-processing notice text and its `privacyNoticeVersion`.
-3. Until done, `customUploadEnabled` stays `false`; arbitrary files rejected with `403 CUSTOM_UPLOAD_DISABLED`.
+**DONE for demo-only scope (owner decision, 2026-10-02):**
+
+1. **Deployed provider path:** Gemini API **Free tier** via `GEMINI_API_KEY` (AI Studio credential; no paid billing on that API project).
+2. **Recorded Unpaid Services data handling:** submitted content and responses **may be used to improve Google products** and **may be reviewed by people**. No zero-retention claim; no private-processing claim; notice must never promise deletion or confidentiality.
+3. **Approved public notice (demo scope):** the "Demo uploads only" text — uploads restricted to fictional, non-sensitive documents; real offers/contracts forbidden even for testing; content goes to Google's Gemini API; Free tier may use it to improve products with possible human review; WazehTerms is a demonstration not ready for real employment documents. `privacyNoticeVersion = gemini-free-demo-v1`.
+4. **UI requirements:** short warning beside the file picker; complete notice before submission with an **unticked acknowledgment** the user must tick; action wording "Try with a fictional PDF"; never "upload my contract".
+5. **Gate change:** `customUploadEnabled: true` in the deployed config **for this demo-only release**. Real documents remain excluded — acceptance of real offers/contracts is a **separate future release** (paid provider path, revised notice, tests, owner approval).
+6. **Recorded limitation:** notices cannot guarantee users follow the fictional-only restriction; residual risk accepted by the owner for the demo. The exposure is bounded by measured limits (8 MB/file, 16 MB total, 15 pages), admission control (60 req/min per instance, 5 concurrent, max-instances 4), zero-disk processing, coarse-only logs, and the short review TTL.
+7. **Rollback:** one-line flag-off (`CUSTOM_UPLOAD_ENABLED: "false"` in `deploy/env.staging.yaml`) + redeploy; capability flips false and UI hides upload immediately.

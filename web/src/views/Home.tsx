@@ -42,7 +42,7 @@ export function Home({
               customUploadEnabled ? (
                 <>
                   <button className="button" onClick={onUploadClick}>
-                    <span>Review your documents</span>
+                    <span>Try with a fictional PDF</span>
                     <span aria-hidden="true">→</span>
                   </button>
                   <button className="button button--secondary" onClick={onTrySample}>
@@ -87,7 +87,7 @@ export function Home({
           </p>
           {customUploadEnabled ? (
             <p className="hero__sub">
-              Custom PDF upload is enabled — upload your offer, contract, or both for automated verification.
+              Demo mode — try the review with a fictional PDF. Not for real job offers or contracts.
             </p>
           ) : (
             <p className="hero__sub">

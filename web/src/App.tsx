@@ -262,7 +262,7 @@ export function App() {
                 className={`nav-link ${view === 'upload' ? 'nav-link--active' : ''}`}
                 onClick={() => navigate('upload')}
               >
-                Upload & Review
+                Demo upload
               </button>
             ) : null}
             <button
@@ -295,7 +295,7 @@ export function App() {
           <div className="workflow-bar__inner">
             <ol className="workflow-steps">
               <li className="workflow-step workflow-step--done">
-                <span>{activeSample ? '1. Choose Sample' : '1. Upload Documents'}</span>
+                <span>{activeSample ? '1. Choose Sample' : '1. Choose a Fictional PDF'}</span>
                 <span className="workflow-sep" aria-hidden="true">→</span>
               </li>
               <li className={`workflow-step ${view === 'extracting' ? 'workflow-step--active' : view === 'review' || view === 'analyzing' || view === 'result' ? 'workflow-step--done' : ''}`}>
@@ -343,6 +343,7 @@ export function App() {
             maxBytesPerFile={capabilities?.maxBytesPerFile}
             maxPagesPerPdf={capabilities?.maxPagesPerPdf}
             customUploadEnabled={capabilities?.customUploadEnabled}
+            privacyNoticeVersion={capabilities?.privacyNoticeVersion}
           />
         ) : null}
 
