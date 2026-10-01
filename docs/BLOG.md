@@ -65,11 +65,11 @@ Every name, employer, and amount in the public samples is invented. The point is
 
 ![WazehTerms upload screen](../public/images/upload-page.jpg)
 
-The app now includes a custom PDF upload screen and backend upload implementation. It accepts separate slots for a job offer and an employment contract, streams multipart files through the API, validates the file type and limits, and keeps the preview in memory instead of creating a permanent worker document archive.
+The app includes a custom PDF upload screen and backend upload implementation. It accepts separate slots for a job offer and an employment contract, streams multipart files through the API, validates the file type and limits, and keeps the preview in memory instead of creating a permanent worker document archive.
 
-This feature is intentionally controlled by runtime capability flags. The code can support custom uploads, but a public deployment can keep them disabled until the owner has completed the remaining privacy, provider, staging, and release checks.
+As of October 2, 2026, upload is enabled on the live demo **for fictional, non-sensitive documents only**. The upload page says so twice: a short "Demo uploads only" warning beside the file pickers, and a complete notice before submission that must be acknowledged with a checkbox before the "Try with a fictional PDF" button unlocks. The notice explains the actual provider posture: content goes to Google's Gemini API, and on the Free tier Google may use submitted content and responses to improve its products, with possible human review. It makes no zero-retention or private-processing promises, because none would be true.
 
-That distinction matters. A sensitive document product should not enable real uploads just because the screen exists. The public service should only advertise and accept what `/api/v1/capabilities` says is currently allowed.
+That distinction matters. A sensitive document product should not accept real uploads just because the screen exists. Real job offers and contracts stay excluded until WazehTerms moves to a paid provider path with its own notice, tests, and approval decision — and the runtime always advertises exactly what `/api/v1/capabilities` says is currently allowed.
 
 ## Why Evidence Matters
 
@@ -114,9 +114,9 @@ The remaining work is no longer "make it work" but "make it measured and trusted
 
 - A full browser (Playwright) journey against the live URL, complementing the HTTP-level smoke.
 - Corpus evaluation numbers (Phase 15): field accuracy, mismatch recall, citation support, and latency, reported as measured results rather than targets.
-- The decision, with the provider data-handling review and privacy notice approved, on when real custom uploads may be enabled for the public.
+- A separate release decision — on a paid provider path, with a revised notice and tests — before real employment documents are ever accepted.
 
-Until that last gate is recorded, WazehTerms remains what this post describes: a live, careful, sample-only demonstration of evidence-first document review — not yet a place to send real employment documents.
+Until that last decision is made, WazehTerms remains what this post describes: a live, careful demonstration of evidence-first document review, running on fictional documents by design — not a place to send a real employment contract.
 
 ## What Makes WazehTerms Different
 

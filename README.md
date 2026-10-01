@@ -10,18 +10,18 @@ The app is built for one careful use case: Pakistan to UAE mainland private-sect
 
 ## Current Status
 
-**WazehTerms is deployed and serving the public sample-only demo at <https://wazehterms-957765366699.asia-south1.run.app>** (Cloud Run, `asia-south1`, single origin for web + API per ADR-008; release record in `docs/DEPLOYMENT.md` §4).
+**WazehTerms is live at <https://wazehterms-957765366699.asia-south1.run.app>** (Cloud Run, `asia-south1`, single origin for web + API per ADR-008; release record in `docs/DEPLOYMENT.md` §4).
 
-As of September 30, 2026, the repository contains the complete MVP implementation:
+As of October 2, 2026, the repository contains the complete MVP implementation:
 
 - React/Vite web app with the Phase 12 dark visual design, guided navigation, fictional samples, upload/review flow, extraction review, findings dashboard, and responsive/accessibility checks.
 - Express/TypeScript API with signed extraction handoff, deterministic term comparison, Sanity-backed source retrieval checks, HMAC proof validation, structured errors, cancellation handling, and security headers.
 - Five allowlisted fictional sample cases for public demonstration and automated testing — all five verified on the live deployment.
-- Custom PDF upload implementation with streaming multipart parsing and in-memory previews.
+- **Demo custom upload (MT-10, owner decision 2026-10-02):** real PDF upload is enabled **for fictional, non-sensitive documents only**, behind the approved "Demo uploads only" notice (`gemini-free-demo-v1`) with an unticked acknowledgment required before submission. The deployed provider is the Gemini API Free tier: submitted content may be used to improve Google products and may be reviewed by people — the notice says so plainly, and no zero-retention or private-processing claim is made. Real employment documents remain excluded; accepting them is a separate future release on a paid provider path.
 - Security hardening for rate limits, concurrency admission, log redaction, no persistent upload storage, CSP, same-origin API behavior, and zero-temp-file test coverage.
 - Live deployment: multi-stage Dockerfile, Cloud Run service with pinned Secret Manager bindings, staging-measured limits (45 s deadline, 15 s retrieval budget), rollback drill passed, and a verified source-backed concern on the live path — the worker-charge sample raises the official Article (6)(4) citation of UAE Federal Decree-Law 33/2021 (`docs/DEPLOYMENT.md` §4).
 
-The runtime stays gated to the fictional-sample demo: `SAMPLE_MODE_ENABLED=true` and `CUSTOM_UPLOAD_ENABLED=false` in the deployed configuration. Upload support exists in the codebase, but enabling it for real documents waits on the provider data-handling review, privacy-notice approval, and remaining release gates (MT-10 in `plans/manual-tasks.md`); the public runtime advertises and enforces exactly what `/api/v1/capabilities` reports.
+The public runtime advertises and enforces exactly what `/api/v1/capabilities` reports. The demo-upload posture is acknowledged as imperfect: a notice cannot guarantee users follow the fictional-only restriction — the owner accepted that residual risk for this demo, and a one-line flag rollback (`CUSTOM_UPLOAD_ENABLED: "false"` + redeploy) stays available.
 
 ## What It Does
 
@@ -210,7 +210,9 @@ Not yet recorded as complete:
 
 - Full Playwright browser journey against the live URL (smoke so far is HTTP-level).
 - Corpus evaluation metrics (Phase 15): field accuracy, mismatch recall, citation support, latency.
-- Final approval to enable public custom uploads (MT-10).
+- Acceptance of real employment documents — deliberately out of scope; requires a paid provider path, revised notice, tests, and owner approval (MT-10 demo scope covers fictional documents only).
+
+MT-10 demo-upload verification (2026-10-02): `/capabilities` reports `customUploadEnabled: true` + `privacyNoticeVersion: gemini-free-demo-v1`; a fictional PDF uploaded through production returned a complete, signed extraction (`sourceMode: custom`); the sample journey recovered after the Gemini key rotation (old key disabled at AI Studio and in Secret Manager version 1).
 
 ## Documentation
 

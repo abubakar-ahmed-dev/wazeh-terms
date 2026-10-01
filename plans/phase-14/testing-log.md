@@ -81,3 +81,27 @@ gcloud 583.0.0, node 22 (bookworm-slim in image).
   `00005-m7x` (health 200).
 - Not yet run: full Playwright journey against the live URL (curl-level
   smoke only) — recorded as remaining evidence for the release.
+
+## MT-10 demo-upload release verification (2026-10-02)
+
+- Gemini key rotated by owner (prepayment credits exhausted on 2026-10-01 —
+  all extraction 503'd locally and in production; `402 RESOURCE_EXHAUSTED`
+  confirmed by direct API probe). New Free-tier key verified (`200` probe);
+  Secret Manager `gemini-api-key` version 2 created, version 1 disabled;
+  revision binds `gemini-api-key:2`.
+- Local fictional-PDF upload e2e: multipart → 200, `status: complete`,
+  signed, 33 fields, `sourceMode: custom`.
+- Production: `/capabilities` reports `customUploadEnabled: true`,
+  `privacyNoticeVersion: gemini-free-demo-v1`; fictional-PDF upload through
+  the live URL → complete signed extraction; sample path 200.
+- Upload UI: "Demo uploads only" warning, full Free-tier notice with
+  unticked acknowledgment gating "Try with a fictional PDF", honest
+  closed-state copy (no env-var instructions in public UI).
+- **Ops incident recorded:** a second agent deployed revisions `00007`/
+  `00008` concurrently without the env file while traffic stayed pinned to
+  `00006` (bound to disabled secret v1) → 500s. Fixed by redeploying
+  `00009-stc` with full config and forcing 100% traffic + re-pointing the
+  `staging` tag. Rule going forward: one deploy actor at a time.
+- Residual risk (accepted by owner, recorded in MT-10): the notice cannot
+  guarantee users upload only fictional documents. Rollback: set
+  `CUSTOM_UPLOAD_ENABLED: "false"` + redeploy.
