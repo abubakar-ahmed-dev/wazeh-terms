@@ -437,6 +437,7 @@ export function App() {
         {view === 'result' && report ? (
           <Findings
             report={report}
+            issued={issued}
             onReviewAnother={() => (capabilities?.customUploadEnabled ? navigate('upload') : navigate('examples'))}
             onReset={resetCase}
           />

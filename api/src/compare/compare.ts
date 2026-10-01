@@ -160,19 +160,22 @@ function draft(
   options: DraftOptions,
 ): FindingDraft {
   const { side, uncertaintyReasons = [] } = options;
-  const where = side === 'both' ? 'either document' : `${side} document`;
+  const where = side === 'both' ? 'either document' : `the ${side} document`;
   const label = definition.label;
   const lower = label.toLowerCase();
 
   const explanations: Record<string, string> = {
-    missing_information: `No ${lower} was found in the ${where}.`,
-    needs_clarification: `The ${lower} wording is unclear or conditional in the ${where}.`,
-    unable_to_determine: `The ${lower} could not be read in the ${where}.`,
+    missing_information: `No ${lower} was found in ${where}.`,
+    needs_clarification: `The ${lower} wording is unclear or conditional in ${where}.`,
+    unable_to_determine: `The ${lower} could not be read in ${where}.`,
   };
   const questions: Record<string, string> = {
-    missing_information: `Ask why the ${lower} is not stated in the ${where}.`,
+    missing_information: `Ask why the ${lower} is not stated in ${where}.`,
     needs_clarification: `Ask for the exact ${lower} wording, including any conditions.`,
-    unable_to_determine: `Check the ${where} page for the ${lower}; it could not be read here.`,
+    unable_to_determine:
+      side === 'both'
+        ? `Check either document for the ${lower}; it could not be read here.`
+        : `Check the ${side} document page for the ${lower}; it could not be read here.`,
   };
 
   return {
