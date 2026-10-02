@@ -72,7 +72,7 @@ Three things keyword search over documents cannot do:
 
 - **Applicability, not relevance.** Finding the sentence "the employer shall bear recruitment costs" is easy; knowing the rule is current, applies to UAE mainland private-sector employment, and matches the documents' worker category is structure. The check fails closed when the structure does not confirm it.
 - **Versioning with consequences.** When a rule is superseded, its approved revision changes and concerns tied to the old revision stop appearing. The content decides what may be claimed — not the prompt.
-- **Honest conflicts.** Where sources disagree, claims stay distinct, each linked to its own source and version, with uncertainty shown instead of blended away.
+- **Designed for honest conflicts.** The content model keeps claims distinct — each linked to its own source and version, with uncertainty shown instead of blended away; a public side-by-side conflict case is on the roadmap.
 
 The runtime endpoint is Knowledge Base-only (organization token, server-side); uploads, worker data, and reports never enter Sanity. Retrieval alone is never proof — the canonical approved record is.
 

@@ -18,10 +18,13 @@ personal information in any frame. Captions for narration.
    Article (6) clause (4), the quoted passage, the official source link.
    Point out this appeared only after the Knowledge Base retrieval AND the
    canonical approved-record verification both completed.
-4. **Honest abstention (≈30 s).** Open the single-contract sample (TC-014)
-   and the adversarial sample (TC-015). TC-014: unreadable salary page →
-   partial report, no guesses. TC-015: embedded instructions in the
-   documents are treated as data — nothing injected, nothing obeyed.
+4. **Honest limits (≈30 s).** Open the missing-terms sample (TC-013):
+   notice period absent from both documents → a missing-information
+   finding, with absence never presented as denial. Then the
+   single-contract sample (TC-014): one document means no comparison, and
+   the report says exactly what a one-document check cannot determine.
+   Then the adversarial sample (TC-015): embedded instructions are treated
+   as data — nothing injected, nothing obeyed.
 5. **Structured content is load-bearing (≈60 s).** The key segment:
    - Sanity Dashboard: the KB entries, each linked to its source.
    - The approved rule record: revision, source version, pinpoint, scope.

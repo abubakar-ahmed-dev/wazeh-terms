@@ -17,8 +17,9 @@ for the owner to merge or discard.
 
 - `api/src/contracts/field-registry.ts`: new `expectedToDiffer` flag; set on
   `document_date`, `document_reference`, `verification_reference`,
-  `annex_reference` (17 metadata-family false findings in the 2026-10-02
-  run, incl. 6 on consistent pairs).
+  `annex_reference` (15 policyExempt metadata findings in the 2026-10-02
+  run per the rescored artifact — an earlier "17" here and in commit
+  `5afa079` was an estimate; superseded).
 - `api/src/compare/compare.ts`: mismatch emission skipped for these fields
   (single + defensive repeatable guard); still counted in
   `checkedFieldKeys`. `signature_presence`/`document_language` stay

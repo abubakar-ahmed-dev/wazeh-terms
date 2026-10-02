@@ -110,7 +110,9 @@ explanation ↔ fieldKey ↔ evidence consistency (`api/test/release-polish/`).
 `verification_reference`, `annex_reference`) are counted `policyExempt` —
 not precision errors, not in the denominator — because the comparison engine
 no longer emits them (registry policy; 15 such findings existed in this run,
-pre-fix engine). Dry-run proof of the new engine: 15/15 cases, 53/53 field
+pre-fix engine — the authoritative scorer count; earlier notes and commit
+`5afa079` said 17, an estimate mixing metadata with duplicate and
+forbidden-category reasons, superseded here). Dry-run proof of the new engine: 15/15 cases, 53/53 field
 accuracy, 11/11 recall, 12/12 precision, 0 abstention violations
 (`eval-rp-dryrun3.json`).
 
