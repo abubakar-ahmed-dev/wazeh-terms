@@ -1,0 +1,65 @@
+{
+  "frozenAt": "2026-10-02T18:30:00Z",
+  "freezeId": "freeze-2026-10-03-prod",
+  "purpose": "Fresh production evaluation of the corrected engine. Separate from freeze-2026-10-02.json (run-1), which stays untouched alongside its results and amended manifest.",
+  "codeCommit": "223eb7b1318bb7f234d3aa70f453516f9eda7b2e",
+  "codeNote": "dev HEAD after PR #20. Deployed image was built from cc4d1e2 (parent content identical to 223eb7b except docs + smoke-evidence files, no src/test-corpus changes).",
+  "deployed": {
+    "service": "wazehterms",
+    "region": "asia-south1",
+    "revision": "wazehterms-00016-run",
+    "imageTag": "wazehterms:cc4d1e2",
+    "imageDigest": "sha256:9a76258f299e3fc1dadd51c86c2298a4c33fe66df77120834191a5e38b6cf82c",
+    "trafficPercent": 100,
+    "trafficVerifiedAt": "2026-10-02"
+  },
+  "corpusRevision": {
+    "gitTree": "8a71ca3bf13b7303c42825d3fd242b319141b460",
+    "note": "15 cases TC-001..TC-015, truth schema v1 with the release-polish rebaseline applied in place (TC-001/003/004/005/006/007/012; owner ratification in progress at freeze time). Deterministic regeneration asserted by the Phase 07 suite."
+  },
+  "bundledFixturesTree": "440fd5c72ad1933a9b323caa4ed4e64e858768f0",
+  "model": "gemini-3.5-flash-lite",
+  "promptFile": "api/src/services/gemini/prompt.ts",
+  "promptSha256_16": "a3d4665e2905be61",
+  "sanityContentRelease": {
+    "project": "8g0kllu0",
+    "dataset": "production",
+    "publishedApprovedRecords": 44,
+    "approvedRules": [
+      {
+        "ruleKey": "ae-recruitment-costs-employer-bears",
+        "ruleRevision": 1,
+        "sourceKey": "uae-federal-decree-law-33-2021",
+        "versionKey": "base-text-2022",
+        "pinpoint": "Article (6) Recruitment and Employment of Workers, clause (4)"
+      }
+    ]
+  },
+  "knowledgeBase": {
+    "id": "kbynAP4r8P6m",
+    "endpoint": "https://api.sanity.io/v1/context/organizations/on41l5b0b/mcp/wazeh-terms-mcp"
+  },
+  "capabilities": {
+    "sampleModeEnabled": true,
+    "customUploadEnabled": true,
+    "acceptedCustomMimeTypes": ["application/pdf"],
+    "supportedAnalysisLanguages": ["en"],
+    "maxDocuments": 2,
+    "maxBytesPerFile": 8388608,
+    "maxTotalBytes": 16777216,
+    "maxPagesPerPdf": 15,
+    "maxCorrections": 100,
+    "sourceBackedChecks": "available",
+    "privacyNoticeVersion": "gemini-free-demo-v1"
+  },
+  "providerPosture": "Gemini API key (owner states Free tier; one earlier 402 credit-exhaustion event recorded 2026-10-01 — owner to confirm billing attachment before the run). Quota-limited: runner paces ~13s between cases, resumes via JSONL, HTTP-level retries up to 3 with Retry-After; provider-level retry only on malformed/invalid JSON (max 2 attempts).",
+  "runPolicy": {
+    "cases": ["TC-001","TC-002","TC-012","TC-013","TC-014","TC-015","TC-003","TC-004","TC-005","TC-006","TC-007","TC-008","TC-009","TC-010","TC-011"],
+    "ordering": "listCases() directory order TC-001..TC-015",
+    "geminiCallsExpected": 15,
+    "geminiCallsHardCap": 45,
+    "resume": "JSONL append; existing caseIds skipped; failed cases re-run only via explicit --cases",
+    "noSelectiveReruns": "successful cases are never re-run to improve a score",
+    "outputFiles": "results-<date>-prod2.jsonl + eval-<date>-prod2.json + review record; run-1 files (results-2026-10-02.jsonl, eval-2026-10-02.json, eval-2026-10-02-revised.json) stay immutable"
+  }
+}

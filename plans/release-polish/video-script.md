@@ -28,12 +28,15 @@ personal information in any frame. Captions for narration.
 5. **Structured content is load-bearing (≈60 s).** The key segment:
    - Sanity Dashboard: the KB entries, each linked to its source.
    - The approved rule record: revision, source version, pinpoint, scope.
-   - Live: flip the rule to superseded in Studio → refresh → the live
-     concern disappears; flip back → it returns. The content decides what
-     may be claimed.
    - Why not keyword search: relevance is easy; applicability (jurisdiction,
      worker category, actor, dates, current version) is structure. Fail
      closed when the structure does not confirm.
+   - Content-decides evidence, stated carefully: the eligibility gate is
+     unit-pinned — a rule whose `recordStatus` leaves `current` is
+     `not_current` and the concern is withheld (`api/test/phase-10/
+     gate.test.ts`); the canonical read is a per-request Content Lake
+     query with no cache, so a status change applies to the next analysis.
+     Do NOT claim a live toggle was demonstrated unless it actually was.
 6. **Measured honesty (≈20 s).** The evaluation ledger: 15 frozen cases
    through the live stack — field accuracy 52/53, recall 11/11, precision
    13/13 substantive (post-rebaseline, owner ratification pending), 0
