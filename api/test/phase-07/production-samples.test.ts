@@ -45,7 +45,7 @@ describe('production sample set', () => {
     const emphases: Record<string, (truth: ReturnType<typeof loadTruth>) => boolean> = {
       'TC-001': (truth) => truth.forbiddenFindingCategories.includes('document_mismatch'),
       'TC-002': (truth) => truth.allowedFindingCategories.includes('document_mismatch'),
-      'TC-012': (truth) => truth.seededDifferences.some((s) => s.fieldKey === 'deduction_item'),
+      'TC-012': (truth) => truth.seededDifferences.some((s) => s.fieldKey === 'recruitment_cost'),
       'TC-013': (truth) => truth.allowedFindingCategories.includes('missing_information'),
       'TC-014': (truth) => truth.documents.length === 1,
     };

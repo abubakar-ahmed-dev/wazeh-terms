@@ -61,6 +61,42 @@
         "role": "contract",
         "line": 14
       }
+    },
+    {
+      "role": "offer",
+      "fieldKey": "stated_total_pay",
+      "state": "present",
+      "value": {
+        "kind": "money",
+        "amount": "2700.00",
+        "currency": "AED",
+        "frequency": "monthly",
+        "component": "stated_total",
+        "payer": null
+      },
+      "evidence": {
+        "page": 1,
+        "role": "offer",
+        "line": 16
+      }
+    },
+    {
+      "role": "contract",
+      "fieldKey": "stated_total_pay",
+      "state": "present",
+      "value": {
+        "kind": "money",
+        "amount": "2250.00",
+        "currency": "AED",
+        "frequency": "monthly",
+        "component": "stated_total",
+        "payer": null
+      },
+      "evidence": {
+        "page": 1,
+        "role": "contract",
+        "line": 16
+      }
     }
   ],
   "seededDifferences": [
@@ -68,6 +104,11 @@
       "fieldKey": "basic_salary",
       "kind": "value",
       "note": "Seeded critical difference: basic salary 2,200 vs 1,750."
+    },
+    {
+      "fieldKey": "stated_total_pay",
+      "kind": "value",
+      "note": "Seeded difference: stated total 2,700 vs 2,250 consistent with the salary components (added on rebaseline after the 2026-10-02 run showed the real textual difference)."
     }
   ],
   "allowedFindingCategories": [
@@ -81,5 +122,5 @@
   "expectedAbstentions": [
     "no_global_verdict"
   ],
-  "notes": "Critical salary mismatch with both passages readable."
+  "notes": "Critical salary mismatch with both passages readable Rebaseline 2026-10-02 (release-polish WI-4): added the stated_total_pay seed — both documents state different totals (2,700 vs 2,250) and the production run correctly reported them."
 }

@@ -145,24 +145,10 @@
       {
         "fieldKey": "deduction_item",
         "instanceId": "deduction_item:0",
-        "state": "present",
-        "rawText": "Recruitment fee: AED 3,100 to be paid by the worker to the recruiter in Pakistan",
-        "value": {
-          "kind": "money",
-          "amount": "3100.00",
-          "currency": "AED",
-          "frequency": "monthly",
-          "component": "worker_charge",
-          "payer": null
-        },
-        "evidence": [
-          {
-            "documentId": "doc-offer",
-            "page": 1,
-            "quote": "Recruitment fee: AED 3,100 to be paid by the worker to the recruiter in Pakistan",
-            "verification": "matched_text"
-          }
-        ],
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
         "qualityNotes": []
       },
       {
@@ -177,10 +163,24 @@
       {
         "fieldKey": "recruitment_cost",
         "instanceId": "recruitment_cost:0",
-        "state": "absent",
-        "rawText": null,
-        "value": null,
-        "evidence": [],
+        "state": "present",
+        "rawText": "Recruitment fee: AED 3,100 to be paid by the worker to the recruiter in Pakistan",
+        "value": {
+          "kind": "money",
+          "amount": "3100.00",
+          "currency": "AED",
+          "frequency": "per_contract",
+          "component": "worker_charge",
+          "payer": "worker"
+        },
+        "evidence": [
+          {
+            "documentId": "doc-offer",
+            "page": 1,
+            "quote": "Recruitment fee: AED 3,100 to be paid by the worker to the recruiter in Pakistan",
+            "verification": "matched_text"
+          }
+        ],
         "qualityNotes": []
       },
       {
@@ -467,24 +467,10 @@
       {
         "fieldKey": "deduction_item",
         "instanceId": "deduction_item:0",
-        "state": "present",
-        "rawText": "Recruitment fee: AED 3,500 to be paid by the worker before visa stamping",
-        "value": {
-          "kind": "money",
-          "amount": "3500.00",
-          "currency": "AED",
-          "frequency": "monthly",
-          "component": "worker_charge",
-          "payer": null
-        },
-        "evidence": [
-          {
-            "documentId": "doc-contract",
-            "page": 1,
-            "quote": "Recruitment fee: AED 3,500 to be paid by the worker before visa stamping",
-            "verification": "matched_text"
-          }
-        ],
+        "state": "absent",
+        "rawText": null,
+        "value": null,
+        "evidence": [],
         "qualityNotes": []
       },
       {
@@ -499,10 +485,24 @@
       {
         "fieldKey": "recruitment_cost",
         "instanceId": "recruitment_cost:0",
-        "state": "absent",
-        "rawText": null,
-        "value": null,
-        "evidence": [],
+        "state": "present",
+        "rawText": "Recruitment fee: AED 3,500 to be paid by the worker before visa stamping",
+        "value": {
+          "kind": "money",
+          "amount": "3500.00",
+          "currency": "AED",
+          "frequency": "per_contract",
+          "component": "worker_charge",
+          "payer": "worker"
+        },
+        "evidence": [
+          {
+            "documentId": "doc-contract",
+            "page": 1,
+            "quote": "Recruitment fee: AED 3,500 to be paid by the worker before visa stamping",
+            "verification": "matched_text"
+          }
+        ],
         "qualityNotes": []
       },
       {

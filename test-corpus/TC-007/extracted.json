@@ -46,10 +46,24 @@
       {
         "fieldKey": "allowance_item",
         "instanceId": "allowance_item:0",
-        "state": "absent",
-        "rawText": null,
-        "value": null,
-        "evidence": [],
+        "state": "present",
+        "rawText": "Transport allowance: AED 500 per month",
+        "value": {
+          "kind": "money",
+          "amount": "500.00",
+          "currency": "AED",
+          "frequency": "monthly",
+          "component": "allowance",
+          "payer": null
+        },
+        "evidence": [
+          {
+            "documentId": "doc-offer",
+            "page": 1,
+            "quote": "Transport allowance: AED 500 per month",
+            "verification": "matched_text"
+          }
+        ],
         "qualityNotes": []
       },
       {
@@ -368,10 +382,24 @@
       {
         "fieldKey": "allowance_item",
         "instanceId": "allowance_item:0",
-        "state": "absent",
-        "rawText": null,
-        "value": null,
-        "evidence": [],
+        "state": "present",
+        "rawText": "Transport allowance: AED 950 per month",
+        "value": {
+          "kind": "money",
+          "amount": "950.00",
+          "currency": "AED",
+          "frequency": "monthly",
+          "component": "allowance",
+          "payer": null
+        },
+        "evidence": [
+          {
+            "documentId": "doc-contract",
+            "page": 1,
+            "quote": "Transport allowance: AED 950 per month",
+            "verification": "matched_text"
+          }
+        ],
         "qualityNotes": []
       },
       {

@@ -48,16 +48,33 @@ describe('corpus truth files', () => {
       expect(truth.allowedFindingCategories, mismatch).toContain('document_mismatch');
       expect(truth.forbiddenFindingCategories, mismatch).toContain('source_backed_concern');
     }
-    // Abstention/emphasis cases.
-    expect(byCase.get('TC-012')!.expectedAbstentions).toContain('no_rule_claims');
+    // Abstention/emphasis cases. TC-012's no_rule_claims abstention was
+    // superseded when the worker-charge rule was approved (Phase 10) and the
+    // truth was rebaselined (release-polish WI-4, owner ratification pending).
+    expect(byCase.get('TC-012')!.expectedAbstentions).not.toContain('no_rule_claims');
+    expect(byCase.get('TC-012')!.allowedFindingCategories).toContain('source_backed_concern');
     expect(byCase.get('TC-013')!.allowedFindingCategories).toContain('missing_information');
     expect(byCase.get('TC-014')!.documents).toHaveLength(1);
     expect(byCase.get('TC-015')!.expectedAbstentions).toContain('instructions_treated_as_data');
   });
 
-  it('keeps rule references empty until approved content exists (Phases 09/10)', () => {
+  it('restricts rule references to cases allowed source-backed concerns', () => {
+    // Approved content exists since Phases 09/10; truth files may cite only
+    // approved, revisioned rules, and only where the category is allowed.
     for (const caseId of CASE_IDS) {
-      expect(loadTruth(caseId).requiredRuleRefs, caseId).toEqual([]);
+      const truth = loadTruth(caseId);
+      const sbcAllowed = truth.allowedFindingCategories.includes('source_backed_concern');
+      if (!sbcAllowed) {
+        expect(truth.requiredRuleRefs, caseId).toEqual([]);
+        continue;
+      }
+      for (const ref of truth.requiredRuleRefs) {
+        expect(ref.ruleKey.length, caseId).toBeGreaterThan(0);
+        expect(ref.ruleRevision, caseId).toBeGreaterThanOrEqual(1);
+      }
     }
+    expect(loadTruth('TC-012').requiredRuleRefs).toEqual([
+      { ruleKey: 'ae-recruitment-costs-employer-bears', ruleRevision: 1 },
+    ]);
   });
 });

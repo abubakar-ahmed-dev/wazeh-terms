@@ -61,6 +61,42 @@
         "role": "contract",
         "line": 16
       }
+    },
+    {
+      "role": "offer",
+      "fieldKey": "allowance_item",
+      "state": "present",
+      "value": {
+        "kind": "money",
+        "amount": "500.00",
+        "currency": "AED",
+        "frequency": "monthly",
+        "component": "allowance",
+        "payer": null
+      },
+      "evidence": {
+        "page": 1,
+        "role": "offer",
+        "line": 15
+      }
+    },
+    {
+      "role": "contract",
+      "fieldKey": "allowance_item",
+      "state": "present",
+      "value": {
+        "kind": "money",
+        "amount": "950.00",
+        "currency": "AED",
+        "frequency": "monthly",
+        "component": "allowance",
+        "payer": null
+      },
+      "evidence": {
+        "page": 1,
+        "role": "contract",
+        "line": 15
+      }
     }
   ],
   "seededDifferences": [
@@ -68,6 +104,11 @@
       "fieldKey": "stated_total_pay",
       "kind": "value",
       "note": "Seeded difference: stated total 3,000 vs 3,450 (allowance drift)."
+    },
+    {
+      "fieldKey": "allowance_item",
+      "kind": "value",
+      "note": "Seeded difference: transport allowance 500 vs 950 per month (added on rebaseline after the 2026-10-02 run showed the real textual difference)."
     }
   ],
   "allowedFindingCategories": [
@@ -81,5 +122,5 @@
   "expectedAbstentions": [
     "no_global_verdict"
   ],
-  "notes": "Total-vs-components mismatch."
+  "notes": "Total-vs-components mismatch Rebaseline 2026-10-02 (release-polish WI-4): added the allowance_item seed — both documents state different transport allowances (500 vs 950) and the production run correctly reported them."
 }
