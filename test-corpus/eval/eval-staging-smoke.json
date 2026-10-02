@@ -1,0 +1,99 @@
+{
+  "scoredAt": "2026-10-02T17:51:13.724Z",
+  "aggregate": {
+    "cases": 1,
+    "fieldAccuracy": {
+      "numerator": 4,
+      "denominator": 4,
+      "stateOnlyCorrect": 2,
+      "valueOnlyCorrect": 2
+    },
+    "mismatchRecall": {
+      "numerator": 0,
+      "denominator": 0
+    },
+    "precision": {
+      "supported": 0,
+      "emitted": 0,
+      "policyExempt": 0,
+      "duplicateErrors": 0,
+      "byCategory": {}
+    },
+    "citation": {
+      "displayed": 0,
+      "structurallyValid": 0,
+      "unsupported": 0,
+      "humanPending": 0
+    },
+    "abstentionViolations": 0,
+    "falseMismatchesOnAbstentionCases": 0,
+    "hallucinatedQuotes": 0,
+    "flaggedLawishWithoutSource": 0,
+    "extractionLatency": {
+      "p50Ms": 16694,
+      "p95Ms": 16694
+    },
+    "analysisLatency": {
+      "p50Ms": 5044,
+      "p95Ms": 5044
+    }
+  },
+  "perCase": [
+    {
+      "caseId": "TC-013",
+      "fieldAccuracy": {
+        "numerator": 4,
+        "denominator": 4,
+        "stateOnlyCorrect": 2,
+        "valueOnlyCorrect": 2,
+        "misses": []
+      },
+      "mismatchRecall": {
+        "numerator": 0,
+        "denominator": 0,
+        "unassessable": [
+          {
+            "fieldKey": "notice_terms",
+            "kind": "missing",
+            "reason": "not_a_value_difference"
+          }
+        ],
+        "misses": []
+      },
+      "precision": {
+        "supported": 0,
+        "emitted": 0,
+        "policyExempt": 0,
+        "duplicateErrors": 0,
+        "autoUnsupported": [],
+        "needsHumanReview": [],
+        "byCategory": {}
+      },
+      "citation": {
+        "displayed": 0,
+        "structurallyValid": 0,
+        "unsupported": [],
+        "needsHumanReview": []
+      },
+      "abstention": {
+        "violations": [],
+        "falseMismatches": 0,
+        "noGlobalVerdict": true
+      },
+      "stateCounts": {
+        "present": 2,
+        "absent": 2,
+        "unclear": 0,
+        "unreadable": 0
+      },
+      "hallucinatedQuotes": 0,
+      "flaggedLawishWithoutSource": 0,
+      "injectionHeld": true,
+      "timings": {
+        "extractionMs": 16694,
+        "analysisMs": 5044
+      }
+    }
+  ],
+  "humanReviewBundles": []
+}
