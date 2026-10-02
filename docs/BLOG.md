@@ -49,7 +49,7 @@ Third, the app analyzes the written terms. It compares the offer and contract us
 
 ![Fictional sample page](../public/images/sample-page.jpg)
 
-The app includes five fictional sample cases. These samples are useful because they let the team and public reviewers test the workflow without real personal documents.
+The app includes six fictional sample cases. These samples are useful because they let the team and public reviewers test the workflow without real personal documents.
 
 The sample set covers common review situations:
 
@@ -58,6 +58,7 @@ The sample set covers common review situations:
 - A benefit or allowance difference.
 - Worker-cost or deduction wording that needs careful review.
 - Missing, conditional, incomplete, or unclear terms.
+- Documents containing embedded instructions aimed at automated systems — which are treated strictly as data, never obeyed.
 
 Every name, employer, and amount in the public samples is invented. The point is to demonstrate the review method, not to represent a real worker or company.
 
@@ -91,6 +92,22 @@ For document understanding, the backend uses Gemini to extract structured terms 
 
 For official reference checks, the system uses Sanity Content Lake and Sanity Context MCP. The knowledge layer is for curated public or authorized reference material. It is not a place to store uploaded worker documents.
 
+## Built on Structured Content: Sanity Context and the Knowledge Base
+
+The source-backed check deserves a closer look, because it only works because the content behind it is structured.
+
+Curated official references live in Sanity as versioned records: an authority, an exact source document version, an approved rule revision, and a pinpoint — the article, clause, and quoted passage that actually supports the concern. Each rule also records its scope: which jurisdiction, which worker category, which actor pays or is paid, and which dates it applies to.
+
+When a report needs a source-backed concern, the backend queries a Knowledge Base through a Sanity Context MCP endpoint, then verifies the candidate against the approved canonical record before anything is shown. Retrieval alone is never proof. Only after the rule revision, source version, pinpoint, actor, scope, conditions, and dates all check out does the concern appear — with its citation and the official source link.
+
+That structure buys three things a keyword search over documents cannot:
+
+- **Applicability, not just relevance.** A search can find the sentence "the employer shall bear recruitment costs". It cannot check that the rule is current, applies to UAE mainland private-sector employment, and matches the worker category in the documents. The structured records can, and the check fails closed when they cannot.
+- **Versioning with consequences.** When a rule is superseded or a source version changes, the approved revision changes with it, and concerns tied to the old revision stop appearing. The content, not the prompt, decides what may be claimed.
+- **Honest conflicts.** Where two sources disagree, the system keeps them distinct instead of blending them: each claim stays linked to its own source and version, and uncertainty is shown rather than resolved by a confident-sounding guess.
+
+The same structure is also what keeps the system quiet. If retrieval is unavailable, or verification cannot complete within its budget, the report says the official-source check was not performed and labels itself partial. Document-only findings still appear, clearly separated from rule-backed claims. Withholding is a designed outcome, not a failure state.
+
 The deployment target is a single Cloud Run service that serves the built web app, the API under `/api/v1/*`, and a minimal `/health` endpoint from the same origin.
 
 ## Privacy and Security Choices
@@ -105,7 +122,7 @@ The backend also includes rate limiting, concurrency controls, strict security h
 
 WazehTerms is now live. As of September 30, 2026, the app runs as a single Cloud Run service at `wazehterms-957765366699.asia-south1.run.app`, serving the built web app and the API from one origin. The deployment smoke verified every part of the story this post has described:
 
-- All five fictional samples extract successfully on the live path, with signed, short-lived review handoffs.
+- The fictional samples extract successfully on the live path, with signed, short-lived review handoffs (five at the September 30 smoke; a sixth adversarial-instructions sample has since joined the set).
 - The worker-charge sample raises a real source-backed concern on the live deployment: UAE Federal Decree-Law No. 33 of 2021, Article (6), clause (4), with the official source link — retrieved from the curated knowledge base, verified against the approved canonical record, and refused to appear at all in runs where verification could not complete (the report honestly labels itself partial instead).
 - Arbitrary uploads are rejected with the documented `403 CUSTOM_UPLOAD_DISABLED` response, and the runtime advertises exactly what `/api/v1/capabilities` says is enabled.
 - Security controls run in production: rate limiting, concurrency admission, strict headers, same-origin CORS posture, coarse-only logs, and a rollback drill that already shifted traffic between revisions once.
@@ -113,7 +130,7 @@ WazehTerms is now live. As of September 30, 2026, the app runs as a single Cloud
 The remaining work is no longer "make it work" but "make it measured and trusted":
 
 - A full browser (Playwright) journey against the live URL, complementing the HTTP-level smoke.
-- Corpus evaluation numbers (Phase 15): field accuracy, mismatch recall, citation support, and latency, reported as measured results rather than targets.
+- Corpus evaluation is now measured, not just planned: on the 2026-10-02 production run, corrected scoring reports field accuracy 52/53, mismatch recall 11/11, and precision 13/13 on substantive findings, with 0 abstention violations — pending owner sign-off on the single displayed citation and ratification of the corrected truth annotations (`test-corpus/eval/eval-2026-10-02-review.md`).
 - A separate release decision — on a paid provider path, with a revised notice and tests — before real employment documents are ever accepted.
 
 Until that last decision is made, WazehTerms remains what this post describes: a live, careful demonstration of evidence-first document review, running on fictional documents by design — not a place to send a real employment contract.
