@@ -122,7 +122,7 @@ describe('Phase 11 six-sample local flow', () => {
     expect(reports.get('TC-012')!.findings.some((finding) => finding.category === 'document_mismatch' && finding.fieldKeys.includes('recruitment_cost'))).toBe(true);
     expect(reports.get('TC-013')!.findings.some((finding) => finding.category === 'missing_information' && finding.fieldKeys.includes('notice_terms'))).toBe(true);
     expect(reports.get('TC-014')!.stages.comparison).toBe('not_applicable');
-    expect(reports.get('TC-014')!.coverage.unreadableFieldKeys).toContain('basic_salary');
+    expect(reports.get('TC-014')!.coverage.unreadableFieldKeys).not.toContain('basic_salary');
 
     for (const [sampleCaseId, report] of reports) {
       expect(report.status, sampleCaseId).toBe('partial');

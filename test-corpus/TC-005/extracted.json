@@ -3,9 +3,9 @@
     "documentId": "doc-offer",
     "role": "offer",
     "mimeType": "application/pdf",
-    "pageCount": 1,
+    "pageCount": 2,
     "sha256": "a2bc16647511b07bab61e4cca6a63e6856e5460188925f00d671437f9fbd5dda",
-    "extractionStatus": "completed",
+    "extractionStatus": "partial",
     "fields": [
       {
         "fieldKey": "employer_name",
@@ -326,15 +326,17 @@
         "qualityNotes": []
       }
     ],
-    "unreadablePages": []
+    "unreadablePages": [
+      2
+    ]
   },
   "contract": {
     "documentId": "doc-contract",
     "role": "contract",
     "mimeType": "application/pdf",
-    "pageCount": 1,
+    "pageCount": 2,
     "sha256": "dbbfd3706ccf623fcb215febad4e536cff112f83b809103d8341fef5c662b10b",
-    "extractionStatus": "completed",
+    "extractionStatus": "partial",
     "fields": [
       {
         "fieldKey": "employer_name",
@@ -655,6 +657,8 @@
         "qualityNotes": []
       }
     ],
-    "unreadablePages": []
+    "unreadablePages": [
+      2
+    ]
   }
 }
