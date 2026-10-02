@@ -1,0 +1,63 @@
+{
+  "frozenAt": "2026-10-02T05:49:28.419Z",
+  "corpusRevision": {
+    "lastCorpusCommit": "04d241c",
+    "note": "15 cases TC-001..TC-015, truth schema v1"
+  },
+  "codeCommit": "0e73d68",
+  "model": "gemini-3.5-flash-lite",
+  "promptFile": "api/src/services/gemini/prompt.ts",
+  "promptSha256_16": "a3d4665e2905be61",
+  "sanityContentRelease": {
+    "project": "8g0kllu0",
+    "dataset": "production",
+    "publishedApprovedRecords": 44,
+    "rule1ReviewedAt": "2026-09-30"
+  },
+  "knowledgeBase": {
+    "id": "kbynAP4r8P6m",
+    "endpoint": "https://api.sanity.io/v1/context/organizations/on41l5b0b/mcp/wazeh-terms-mcp"
+  },
+  "deployedConfig": {
+    "service": "wazehterms",
+    "region": "asia-south1",
+    "revision": "wazehterms-00009-stc",
+    "imageTag": "wazehterms:26d6b34",
+    "flags": {
+      "SAMPLE_MODE_ENABLED": true,
+      "CUSTOM_UPLOAD_ENABLED": true,
+      "IMAGE_INPUT_ENABLED": false,
+      "URDU_EXPLANATION_ENABLED": false
+    },
+    "limits": {
+      "maxBytesPerFile": 8388608,
+      "maxTotalBytes": 16777216,
+      "maxPagesPerPdf": 15,
+      "maxCorrections": 100,
+      "applicationDeadlineMs": 45000,
+      "retrievalTimeoutMs": 15000
+    },
+    "admission": {
+      "rateLimitMax": 60,
+      "rateLimitWindowMs": 60000,
+      "maxConcurrentExtractions": 5
+    }
+  },
+  "privacyNoticeVersion": "gemini-free-demo-v1",
+  "providerPosture": "Gemini API Free tier (AI Studio key, secret gemini-api-key:2). Unpaid Services handling recorded in plans/manual-tasks.md MT-10. Quota-limited: runner paces ~13s between cases and resumes via JSONL.",
+  "approvedRules": [
+    {
+      "ruleKey": "ae-recruitment-costs-employer-bears",
+      "ruleRevision": 1,
+      "sourceKey": "uae-federal-decree-law-33-2021",
+      "versionKey": "base-text-2022",
+      "pinpoint": "Article (6), clause (4)"
+    }
+  ],
+  "supersededAbstentions": {
+    "TC-012": [
+      "no_rule_claims"
+    ]
+  },
+  "supersededAbstentionsRationale": "TC-012 truth predates Phase 09/10 approved content; Rule 1 (Article 6(4)) is now approved and claimable for the worker-charge topic (documented in Phase 10 live checks). no_global_verdict stays enforced everywhere. Owner sign-off pending in eval review record."
+}
