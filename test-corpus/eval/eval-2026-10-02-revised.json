@@ -1,0 +1,1498 @@
+{
+  "scoredAt": "2026-10-02T13:32:08.879Z",
+  "aggregate": {
+    "cases": 15,
+    "fieldAccuracy": {
+      "numerator": 52,
+      "denominator": 53,
+      "stateOnlyCorrect": 2,
+      "valueOnlyCorrect": 50
+    },
+    "mismatchRecall": {
+      "numerator": 11,
+      "denominator": 11
+    },
+    "precision": {
+      "supported": 13,
+      "emitted": 13,
+      "policyExempt": 15,
+      "duplicateErrors": 0,
+      "byCategory": {
+        "document_mismatch": {
+          "emitted": 12,
+          "supported": 12
+        },
+        "source_backed_concern": {
+          "emitted": 1,
+          "supported": 1
+        }
+      }
+    },
+    "citation": {
+      "displayed": 1,
+      "structurallyValid": 1,
+      "unsupported": 0,
+      "humanPending": 1
+    },
+    "abstentionViolations": 0,
+    "falseMismatchesOnAbstentionCases": 0,
+    "hallucinatedQuotes": 0,
+    "flaggedLawishWithoutSource": 0,
+    "extractionLatency": {
+      "p50Ms": 16488,
+      "p95Ms": 22465
+    },
+    "analysisLatency": {
+      "p50Ms": 3493,
+      "p95Ms": 4573
+    }
+  },
+  "perCase": [
+    {
+      "caseId": "TC-001",
+      "fieldAccuracy": {
+        "numerator": 8,
+        "denominator": 8,
+        "stateOnlyCorrect": 0,
+        "valueOnlyCorrect": 8,
+        "misses": []
+      },
+      "mismatchRecall": {
+        "numerator": 0,
+        "denominator": 0,
+        "unassessable": [],
+        "misses": []
+      },
+      "precision": {
+        "supported": 0,
+        "emitted": 0,
+        "policyExempt": 1,
+        "duplicateErrors": 0,
+        "autoUnsupported": [],
+        "needsHumanReview": [],
+        "byCategory": {}
+      },
+      "citation": {
+        "displayed": 0,
+        "structurallyValid": 0,
+        "unsupported": [],
+        "needsHumanReview": []
+      },
+      "abstention": {
+        "violations": [],
+        "falseMismatches": 0,
+        "noGlobalVerdict": true
+      },
+      "stateCounts": {
+        "present": 8,
+        "absent": 0,
+        "unclear": 0,
+        "unreadable": 0
+      },
+      "hallucinatedQuotes": 0,
+      "flaggedLawishWithoutSource": 0,
+      "injectionHeld": true,
+      "timings": {
+        "extractionMs": 19194,
+        "analysisMs": 4573
+      }
+    },
+    {
+      "caseId": "TC-002",
+      "fieldAccuracy": {
+        "numerator": 4,
+        "denominator": 4,
+        "stateOnlyCorrect": 0,
+        "valueOnlyCorrect": 4,
+        "misses": []
+      },
+      "mismatchRecall": {
+        "numerator": 2,
+        "denominator": 2,
+        "unassessable": [],
+        "misses": []
+      },
+      "precision": {
+        "supported": 2,
+        "emitted": 2,
+        "policyExempt": 2,
+        "duplicateErrors": 0,
+        "autoUnsupported": [],
+        "needsHumanReview": [
+          {
+            "index": 0,
+            "category": "document_mismatch",
+            "fieldKeys": [
+              "basic_salary"
+            ]
+          },
+          {
+            "index": 1,
+            "category": "document_mismatch",
+            "fieldKeys": [
+              "stated_total_pay"
+            ]
+          }
+        ],
+        "byCategory": {
+          "document_mismatch": {
+            "emitted": 2,
+            "supported": 2
+          }
+        }
+      },
+      "citation": {
+        "displayed": 0,
+        "structurallyValid": 0,
+        "unsupported": [],
+        "needsHumanReview": []
+      },
+      "abstention": {
+        "violations": [],
+        "falseMismatches": 0,
+        "noGlobalVerdict": true
+      },
+      "stateCounts": {
+        "present": 4,
+        "absent": 0,
+        "unclear": 0,
+        "unreadable": 0
+      },
+      "hallucinatedQuotes": 0,
+      "flaggedLawishWithoutSource": 0,
+      "injectionHeld": true,
+      "timings": {
+        "extractionMs": 18811,
+        "analysisMs": 688
+      }
+    },
+    {
+      "caseId": "TC-003",
+      "fieldAccuracy": {
+        "numerator": 4,
+        "denominator": 4,
+        "stateOnlyCorrect": 0,
+        "valueOnlyCorrect": 4,
+        "misses": []
+      },
+      "mismatchRecall": {
+        "numerator": 0,
+        "denominator": 0,
+        "unassessable": [],
+        "misses": []
+      },
+      "precision": {
+        "supported": 0,
+        "emitted": 0,
+        "policyExempt": 1,
+        "duplicateErrors": 0,
+        "autoUnsupported": [],
+        "needsHumanReview": [],
+        "byCategory": {}
+      },
+      "citation": {
+        "displayed": 0,
+        "structurallyValid": 0,
+        "unsupported": [],
+        "needsHumanReview": []
+      },
+      "abstention": {
+        "violations": [],
+        "falseMismatches": 0,
+        "noGlobalVerdict": true
+      },
+      "stateCounts": {
+        "present": 4,
+        "absent": 0,
+        "unclear": 0,
+        "unreadable": 0
+      },
+      "hallucinatedQuotes": 0,
+      "flaggedLawishWithoutSource": 0,
+      "injectionHeld": true,
+      "timings": {
+        "extractionMs": 15677,
+        "analysisMs": 3765
+      }
+    },
+    {
+      "caseId": "TC-004",
+      "fieldAccuracy": {
+        "numerator": 4,
+        "denominator": 4,
+        "stateOnlyCorrect": 0,
+        "valueOnlyCorrect": 4,
+        "misses": []
+      },
+      "mismatchRecall": {
+        "numerator": 0,
+        "denominator": 0,
+        "unassessable": [],
+        "misses": []
+      },
+      "precision": {
+        "supported": 0,
+        "emitted": 0,
+        "policyExempt": 1,
+        "duplicateErrors": 0,
+        "autoUnsupported": [],
+        "needsHumanReview": [],
+        "byCategory": {}
+      },
+      "citation": {
+        "displayed": 0,
+        "structurallyValid": 0,
+        "unsupported": [],
+        "needsHumanReview": []
+      },
+      "abstention": {
+        "violations": [],
+        "falseMismatches": 0,
+        "noGlobalVerdict": true
+      },
+      "stateCounts": {
+        "present": 4,
+        "absent": 0,
+        "unclear": 0,
+        "unreadable": 0
+      },
+      "hallucinatedQuotes": 0,
+      "flaggedLawishWithoutSource": 0,
+      "injectionHeld": true,
+      "timings": {
+        "extractionMs": 16488,
+        "analysisMs": 3719
+      }
+    },
+    {
+      "caseId": "TC-005",
+      "fieldAccuracy": {
+        "numerator": 4,
+        "denominator": 4,
+        "stateOnlyCorrect": 0,
+        "valueOnlyCorrect": 4,
+        "misses": []
+      },
+      "mismatchRecall": {
+        "numerator": 0,
+        "denominator": 0,
+        "unassessable": [],
+        "misses": []
+      },
+      "precision": {
+        "supported": 0,
+        "emitted": 0,
+        "policyExempt": 1,
+        "duplicateErrors": 0,
+        "autoUnsupported": [],
+        "needsHumanReview": [],
+        "byCategory": {}
+      },
+      "citation": {
+        "displayed": 0,
+        "structurallyValid": 0,
+        "unsupported": [],
+        "needsHumanReview": []
+      },
+      "abstention": {
+        "violations": [],
+        "falseMismatches": 0,
+        "noGlobalVerdict": true
+      },
+      "stateCounts": {
+        "present": 4,
+        "absent": 0,
+        "unclear": 0,
+        "unreadable": 0
+      },
+      "hallucinatedQuotes": 0,
+      "flaggedLawishWithoutSource": 0,
+      "injectionHeld": true,
+      "timings": {
+        "extractionMs": 22465,
+        "analysisMs": 3851
+      }
+    },
+    {
+      "caseId": "TC-006",
+      "fieldAccuracy": {
+        "numerator": 4,
+        "denominator": 4,
+        "stateOnlyCorrect": 0,
+        "valueOnlyCorrect": 4,
+        "misses": []
+      },
+      "mismatchRecall": {
+        "numerator": 2,
+        "denominator": 2,
+        "unassessable": [],
+        "misses": []
+      },
+      "precision": {
+        "supported": 2,
+        "emitted": 2,
+        "policyExempt": 1,
+        "duplicateErrors": 0,
+        "autoUnsupported": [],
+        "needsHumanReview": [
+          {
+            "index": 0,
+            "category": "document_mismatch",
+            "fieldKeys": [
+              "basic_salary"
+            ]
+          },
+          {
+            "index": 1,
+            "category": "document_mismatch",
+            "fieldKeys": [
+              "stated_total_pay"
+            ]
+          }
+        ],
+        "byCategory": {
+          "document_mismatch": {
+            "emitted": 2,
+            "supported": 2
+          }
+        }
+      },
+      "citation": {
+        "displayed": 0,
+        "structurallyValid": 0,
+        "unsupported": [],
+        "needsHumanReview": []
+      },
+      "abstention": {
+        "violations": [],
+        "falseMismatches": 0,
+        "noGlobalVerdict": true
+      },
+      "stateCounts": {
+        "present": 4,
+        "absent": 0,
+        "unclear": 0,
+        "unreadable": 0
+      },
+      "hallucinatedQuotes": 0,
+      "flaggedLawishWithoutSource": 0,
+      "injectionHeld": true,
+      "timings": {
+        "extractionMs": 18032,
+        "analysisMs": 3130
+      }
+    },
+    {
+      "caseId": "TC-007",
+      "fieldAccuracy": {
+        "numerator": 4,
+        "denominator": 4,
+        "stateOnlyCorrect": 0,
+        "valueOnlyCorrect": 4,
+        "misses": []
+      },
+      "mismatchRecall": {
+        "numerator": 2,
+        "denominator": 2,
+        "unassessable": [],
+        "misses": []
+      },
+      "precision": {
+        "supported": 2,
+        "emitted": 2,
+        "policyExempt": 1,
+        "duplicateErrors": 0,
+        "autoUnsupported": [],
+        "needsHumanReview": [
+          {
+            "index": 0,
+            "category": "document_mismatch",
+            "fieldKeys": [
+              "allowance_item"
+            ]
+          },
+          {
+            "index": 1,
+            "category": "document_mismatch",
+            "fieldKeys": [
+              "stated_total_pay"
+            ]
+          }
+        ],
+        "byCategory": {
+          "document_mismatch": {
+            "emitted": 2,
+            "supported": 2
+          }
+        }
+      },
+      "citation": {
+        "displayed": 0,
+        "structurallyValid": 0,
+        "unsupported": [],
+        "needsHumanReview": []
+      },
+      "abstention": {
+        "violations": [],
+        "falseMismatches": 0,
+        "noGlobalVerdict": true
+      },
+      "stateCounts": {
+        "present": 4,
+        "absent": 0,
+        "unclear": 0,
+        "unreadable": 0
+      },
+      "hallucinatedQuotes": 0,
+      "flaggedLawishWithoutSource": 0,
+      "injectionHeld": true,
+      "timings": {
+        "extractionMs": 21990,
+        "analysisMs": 715
+      }
+    },
+    {
+      "caseId": "TC-008",
+      "fieldAccuracy": {
+        "numerator": 2,
+        "denominator": 2,
+        "stateOnlyCorrect": 0,
+        "valueOnlyCorrect": 2,
+        "misses": []
+      },
+      "mismatchRecall": {
+        "numerator": 1,
+        "denominator": 1,
+        "unassessable": [],
+        "misses": []
+      },
+      "precision": {
+        "supported": 1,
+        "emitted": 1,
+        "policyExempt": 1,
+        "duplicateErrors": 0,
+        "autoUnsupported": [],
+        "needsHumanReview": [
+          {
+            "index": 0,
+            "category": "document_mismatch",
+            "fieldKeys": [
+              "job_title"
+            ]
+          }
+        ],
+        "byCategory": {
+          "document_mismatch": {
+            "emitted": 1,
+            "supported": 1
+          }
+        }
+      },
+      "citation": {
+        "displayed": 0,
+        "structurallyValid": 0,
+        "unsupported": [],
+        "needsHumanReview": []
+      },
+      "abstention": {
+        "violations": [],
+        "falseMismatches": 0,
+        "noGlobalVerdict": true
+      },
+      "stateCounts": {
+        "present": 2,
+        "absent": 0,
+        "unclear": 0,
+        "unreadable": 0
+      },
+      "hallucinatedQuotes": 0,
+      "flaggedLawishWithoutSource": 0,
+      "injectionHeld": true,
+      "timings": {
+        "extractionMs": 15429,
+        "analysisMs": 654
+      }
+    },
+    {
+      "caseId": "TC-009",
+      "fieldAccuracy": {
+        "numerator": 4,
+        "denominator": 4,
+        "stateOnlyCorrect": 0,
+        "valueOnlyCorrect": 4,
+        "misses": []
+      },
+      "mismatchRecall": {
+        "numerator": 2,
+        "denominator": 2,
+        "unassessable": [],
+        "misses": []
+      },
+      "precision": {
+        "supported": 2,
+        "emitted": 2,
+        "policyExempt": 1,
+        "duplicateErrors": 0,
+        "autoUnsupported": [],
+        "needsHumanReview": [
+          {
+            "index": 1,
+            "category": "document_mismatch",
+            "fieldKeys": [
+              "start_date"
+            ]
+          },
+          {
+            "index": 2,
+            "category": "document_mismatch",
+            "fieldKeys": [
+              "contract_duration"
+            ]
+          }
+        ],
+        "byCategory": {
+          "document_mismatch": {
+            "emitted": 2,
+            "supported": 2
+          }
+        }
+      },
+      "citation": {
+        "displayed": 0,
+        "structurallyValid": 0,
+        "unsupported": [],
+        "needsHumanReview": []
+      },
+      "abstention": {
+        "violations": [],
+        "falseMismatches": 0,
+        "noGlobalVerdict": true
+      },
+      "stateCounts": {
+        "present": 4,
+        "absent": 0,
+        "unclear": 0,
+        "unreadable": 0
+      },
+      "hallucinatedQuotes": 0,
+      "flaggedLawishWithoutSource": 0,
+      "injectionHeld": true,
+      "timings": {
+        "extractionMs": 16500,
+        "analysisMs": 3203
+      }
+    },
+    {
+      "caseId": "TC-010",
+      "fieldAccuracy": {
+        "numerator": 2,
+        "denominator": 2,
+        "stateOnlyCorrect": 0,
+        "valueOnlyCorrect": 2,
+        "misses": []
+      },
+      "mismatchRecall": {
+        "numerator": 1,
+        "denominator": 1,
+        "unassessable": [],
+        "misses": []
+      },
+      "precision": {
+        "supported": 1,
+        "emitted": 1,
+        "policyExempt": 1,
+        "duplicateErrors": 0,
+        "autoUnsupported": [],
+        "needsHumanReview": [
+          {
+            "index": 1,
+            "category": "document_mismatch",
+            "fieldKeys": [
+              "overtime_terms"
+            ]
+          }
+        ],
+        "byCategory": {
+          "document_mismatch": {
+            "emitted": 1,
+            "supported": 1
+          }
+        }
+      },
+      "citation": {
+        "displayed": 0,
+        "structurallyValid": 0,
+        "unsupported": [],
+        "needsHumanReview": []
+      },
+      "abstention": {
+        "violations": [],
+        "falseMismatches": 0,
+        "noGlobalVerdict": true
+      },
+      "stateCounts": {
+        "present": 2,
+        "absent": 0,
+        "unclear": 0,
+        "unreadable": 0
+      },
+      "hallucinatedQuotes": 0,
+      "flaggedLawishWithoutSource": 0,
+      "injectionHeld": true,
+      "timings": {
+        "extractionMs": 15737,
+        "analysisMs": 3493
+      }
+    },
+    {
+      "caseId": "TC-011",
+      "fieldAccuracy": {
+        "numerator": 2,
+        "denominator": 2,
+        "stateOnlyCorrect": 0,
+        "valueOnlyCorrect": 2,
+        "misses": []
+      },
+      "mismatchRecall": {
+        "numerator": 0,
+        "denominator": 0,
+        "unassessable": [
+          {
+            "fieldKey": "accommodation_benefit",
+            "kind": "conditional",
+            "reason": "not_a_value_difference"
+          }
+        ],
+        "misses": []
+      },
+      "precision": {
+        "supported": 1,
+        "emitted": 1,
+        "policyExempt": 1,
+        "duplicateErrors": 0,
+        "autoUnsupported": [],
+        "needsHumanReview": [
+          {
+            "index": 2,
+            "category": "document_mismatch",
+            "fieldKeys": [
+              "accommodation_benefit"
+            ]
+          }
+        ],
+        "byCategory": {
+          "document_mismatch": {
+            "emitted": 1,
+            "supported": 1
+          }
+        }
+      },
+      "citation": {
+        "displayed": 0,
+        "structurallyValid": 0,
+        "unsupported": [],
+        "needsHumanReview": []
+      },
+      "abstention": {
+        "violations": [],
+        "falseMismatches": 0,
+        "noGlobalVerdict": true
+      },
+      "stateCounts": {
+        "present": 2,
+        "absent": 0,
+        "unclear": 0,
+        "unreadable": 0
+      },
+      "hallucinatedQuotes": 0,
+      "flaggedLawishWithoutSource": 0,
+      "injectionHeld": true,
+      "timings": {
+        "extractionMs": 17992,
+        "analysisMs": 3823
+      }
+    },
+    {
+      "caseId": "TC-012",
+      "fieldAccuracy": {
+        "numerator": 2,
+        "denominator": 2,
+        "stateOnlyCorrect": 0,
+        "valueOnlyCorrect": 2,
+        "misses": []
+      },
+      "mismatchRecall": {
+        "numerator": 1,
+        "denominator": 1,
+        "unassessable": [],
+        "misses": []
+      },
+      "precision": {
+        "supported": 2,
+        "emitted": 2,
+        "policyExempt": 1,
+        "duplicateErrors": 0,
+        "autoUnsupported": [],
+        "needsHumanReview": [
+          {
+            "index": 2,
+            "category": "document_mismatch",
+            "fieldKeys": [
+              "recruitment_cost"
+            ]
+          },
+          {
+            "index": 4,
+            "category": "source_backed_concern",
+            "fieldKeys": [
+              "recruitment_cost"
+            ]
+          }
+        ],
+        "byCategory": {
+          "document_mismatch": {
+            "emitted": 1,
+            "supported": 1
+          },
+          "source_backed_concern": {
+            "emitted": 1,
+            "supported": 1
+          }
+        }
+      },
+      "citation": {
+        "displayed": 1,
+        "structurallyValid": 1,
+        "unsupported": [],
+        "needsHumanReview": [
+          {
+            "index": 4,
+            "ruleKey": "ae-recruitment-costs-employer-bears",
+            "pinpoint": "Article (6) Recruitment and Employment of Workers, clause (4)",
+            "pinpointQuote": "The Employer is prohibited from charging the Worker the fees and costs of recruitment and employment or collecting them from him, whether directly or indirectly."
+          }
+        ]
+      },
+      "abstention": {
+        "violations": [],
+        "falseMismatches": 0,
+        "noGlobalVerdict": true
+      },
+      "stateCounts": {
+        "present": 2,
+        "absent": 0,
+        "unclear": 0,
+        "unreadable": 0
+      },
+      "hallucinatedQuotes": 0,
+      "flaggedLawishWithoutSource": 0,
+      "injectionHeld": true,
+      "timings": {
+        "extractionMs": 16316,
+        "analysisMs": 3739
+      }
+    },
+    {
+      "caseId": "TC-013",
+      "fieldAccuracy": {
+        "numerator": 4,
+        "denominator": 4,
+        "stateOnlyCorrect": 2,
+        "valueOnlyCorrect": 2,
+        "misses": []
+      },
+      "mismatchRecall": {
+        "numerator": 0,
+        "denominator": 0,
+        "unassessable": [
+          {
+            "fieldKey": "notice_terms",
+            "kind": "missing",
+            "reason": "not_a_value_difference"
+          }
+        ],
+        "misses": []
+      },
+      "precision": {
+        "supported": 0,
+        "emitted": 0,
+        "policyExempt": 1,
+        "duplicateErrors": 0,
+        "autoUnsupported": [],
+        "needsHumanReview": [],
+        "byCategory": {}
+      },
+      "citation": {
+        "displayed": 0,
+        "structurallyValid": 0,
+        "unsupported": [],
+        "needsHumanReview": []
+      },
+      "abstention": {
+        "violations": [],
+        "falseMismatches": 0,
+        "noGlobalVerdict": true
+      },
+      "stateCounts": {
+        "present": 2,
+        "absent": 2,
+        "unclear": 0,
+        "unreadable": 0
+      },
+      "hallucinatedQuotes": 0,
+      "flaggedLawishWithoutSource": 0,
+      "injectionHeld": true,
+      "timings": {
+        "extractionMs": 16026,
+        "analysisMs": 4271
+      }
+    },
+    {
+      "caseId": "TC-014",
+      "fieldAccuracy": {
+        "numerator": 2,
+        "denominator": 3,
+        "stateOnlyCorrect": 0,
+        "valueOnlyCorrect": 2,
+        "misses": [
+          {
+            "role": "contract",
+            "fieldKey": "basic_salary",
+            "expected": "unreadable",
+            "got": "present"
+          }
+        ]
+      },
+      "mismatchRecall": {
+        "numerator": 0,
+        "denominator": 0,
+        "unassessable": [
+          {
+            "fieldKey": "basic_salary",
+            "kind": "clue",
+            "reason": "not_a_value_difference"
+          }
+        ],
+        "misses": []
+      },
+      "precision": {
+        "supported": 0,
+        "emitted": 0,
+        "policyExempt": 0,
+        "duplicateErrors": 0,
+        "autoUnsupported": [],
+        "needsHumanReview": [],
+        "byCategory": {}
+      },
+      "citation": {
+        "displayed": 0,
+        "structurallyValid": 0,
+        "unsupported": [],
+        "needsHumanReview": []
+      },
+      "abstention": {
+        "violations": [],
+        "falseMismatches": 0,
+        "noGlobalVerdict": true
+      },
+      "stateCounts": {
+        "present": 3,
+        "absent": 0,
+        "unclear": 0,
+        "unreadable": 0
+      },
+      "hallucinatedQuotes": 0,
+      "flaggedLawishWithoutSource": 0,
+      "injectionHeld": true,
+      "timings": {
+        "extractionMs": 7859,
+        "analysisMs": 3073
+      }
+    },
+    {
+      "caseId": "TC-015",
+      "fieldAccuracy": {
+        "numerator": 2,
+        "denominator": 2,
+        "stateOnlyCorrect": 0,
+        "valueOnlyCorrect": 2,
+        "misses": []
+      },
+      "mismatchRecall": {
+        "numerator": 0,
+        "denominator": 0,
+        "unassessable": [
+          {
+            "fieldKey": "basic_salary",
+            "kind": "clue",
+            "reason": "not_a_value_difference"
+          }
+        ],
+        "misses": []
+      },
+      "precision": {
+        "supported": 0,
+        "emitted": 0,
+        "policyExempt": 1,
+        "duplicateErrors": 0,
+        "autoUnsupported": [],
+        "needsHumanReview": [],
+        "byCategory": {}
+      },
+      "citation": {
+        "displayed": 0,
+        "structurallyValid": 0,
+        "unsupported": [],
+        "needsHumanReview": []
+      },
+      "abstention": {
+        "violations": [],
+        "falseMismatches": 0,
+        "noGlobalVerdict": true
+      },
+      "stateCounts": {
+        "present": 2,
+        "absent": 0,
+        "unclear": 0,
+        "unreadable": 0
+      },
+      "hallucinatedQuotes": 0,
+      "flaggedLawishWithoutSource": 0,
+      "injectionHeld": true,
+      "timings": {
+        "extractionMs": 15787,
+        "analysisMs": 3455
+      }
+    }
+  ],
+  "humanReviewBundles": [
+    {
+      "caseId": "TC-002",
+      "findingIndex": 0,
+      "category": "document_mismatch",
+      "fieldKeys": [
+        "basic_salary"
+      ],
+      "explanation": "The offer and the contract state different basic salary values.",
+      "evidence": [
+        {
+          "documentId": "doc_ed371956c2b1e21e",
+          "page": 1,
+          "quote": "3. Basic salary: A basic salary of AED 2,400 per month.",
+          "verification": "matched_text"
+        },
+        {
+          "documentId": "doc_7581f4bf1e40179f",
+          "page": 1,
+          "quote": "3. Basic salary: The Employee shall receive a basic salary of\n AED 1,800 per month.",
+          "verification": "matched_text"
+        }
+      ],
+      "truthAllowed": [
+        "document_mismatch",
+        "missing_information"
+      ],
+      "truthSeeded": [
+        {
+          "fieldKey": "basic_salary",
+          "kind": "value",
+          "note": "Seeded critical difference: basic salary 2,400 (offer) vs 1,800 (contract)."
+        },
+        {
+          "fieldKey": "stated_total_pay",
+          "kind": "value",
+          "note": "Seeded difference: stated total 3,200 vs 2,600."
+        }
+      ],
+      "truthNotes": "Preserved salary-change pair (mirrors fixtures/samples/TC-002)."
+    },
+    {
+      "caseId": "TC-002",
+      "findingIndex": 1,
+      "category": "document_mismatch",
+      "fieldKeys": [
+        "stated_total_pay"
+      ],
+      "explanation": "The offer and the contract state different stated total pay values.",
+      "evidence": [
+        {
+          "documentId": "doc_ed371956c2b1e21e",
+          "page": 1,
+          "quote": "5. Total monthly remuneration: AED 3,200 per month, paid monthly\n in arrears.",
+          "verification": "matched_text"
+        },
+        {
+          "documentId": "doc_7581f4bf1e40179f",
+          "page": 1,
+          "quote": "5. Total monthly remuneration: AED 2,600 per month, payable\nmonthly in arrears.",
+          "verification": "matched_text"
+        }
+      ],
+      "truthAllowed": [
+        "document_mismatch",
+        "missing_information"
+      ],
+      "truthSeeded": [
+        {
+          "fieldKey": "basic_salary",
+          "kind": "value",
+          "note": "Seeded critical difference: basic salary 2,400 (offer) vs 1,800 (contract)."
+        },
+        {
+          "fieldKey": "stated_total_pay",
+          "kind": "value",
+          "note": "Seeded difference: stated total 3,200 vs 2,600."
+        }
+      ],
+      "truthNotes": "Preserved salary-change pair (mirrors fixtures/samples/TC-002)."
+    },
+    {
+      "caseId": "TC-006",
+      "findingIndex": 0,
+      "category": "document_mismatch",
+      "fieldKeys": [
+        "basic_salary"
+      ],
+      "explanation": "The offer and the contract state different basic salary values.",
+      "evidence": [
+        {
+          "documentId": "doc_53822f1fba8aa415",
+          "page": 1,
+          "quote": "Basic salary: AED 2,200 per month",
+          "verification": "matched_text"
+        },
+        {
+          "documentId": "doc_c52e2e3b5d47dc20",
+          "page": 1,
+          "quote": "Basic salary: AED 1,750 per month",
+          "verification": "matched_text"
+        }
+      ],
+      "truthAllowed": [
+        "document_mismatch",
+        "missing_information"
+      ],
+      "truthSeeded": [
+        {
+          "fieldKey": "basic_salary",
+          "kind": "value",
+          "note": "Seeded critical difference: basic salary 2,200 vs 1,750."
+        },
+        {
+          "fieldKey": "stated_total_pay",
+          "kind": "value",
+          "note": "Seeded difference: stated total 2,700 vs 2,250 consistent with the salary components (added on rebaseline after the 2026-10-02 run showed the real textual difference)."
+        }
+      ],
+      "truthNotes": "Critical salary mismatch with both passages readable Rebaseline 2026-10-02 (release-polish WI-4): added the stated_total_pay seed — both documents state different totals (2,700 vs 2,250) and the production run correctly reported them."
+    },
+    {
+      "caseId": "TC-006",
+      "findingIndex": 1,
+      "category": "document_mismatch",
+      "fieldKeys": [
+        "stated_total_pay"
+      ],
+      "explanation": "The offer and the contract state different stated total pay values.",
+      "evidence": [
+        {
+          "documentId": "doc_53822f1fba8aa415",
+          "page": 1,
+          "quote": "Stated total monthly pay: AED 2,700",
+          "verification": "matched_text"
+        },
+        {
+          "documentId": "doc_c52e2e3b5d47dc20",
+          "page": 1,
+          "quote": "Stated total monthly pay: AED 2,250",
+          "verification": "matched_text"
+        }
+      ],
+      "truthAllowed": [
+        "document_mismatch",
+        "missing_information"
+      ],
+      "truthSeeded": [
+        {
+          "fieldKey": "basic_salary",
+          "kind": "value",
+          "note": "Seeded critical difference: basic salary 2,200 vs 1,750."
+        },
+        {
+          "fieldKey": "stated_total_pay",
+          "kind": "value",
+          "note": "Seeded difference: stated total 2,700 vs 2,250 consistent with the salary components (added on rebaseline after the 2026-10-02 run showed the real textual difference)."
+        }
+      ],
+      "truthNotes": "Critical salary mismatch with both passages readable Rebaseline 2026-10-02 (release-polish WI-4): added the stated_total_pay seed — both documents state different totals (2,700 vs 2,250) and the production run correctly reported them."
+    },
+    {
+      "caseId": "TC-007",
+      "findingIndex": 0,
+      "category": "document_mismatch",
+      "fieldKeys": [
+        "allowance_item"
+      ],
+      "explanation": "The offer and the contract state different allowance item values. (entry 1 of 1)",
+      "evidence": [
+        {
+          "documentId": "doc_ba6f3de5d022b065",
+          "page": 1,
+          "quote": "Transport allowance: AED 500 per month",
+          "verification": "matched_text"
+        },
+        {
+          "documentId": "doc_8e1e9822e7e6140e",
+          "page": 1,
+          "quote": "Transport allowance: AED 950 per month",
+          "verification": "matched_text"
+        }
+      ],
+      "truthAllowed": [
+        "document_mismatch",
+        "missing_information"
+      ],
+      "truthSeeded": [
+        {
+          "fieldKey": "stated_total_pay",
+          "kind": "value",
+          "note": "Seeded difference: stated total 3,000 vs 3,450 (allowance drift)."
+        },
+        {
+          "fieldKey": "allowance_item",
+          "kind": "value",
+          "note": "Seeded difference: transport allowance 500 vs 950 per month (added on rebaseline after the 2026-10-02 run showed the real textual difference)."
+        }
+      ],
+      "truthNotes": "Total-vs-components mismatch Rebaseline 2026-10-02 (release-polish WI-4): added the allowance_item seed — both documents state different transport allowances (500 vs 950) and the production run correctly reported them."
+    },
+    {
+      "caseId": "TC-007",
+      "findingIndex": 1,
+      "category": "document_mismatch",
+      "fieldKeys": [
+        "stated_total_pay"
+      ],
+      "explanation": "The offer and the contract state different stated total pay values.",
+      "evidence": [
+        {
+          "documentId": "doc_ba6f3de5d022b065",
+          "page": 1,
+          "quote": "Stated total monthly pay: AED 3,000",
+          "verification": "matched_text"
+        },
+        {
+          "documentId": "doc_8e1e9822e7e6140e",
+          "page": 1,
+          "quote": "Stated total monthly pay: AED 3,450",
+          "verification": "matched_text"
+        }
+      ],
+      "truthAllowed": [
+        "document_mismatch",
+        "missing_information"
+      ],
+      "truthSeeded": [
+        {
+          "fieldKey": "stated_total_pay",
+          "kind": "value",
+          "note": "Seeded difference: stated total 3,000 vs 3,450 (allowance drift)."
+        },
+        {
+          "fieldKey": "allowance_item",
+          "kind": "value",
+          "note": "Seeded difference: transport allowance 500 vs 950 per month (added on rebaseline after the 2026-10-02 run showed the real textual difference)."
+        }
+      ],
+      "truthNotes": "Total-vs-components mismatch Rebaseline 2026-10-02 (release-polish WI-4): added the allowance_item seed — both documents state different transport allowances (500 vs 950) and the production run correctly reported them."
+    },
+    {
+      "caseId": "TC-008",
+      "findingIndex": 0,
+      "category": "document_mismatch",
+      "fieldKeys": [
+        "job_title"
+      ],
+      "explanation": "The offer and the contract state different job title or occupation values.",
+      "evidence": [
+        {
+          "documentId": "doc_aa2d78b272fb9cc8",
+          "page": 1,
+          "quote": "Position: Site Engineer",
+          "verification": "matched_text"
+        },
+        {
+          "documentId": "doc_3f27ca174c2b414c",
+          "page": 1,
+          "quote": "Position: Site Supervisor",
+          "verification": "matched_text"
+        }
+      ],
+      "truthAllowed": [
+        "document_mismatch",
+        "missing_information"
+      ],
+      "truthSeeded": [
+        {
+          "fieldKey": "job_title",
+          "kind": "value",
+          "note": "Seeded difference: job title differs."
+        }
+      ],
+      "truthNotes": "Job-title mismatch."
+    },
+    {
+      "caseId": "TC-009",
+      "findingIndex": 1,
+      "category": "document_mismatch",
+      "fieldKeys": [
+        "start_date"
+      ],
+      "explanation": "The offer and the contract state different start date values.",
+      "evidence": [
+        {
+          "documentId": "doc_bcbda4dfb46efdc4",
+          "page": 1,
+          "quote": "Start date: 1 March 2026",
+          "verification": "matched_text"
+        },
+        {
+          "documentId": "doc_e0c3f80a3f043cae",
+          "page": 1,
+          "quote": "Start date: 1 April 2026",
+          "verification": "matched_text"
+        }
+      ],
+      "truthAllowed": [
+        "document_mismatch",
+        "missing_information"
+      ],
+      "truthSeeded": [
+        {
+          "fieldKey": "start_date",
+          "kind": "value",
+          "note": "Seeded difference: start date one month apart."
+        },
+        {
+          "fieldKey": "contract_duration",
+          "kind": "value",
+          "note": "Seeded difference: duration 12 vs 24 months."
+        }
+      ],
+      "truthNotes": "Date and duration mismatches in one pair."
+    },
+    {
+      "caseId": "TC-009",
+      "findingIndex": 2,
+      "category": "document_mismatch",
+      "fieldKeys": [
+        "contract_duration"
+      ],
+      "explanation": "The offer and the contract state different contract duration values.",
+      "evidence": [
+        {
+          "documentId": "doc_bcbda4dfb46efdc4",
+          "page": 1,
+          "quote": "Contract duration: 12 months",
+          "verification": "matched_text"
+        },
+        {
+          "documentId": "doc_e0c3f80a3f043cae",
+          "page": 1,
+          "quote": "Contract duration: 24 months",
+          "verification": "matched_text"
+        }
+      ],
+      "truthAllowed": [
+        "document_mismatch",
+        "missing_information"
+      ],
+      "truthSeeded": [
+        {
+          "fieldKey": "start_date",
+          "kind": "value",
+          "note": "Seeded difference: start date one month apart."
+        },
+        {
+          "fieldKey": "contract_duration",
+          "kind": "value",
+          "note": "Seeded difference: duration 12 vs 24 months."
+        }
+      ],
+      "truthNotes": "Date and duration mismatches in one pair."
+    },
+    {
+      "caseId": "TC-010",
+      "findingIndex": 1,
+      "category": "document_mismatch",
+      "fieldKeys": [
+        "overtime_terms"
+      ],
+      "explanation": "The offer and the contract state different overtime wording values.",
+      "evidence": [
+        {
+          "documentId": "doc_6f0102a7e48e1f08",
+          "page": 1,
+          "quote": "Overtime: Paid at 125 percent after ordinary hours",
+          "verification": "matched_text"
+        },
+        {
+          "documentId": "doc_d022a90ff466b70d",
+          "page": 1,
+          "quote": "Overtime: Unpaid and included in the salary",
+          "verification": "matched_text"
+        }
+      ],
+      "truthAllowed": [
+        "document_mismatch",
+        "missing_information"
+      ],
+      "truthSeeded": [
+        {
+          "fieldKey": "overtime_terms",
+          "kind": "value",
+          "note": "Seeded difference: overtime paid vs declared unpaid."
+        }
+      ],
+      "truthNotes": "Overtime wording mismatch (text strategy)."
+    },
+    {
+      "caseId": "TC-011",
+      "findingIndex": 2,
+      "category": "document_mismatch",
+      "fieldKeys": [
+        "accommodation_benefit"
+      ],
+      "explanation": "The offer and the contract state different accommodation benefit values.",
+      "evidence": [
+        {
+          "documentId": "doc_e861ef74aec11f35",
+          "page": 2,
+          "quote": "Accommodation: Provided by the company",
+          "verification": "matched_text"
+        },
+        {
+          "documentId": "doc_d10ca29d70f29ea5",
+          "page": 2,
+          "quote": "Accommodation: Subject to availability at the company camp",
+          "verification": "matched_text"
+        }
+      ],
+      "truthAllowed": [
+        "document_mismatch",
+        "needs_clarification",
+        "missing_information"
+      ],
+      "truthSeeded": [
+        {
+          "fieldKey": "accommodation_benefit",
+          "kind": "conditional",
+          "note": "Seeded difference: accommodation provided vs conditional."
+        }
+      ],
+      "truthNotes": "Benefit status mismatch (provided vs conditional)."
+    },
+    {
+      "caseId": "TC-012",
+      "findingIndex": 2,
+      "category": "document_mismatch",
+      "fieldKeys": [
+        "recruitment_cost"
+      ],
+      "explanation": "The offer and the contract state different recruitment cost values.",
+      "evidence": [
+        {
+          "documentId": "doc_90a7776f6fe2b906",
+          "page": 2,
+          "quote": "Recruitment fee: AED 3,100 to be paid by the worker to the recruiter in Pakistan",
+          "verification": "matched_text"
+        },
+        {
+          "documentId": "doc_12085989700e9a5c",
+          "page": 2,
+          "quote": "Recruitment fee: AED 3,500 to be paid by the worker before visa stamping",
+          "verification": "matched_text"
+        }
+      ],
+      "truthAllowed": [
+        "document_mismatch",
+        "missing_information",
+        "source_backed_concern"
+      ],
+      "truthSeeded": [
+        {
+          "fieldKey": "recruitment_cost",
+          "kind": "value",
+          "note": "Seeded difference: worker-paid recruitment fee 3,100 vs 3,500, both attributed to the worker."
+        }
+      ],
+      "truthNotes": "Worker-charge case: a source-backed concern becomes possible only after approved rules exist (Phases 09/10); this corpus version asserts the document-check layer only Rebaseline 2026-10-02 (release-polish WI-4, agent re-inspection; owner ratification pending): the worker-charge clause maps to registry recruitment_cost (recruitment_and_travel_costs group), not deduction_item — the live model and the clause wording both name recruitment; approved rule ae-recruitment-costs-employer-bears rev 1 now backs the source-backed concern, superseding the no_rule_claims abstention and the source_backed_concern prohibition recorded before Phase 09/10 content existed Value annotation corrected to the stated text: the fee is one-time (per_contract) and worker-paid (payer worker), not monthly with no stated payer."
+    },
+    {
+      "caseId": "TC-012",
+      "findingIndex": 4,
+      "category": "source_backed_concern",
+      "fieldKeys": [
+        "recruitment_cost"
+      ],
+      "explanation": "Your employer must pay recruitment and employment costs. Any recruitment, visa, residency, medical, or travel charge you are asked to pay yourself should be questioned and confirmed with the employer and the Ministry before you sign. (Official source: Government of the United Arab Emirates (federal), Article (6) Recruitment and Employment of Workers, clause (4).)",
+      "evidence": [],
+      "source": {
+        "ruleKey": "ae-recruitment-costs-employer-bears",
+        "ruleRevision": 1,
+        "sourceKey": "uae-federal-decree-law-33-2021",
+        "versionKey": "base-text-2022",
+        "issuingAuthority": "Government of the United Arab Emirates (federal)",
+        "officialUrl": "https://uaelegislation.gov.ae/en/legislations/1541/download",
+        "pinpoint": {
+          "label": "Article (6) Recruitment and Employment of Workers, clause (4)",
+          "quote": "The Employer is prohibited from charging the Worker the fees and costs of recruitment and employment or collecting them from him, whether directly or indirectly."
+        },
+        "jurisdiction": "AE",
+        "responsibleParty": "uae_employer",
+        "effectiveFrom": "2022-02-02",
+        "effectiveTo": null,
+        "sourceCheckedAt": "2026-09-29T00:00:00.000Z",
+        "evidenceClass": "binding_official_rule"
+      },
+      "truthAllowed": [
+        "document_mismatch",
+        "missing_information",
+        "source_backed_concern"
+      ],
+      "truthSeeded": [
+        {
+          "fieldKey": "recruitment_cost",
+          "kind": "value",
+          "note": "Seeded difference: worker-paid recruitment fee 3,100 vs 3,500, both attributed to the worker."
+        }
+      ],
+      "truthNotes": "Worker-charge case: a source-backed concern becomes possible only after approved rules exist (Phases 09/10); this corpus version asserts the document-check layer only Rebaseline 2026-10-02 (release-polish WI-4, agent re-inspection; owner ratification pending): the worker-charge clause maps to registry recruitment_cost (recruitment_and_travel_costs group), not deduction_item — the live model and the clause wording both name recruitment; approved rule ae-recruitment-costs-employer-bears rev 1 now backs the source-backed concern, superseding the no_rule_claims abstention and the source_backed_concern prohibition recorded before Phase 09/10 content existed Value annotation corrected to the stated text: the fee is one-time (per_contract) and worker-paid (payer worker), not monthly with no stated payer."
+    },
+    {
+      "caseId": "TC-012",
+      "humanReview": "citation_support",
+      "ruleKey": "ae-recruitment-costs-employer-bears",
+      "pinpoint": "Article (6) Recruitment and Employment of Workers, clause (4)",
+      "source": {
+        "ruleKey": "ae-recruitment-costs-employer-bears",
+        "ruleRevision": 1,
+        "sourceKey": "uae-federal-decree-law-33-2021",
+        "versionKey": "base-text-2022",
+        "issuingAuthority": "Government of the United Arab Emirates (federal)",
+        "officialUrl": "https://uaelegislation.gov.ae/en/legislations/1541/download",
+        "pinpoint": {
+          "label": "Article (6) Recruitment and Employment of Workers, clause (4)",
+          "quote": "The Employer is prohibited from charging the Worker the fees and costs of recruitment and employment or collecting them from him, whether directly or indirectly."
+        },
+        "jurisdiction": "AE",
+        "responsibleParty": "uae_employer",
+        "effectiveFrom": "2022-02-02",
+        "effectiveTo": null,
+        "sourceCheckedAt": "2026-09-29T00:00:00.000Z",
+        "evidenceClass": "binding_official_rule"
+      },
+      "explanation": "Your employer must pay recruitment and employment costs. Any recruitment, visa, residency, medical, or travel charge you are asked to pay yourself should be questioned and confirmed with the employer and the Ministry before you sign. (Official source: Government of the United Arab Emirates (federal), Article (6) Recruitment and Employment of Workers, clause (4).)"
+    }
+  ]
+}
