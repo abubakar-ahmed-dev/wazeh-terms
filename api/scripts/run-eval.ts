@@ -295,9 +295,13 @@ function jsonlHas(jsonlPath: string, caseId: string): boolean {
 
 function scoreResultsFile(jsonlPath: string, date: string, freezeFile: string): void {
   const freeze = JSON.parse(readFileSync(path.join(evalDir, freezeFile), 'utf8')) as {
-    approvedRules: Parameters<typeof scoreCase>[1]['approvedRules'];
-    supersededAbstentions: Record<string, string[]>;
+    approvedRules?: Parameters<typeof scoreCase>[1]['approvedRules'];
+    sanityContentRelease?: { approvedRules?: Parameters<typeof scoreCase>[1]['approvedRules'] };
+    supersededAbstentions?: Record<string, string[]>;
   };
+  // freeze-2026-10-03-prod2 nests the inventory under sanityContentRelease.
+  const approvedRules = freeze.approvedRules ?? freeze.sanityContentRelease?.approvedRules ?? [];
+  const supersededAbstentions = freeze.supersededAbstentions ?? {};
   const scores = [];
   const bundles: Array<Record<string, unknown>> = [];
   for (const line of readFileSync(jsonlPath, 'utf8').split('\n').filter(Boolean)) {
@@ -315,10 +319,7 @@ function scoreResultsFile(jsonlPath: string, date: string, freezeFile: string): 
       sampleText: loadSampleText(entry.caseId),
       timings: { extractionMs: entry.extractionMs ?? 0, analysisMs: entry.analysisMs ?? 0 } as never,
     };
-    const score = scoreCase(run, {
-      approvedRules: freeze.approvedRules,
-      supersededAbstentions: freeze.supersededAbstentions,
-    });
+    const score = scoreCase(run, { approvedRules, supersededAbstentions });
     scores.push(score);
     for (const pending of score.precision.needsHumanReview) {
       const finding = entry.report?.findings[pending.index];
