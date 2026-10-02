@@ -8,7 +8,7 @@
 
 Help a person considering a job in the UAE inspect **what their written offer or contract says**, correct an extraction before analysis, and read concrete differences and source-checked concerns without receiving a legal or document-authenticity verdict.
 
-The first public experience is a **sample-only demonstration** with five fictional cases. `GET /api/v1/capabilities` controls what is actually offered: custom file upload, JPG/PNG, and Urdu explanation each require separate release gates. No visible upload affordance should suggest a personal document can be submitted when `customUploadEnabled` is false. The supported legal-rule route is Pakistan → UAE **mainland, non-domestic private-sector employment**, only when applicability is established. A person's route selection is a declaration to check, not proof.
+The first public experience is a **sample-only demonstration** with six fictional cases. `GET /api/v1/capabilities` controls what is actually offered: custom file upload, JPG/PNG, and Urdu explanation each require separate release gates. No visible upload affordance should suggest a personal document can be submitted when `customUploadEnabled` is false. The supported legal-rule route is Pakistan → UAE **mainland, non-domestic private-sector employment**, only when applicability is established. A person's route selection is a declaration to check, not proof.
 
 ### Product language invariants
 
@@ -70,7 +70,7 @@ At approximately `min-width: 900px`, the home hero and intake page may use two c
 
 ### 4.2 Choose a fictional sample
 
-Header **Explore a fictional example**, explanation that all names/employers are invented, and a note that pressing the action sends the chosen fictional documents to Gemini for extraction. Render only IDs/metadata returned by `GET /api/v1/samples`, reconcile with `sampleModeEnabled`, and never construct a file path from user input. Cards use available API titles/descriptions; the target five cover a consistent pair, salary/benefit difference, worker-charge question, missing/conditional term, and abstention. Do not imply every sample has a source-backed finding.
+Header **Explore a fictional example**, explanation that all names/employers are invented, and a note that pressing the action sends the chosen fictional documents to Gemini for extraction. Render only IDs/metadata returned by `GET /api/v1/samples`, reconcile with `sampleModeEnabled`, and never construct a file path from user input. Cards use available API titles/descriptions; the target six cover a consistent pair, salary/benefit difference, worker-charge question, missing/conditional term, abstention, and adversarial instructions treated as data. Do not imply every sample has a source-backed finding.
 
 Desktop: grid of two or three cards, each with **Fictional sample**, document-role chips, a sentence about the scenario, **Preview files** and **Review this sample**. Mobile: one card per row, actions large enough for touch. Preview loads only API-provided fixed same-origin `/samples/...` URLs and identifies each as offer or contract. Starting sends `{sampleCaseId}` to `POST /api/v1/extractions`; the server manifest supplies scope and bytes. No editable scope/file selector in this mode. If a preview fails, explain the preview problem without assuming extraction is impossible; disable a case only if its actual sample is unavailable.
 
