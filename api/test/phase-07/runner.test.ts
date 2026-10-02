@@ -88,7 +88,7 @@ describe('corpus runner (fixture extraction → analyses → truth assertions)',
       ['TC-009', 'start_date'],
       ['TC-009', 'contract_duration'],
       ['TC-010', 'overtime_terms'],
-      ['TC-012', 'deduction_item'],
+      ['TC-012', 'recruitment_cost'],
     ];
     for (const [caseId, fieldKey] of pairs) {
       const finding = report(caseId).findings.find(
@@ -142,9 +142,14 @@ describe('corpus runner (fixture extraction → analyses → truth assertions)',
     }
   });
 
-  it('TC-012 asserts the document-check layer only (no rule claims)', () => {
+  it('TC-012 document layer works without rule claims in the fixture runner', () => {
+    // Truth rebaseline (release-polish WI-4): the approved worker-charge rule
+    // is referenced in truth, but the fixture runner has no retrieval stage,
+    // so no source-backed concern can or may appear here.
     const truth = loadTruth('TC-012');
-    expect(truth.requiredRuleRefs).toEqual([]);
+    expect(truth.requiredRuleRefs).toEqual([
+      { ruleKey: 'ae-recruitment-costs-employer-bears', ruleRevision: 1 },
+    ]);
     expect(categoriesOf('TC-012')).not.toContain('source_backed_concern');
   });
 });

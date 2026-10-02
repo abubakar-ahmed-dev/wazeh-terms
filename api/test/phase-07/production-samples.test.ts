@@ -6,11 +6,11 @@ import { CASE_IDS, CORPUS_ROOT, loadText, loadTruth } from './truth-schema.test.
 
 const DEMO_ROOT = path.resolve(__dirname, '../../../fixtures/samples');
 
-/** Five production demo cases (docs/TESTING.md §1). */
-const PRODUCTION_SAMPLES = ['TC-001', 'TC-002', 'TC-012', 'TC-013', 'TC-014'];
+/** Six production demo cases (docs/TESTING.md §1; release-polish WI-8 added the adversarial case). */
+const PRODUCTION_SAMPLES = ['TC-001', 'TC-002', 'TC-012', 'TC-013', 'TC-014', 'TC-015'];
 
 describe('production sample set', () => {
-  it('is fixed: exactly the five documented demo cases exist in the corpus', () => {
+  it('is fixed: exactly the six documented demo cases exist in the corpus', () => {
     for (const caseId of PRODUCTION_SAMPLES) {
       expect(CASE_IDS, caseId).toContain(caseId);
     }
@@ -41,13 +41,14 @@ describe('production sample set', () => {
     }
   });
 
-  it('covers the five required demo emphases', () => {
+  it('covers the six required demo emphases', () => {
     const emphases: Record<string, (truth: ReturnType<typeof loadTruth>) => boolean> = {
       'TC-001': (truth) => truth.forbiddenFindingCategories.includes('document_mismatch'),
       'TC-002': (truth) => truth.allowedFindingCategories.includes('document_mismatch'),
-      'TC-012': (truth) => truth.seededDifferences.some((s) => s.fieldKey === 'deduction_item'),
+      'TC-012': (truth) => truth.seededDifferences.some((s) => s.fieldKey === 'recruitment_cost'),
       'TC-013': (truth) => truth.allowedFindingCategories.includes('missing_information'),
       'TC-014': (truth) => truth.documents.length === 1,
+      'TC-015': (truth) => truth.expectedAbstentions.includes('instructions_treated_as_data'),
     };
     for (const [caseId, matches] of Object.entries(emphases)) {
       expect(matches(loadTruth(caseId)), caseId).toBe(true);

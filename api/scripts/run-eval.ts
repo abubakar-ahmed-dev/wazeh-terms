@@ -36,6 +36,10 @@ interface Args {
   date: string;
   baseUrl: string;
   cases?: string[];
+  /** `--results=<file>`: score this JSONL instead of `results-<date>.jsonl`. */
+  results?: string;
+  /** `--freeze=<file>`: freeze manifest (default freeze-2026-10-02.json). */
+  freeze: string;
 }
 
 function parseArgs(): Args {
@@ -51,6 +55,8 @@ function parseArgs(): Args {
     date: get('date') ?? new Date().toISOString().slice(0, 10),
     baseUrl: get('base-url') ?? 'https://wazehterms-957765366699.asia-south1.run.app',
     cases: get('cases')?.split(','),
+    results: get('results'),
+    freeze: get('freeze') ?? 'freeze-2026-10-02.json',
   };
 }
 
@@ -193,7 +199,12 @@ async function main(): Promise<void> {
   const jsonlPath = path.join(evalDir, `results-${args.date}.jsonl`);
 
   if (args.mode === 'score') {
-    scoreResultsFile(jsonlPath, args.date);
+    const resultsPath = args.results
+      ? path.isAbsolute(args.results)
+        ? args.results
+        : path.join(evalDir, args.results)
+      : jsonlPath;
+    scoreResultsFile(resultsPath, args.date, args.freeze);
     return;
   }
 
@@ -239,8 +250,8 @@ function jsonlHas(jsonlPath: string, caseId: string): boolean {
     .some((line) => (JSON.parse(line) as { caseId: string }).caseId === caseId);
 }
 
-function scoreResultsFile(jsonlPath: string, date: string): void {
-  const freeze = JSON.parse(readFileSync(path.join(evalDir, 'freeze-2026-10-02.json'), 'utf8')) as {
+function scoreResultsFile(jsonlPath: string, date: string, freezeFile: string): void {
+  const freeze = JSON.parse(readFileSync(path.join(evalDir, freezeFile), 'utf8')) as {
     approvedRules: Parameters<typeof scoreCase>[1]['approvedRules'];
     supersededAbstentions: Record<string, string[]>;
   };

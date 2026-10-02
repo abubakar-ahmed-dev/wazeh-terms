@@ -1,6 +1,6 @@
 # WazehTerms application image (docs/DEPLOYMENT.md §2, ADR-008):
 # one process serves the built React assets, the Express API under /api/v1,
-# /health, and the five allowlisted sample fixtures. No .env, corpus truth,
+# /health, and the six allowlisted sample fixtures. No .env, corpus truth,
 # sources, docs, plans, or Sanity Studio enter the image (.dockerignore
 # enforces this; the policy check in plans/phase-14 verifies it).
 

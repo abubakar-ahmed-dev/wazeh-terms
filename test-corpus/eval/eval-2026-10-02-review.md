@@ -70,3 +70,65 @@ concrete causes below, not by random noise.
 3. ⏳ Approve disposition of root causes 1–3 as Phase 15 replanning items
    (engine fixes) vs doc-only notes.
 4. ⏳ Approve README achieved-results wording built from this record.
+
+## Addendum — re-inspection and truth rebaseline (2026-10-02, release-polish WI-1–WI-5)
+
+Re-inspected `results-2026-10-02.jsonl` finding-by-finding against the issued
+extraction evidence and `sample-text.json` during the release-polish phase.
+This addendum **corrects the first-pass record above**; owner ratification of
+the rebaseline is pending.
+
+### Verdict corrections (first pass vs data)
+
+| # | Case | First-pass verdict | Data shows | Corrected verdict |
+| --- | --- | --- | --- | --- |
+| 6 | TC-009 `start_date` | Unsupported — "payment-frequency explanation, no evidence" | Explanation and both evidence quotes are start-date passages, correct pages | **Supported** |
+| 7 | TC-009 `contract_duration` | Unsupported — "start-date explanation/evidence" | Explanation and evidence are duration passages | **Supported** |
+| 8 | TC-010 `overtime_terms` | Unsupported — "payment-frequency explanation, no evidence" | Real explicit difference (paid 125% vs unpaid), two matched passages | **Supported** |
+| 9 | TC-011 `accommodation_benefit` | Unsupported — "evidence-less mismatch" | Explicit-vs-conditional with two matched passages; truth allows both categories | **Supported** |
+
+The "explanation/evidence misattachment" engine bug (replanning item 1) is
+**not present in the production data**; regression tests now pin
+explanation ↔ fieldKey ↔ evidence consistency (`api/test/release-polish/`).
+
+### Truth rebaseline (WI-4; owner ratification pending)
+
+- TC-001/003/004/005: removed phantom seeds — `sample-text.json` lines are
+  identical across both documents and the run extracted equal values; the
+  cases are consistent pairs, as their own notes already said.
+- TC-012: seed + expectedFields `deduction_item` → `recruitment_cost`
+  (registry-correct for the clause; the live model and the wording both name
+  recruitment); expected value corrected to one-time (`per_contract`),
+  worker-paid per the stated text; `source_backed_concern` allowed with
+  `requiredRuleRefs` = approved Rule 1 rev 1; `no_rule_claims` superseded.
+- TC-006/TC-007: added the real `stated_total_pay` / `allowance_item` seeds
+  the run surfaced (both texts genuinely differ; the run reported them).
+
+### Scoring policy (WI-1)
+
+`expectedToDiffer` metadata mismatches (`document_date`, `document_reference`,
+`verification_reference`, `annex_reference`) are counted `policyExempt` —
+not precision errors, not in the denominator — because the comparison engine
+no longer emits them (registry policy; 15 such findings existed in this run,
+pre-fix engine). Dry-run proof of the new engine: 15/15 cases, 53/53 field
+accuracy, 11/11 recall, 12/12 precision, 0 abstention violations
+(`eval-rp-dryrun3.json`).
+
+### Revised aggregate for this run (same outputs, amended truth + policy)
+
+`eval-2026-10-02-revised.json`:
+
+| Measure | First pass | Revised |
+| --- | --- | --- |
+| Field accuracy | 46/49 (94%) | **52/53 (98%)** — sole miss TC-014 unreadable-page labeling (design decision pending) |
+| Mismatch recall | 8/13 (62%) | **11/11 (100%)** on valid seeds |
+| Finding precision | 6/28 (21%) | **13/13 (100%)** substantive; 15 metadata findings policyExempt |
+| Citation support | 1/1 structural | 1/1 structural — **owner sign-off still required** for semantic support |
+| Abstention safety | 0 violations | 0 violations, 0 false mismatches |
+| Latency | p50 ≈ 20 s / p95 ≈ 27 s | unchanged |
+
+Caveats: precision/recall are computed under the rebaselined truth and the
+WI-1 scoring policy; one agent review pass; **owner ratification pending**.
+15 samples leave wide uncertainty; development check, not legal validation.
+A fresh production re-run on the new engine is the clean confirmation path
+(owner quota approval required).

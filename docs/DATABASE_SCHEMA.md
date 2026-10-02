@@ -155,6 +155,8 @@ An item belongs in `deductions` when the document describes a wage withholding o
 
 The code-defined registry is the authority for which components are actually extracted, normalized, compared, and shown in a particular release. A new field definition must be accompanied by runtime schema, UI, comparison tests, and a schema-version review before activation. A content edit cannot silently widen the public product promise.
 
+The code registry also marks four `document_details` metadata components (`document_date`, `document_reference`, `verification_reference`, `annex_reference`) as **expected to differ** between an offer and a contract: each document carries its own identifier, issuance date, or annex pointer, so a difference in these fields is metadata, not a term difference, and is never emitted as a `document_mismatch` (comparison policy, release-polish WI-1). `signature_presence` and `document_language` stay must-match fields.
+
 ## 8. `resolutionNote`
 
 A documented editorial decision for conflicting or superseded claims; it records reasoning and review history without becoming a self-authorizing rule.

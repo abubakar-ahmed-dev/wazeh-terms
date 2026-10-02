@@ -16,7 +16,7 @@ As of October 2, 2026, the repository contains the complete MVP implementation:
 
 - React/Vite web app with the Phase 12 dark visual design, guided navigation, fictional samples, upload/review flow, extraction review, findings dashboard, and responsive/accessibility checks.
 - Express/TypeScript API with signed extraction handoff, deterministic term comparison, Sanity-backed source retrieval checks, HMAC proof validation, structured errors, cancellation handling, and security headers.
-- Five allowlisted fictional sample cases for public demonstration and automated testing — all five verified on the live deployment.
+- Six allowlisted fictional sample cases for public demonstration and automated testing — the five core cases verified on the live deployment; the adversarial-instructions case (TC-015) joins this release.
 - **Demo custom upload (MT-10, owner decision 2026-10-02):** real PDF upload is enabled **for fictional, non-sensitive documents only**, behind the approved "Demo uploads only" notice (`gemini-free-demo-v1`) with an unticked acknowledgment required before submission. The deployed provider is the Gemini API Free tier: submitted content may be used to improve Google products and may be reviewed by people — the notice says so plainly, and no zero-retention or private-processing claim is made. Real employment documents remain excluded; accepting them is a separate future release on a paid provider path.
 - Security hardening for rate limits, concurrency admission, log redaction, no persistent upload storage, CSP, same-origin API behavior, and zero-temp-file test coverage.
 - Live deployment: multi-stage Dockerfile, Cloud Run service with pinned Secret Manager bindings, staging-measured limits (45 s deadline, 15 s retrieval budget), rollback drill passed, and a verified source-backed concern on the live path — the worker-charge sample raises the official Article (6)(4) citation of UAE Federal Decree-Law 33/2021 (`docs/DEPLOYMENT.md` §4).
@@ -57,6 +57,25 @@ It does not currently cover:
 - Image uploads, Urdu explanation, or arbitrary public uploads until those flags pass their independent gates.
 - Broad legal compliance conclusions beyond the specific evidence-backed checks implemented.
 
+## Built on Structured Content
+
+The source-backed check only works because the content behind it is structured. Official references live in Sanity as versioned records — authority, exact source version, approved rule revision, and a pinpoint to the passage that supports the concern — each with its scope: jurisdiction, worker category, actor, conditions, and effective dates.
+
+```
+extraction → deterministic comparison → KB-only Sanity Context MCP query
+           → canonical approved-record verification (rule revision, source
+             version, pinpoint, actor, scope, dates) → concern + citation
+           → any check fails or times out → withheld, report marked partial
+```
+
+Three things keyword search over documents cannot do:
+
+- **Applicability, not relevance.** Finding the sentence "the employer shall bear recruitment costs" is easy; knowing the rule is current, applies to UAE mainland private-sector employment, and matches the documents' worker category is structure. The check fails closed when the structure does not confirm it.
+- **Versioning with consequences.** When a rule is superseded, its approved revision changes and concerns tied to the old revision stop appearing. The content decides what may be claimed — not the prompt.
+- **Honest conflicts.** Where sources disagree, claims stay distinct, each linked to its own source and version, with uncertainty shown instead of blended away.
+
+The runtime endpoint is Knowledge Base-only (organization token, server-side); uploads, worker data, and reports never enter Sanity. Retrieval alone is never proof — the canonical approved record is.
+
 ## Evidence-First Design
 
 WazehTerms treats evidence as a product requirement, not a cosmetic detail.
@@ -81,7 +100,7 @@ The interface is built around a small number of focused screens:
 
 - Home page: introduces the app and shows a concrete salary mismatch example.
 - Upload and review: lets a user provide a job offer, an employment contract, or both when enabled.
-- Fictional samples: provides five invented cases for safe testing and demonstration.
+- Fictional samples: provides six invented cases for safe testing and demonstration, including one with embedded instructions aimed at automated systems (treated as data, never obeyed).
 - How it works: explains the three-step flow and the privacy/evidence principles.
 - Review workspace: displays extracted terms, page quotes, user corrections, and analysis status.
 - Findings report: shows differences, questions to ask, and citations where source-backed checks apply.
@@ -158,6 +177,23 @@ npm run validate:content -w api
 
 Provider-backed scripts require the relevant environment variables. Do not put secrets in client-side Vite variables or commit `.env` files.
 
+### Run it with no credentials at all
+
+A test-path server bundles the real Express app with a deterministic fake extraction provider and the fictional corpus fixtures — no Gemini key, no Sanity token, no network beyond localhost:
+
+```bash
+cd api
+# deterministic 15-case evaluation through the full HTTP stack (fake provider):
+npx tsx scripts/run-eval.ts --mode=dry
+# score it:
+npx tsx scripts/run-eval.ts --mode=score --date=<the-date-you-ran-with>
+
+# or run the server interactively and click through the samples:
+SAMPLE_MODE_ENABLED=true CUSTOM_UPLOAD_ENABLED=true REVIEW_HMAC_SECRET=local-test-secret-not-a-credential GEMINI_API_KEY=dry-run-dummy-key-not-a-credential E2E_CORPUS_FIXTURES_DIR=../test-corpus npx tsx scripts/e2e-server.ts
+```
+
+The live sample and retrieval scripts (`live:sample`, `live:retrieval`) are the real-provider paths and do need credentials.
+
 ## Runtime Configuration
 
 The deployment contract is documented in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md). Key settings include:
@@ -193,34 +229,35 @@ Real public custom uploads should stay disabled until provider data handling, pr
 
 ## Latest Verification Snapshot
 
-Recent phase logs record the following successful checks:
+Recorded successful checks, by outcome (details in the phase logs under `plans/`):
 
-- Phase 12 UI polish: typecheck, lint, API tests, web tests, build, desktop/mobile visual validation, accessibility/focus checks.
-- Security hardening: lint, typecheck, build, 314 API tests, 5 web tests, HMAC abuse tests, parser hardening, security headers, redaction, and cancellation cleanup.
-- Phase 13 custom uploads: streaming multipart upload behavior and in-memory previews.
-- Phase 14 deployment: production build, local Express runtime probe, Docker image build/run/policy probes, Cloud setup/secrets/IAM, and the live deployment smoke (2026-09-30):
-  - Health, capabilities, samples, SPA, and sample PDFs return 200 on one origin; CSP/frame-ancestors/referrer headers present; zero CORS grants.
-  - All five fictional samples extract successfully; TC-001 completes with a signed extraction.
-  - TC-012 raises the live source-backed concern with the official Article (6)(4) pinpoint of UAE Federal Decree-Law 33/2021 — Phase 10 retrieval verified in production.
-  - Arbitrary upload returns a clean `403 CUSTOM_UPLOAD_DISABLED`; withheld rule reasons appear in the coarse `retrieval_outcome` log.
-  - Rollback drill passed (traffic shifted to the previous revision and back); secrets resolve from pinned versions.
-  - Full results: `plans/phase-14/testing-log.md` and `docs/DEPLOYMENT.md` §4.
+- **Verification:** lint, typecheck, full API test suite (340+ tests including HMAC abuse, parser hardening, security headers, log redaction, zero-retention), web tests, production build, Docker image probes.
+- **Live deployment smoke (2026-09-30):** one-origin SPA + API + `/health` with CSP/security headers and zero CORS grants; all fictional samples extract with signed handoffs; the worker-charge sample raises the official Article (6)(4) pinpoint of UAE Federal Decree-Law 33/2021 through live Knowledge Base retrieval and canonical verification; arbitrary upload cleanly rejected while the flag was off; rollback drill passed. Full results: `plans/phase-14/testing-log.md`, `docs/DEPLOYMENT.md` §4.
+- **Demo upload (2026-10-02):** fictional-PDF upload through production returns a complete signed extraction under the approved notice.
 
 Not yet recorded as complete:
 
 - Full Playwright browser journey against the live URL (smoke so far is HTTP-level).
 - Acceptance of real employment documents — deliberately out of scope; requires a paid provider path, revised notice, tests, and owner approval (MT-10 demo scope covers fictional documents only).
 
-**First corpus evaluation (2026-10-02, 15 frozen cases, live production stack):**
-achieved results with numerators/denominators — field accuracy 46/49 (94%),
-critical mismatch recall 8/13 (62%), human-adjusted finding precision 6/28
-(21%), citation support 1/1 structurally valid (owner sign-off pending),
-abstention safety 0 violations, machine latency p50 ≈ 20 s / p95 ≈ 27 s.
-Targets (≥95% / ≥90% / ≥85% / 100%) are **targets, not achieved results**;
-the recall/precision gaps have identified engineering causes recorded in
-`plans/phase-15/replanning-items.md`. Full record:
-`test-corpus/eval/eval-2026-10-02-review.md`. Fifteen samples leave wide
-uncertainty; these are development checks, not legal-validation promises.
+**Corpus evaluation (2026-10-02, 15 frozen cases, live production stack):**
+the first scoring pass read field accuracy 46/49 (94%), recall 8/13 (62%),
+precision 6/28 (21%). A later re-inspection (`release-polish` WI-1–WI-5)
+found first-pass review errors and phantom truth seeds, fixed the comparison
+engine's metadata false-mismatch policy, and rebaselined the truth files:
+the same run's outputs rescored to **field accuracy 52/53 (98%), mismatch
+recall 11/11 (100%), finding precision 13/13 (100%) substantive** (15
+metadata-only mismatches now exempt by the `expectedToDiffer` policy), with
+abstention safety 0 violations and 0 hallucinated quotes. Machine latency
+p50 ≈ 20 s / p95 ≈ 27 s. The dry-run proof of the corrected engine: 53/53,
+11/11, 12/12 across all 15 cases. **Caveats:** citation support is 1/1
+structurally valid but awaits owner sign-off; the truth rebaseline awaits
+owner ratification; TC-014's unreadable-page labeling is an open design
+decision; a fresh production re-run on the corrected engine is the final
+confirmation path. Fifteen samples leave wide uncertainty; these are
+development checks, not legal-validation promises. Full record:
+`test-corpus/eval/eval-2026-10-02-review.md` (see the 2026-10-02 addendum)
+and `docs/TESTING.md` §3 ledger.
 
 MT-10 demo-upload verification (2026-10-02): `/capabilities` reports `customUploadEnabled: true` + `privacyNoticeVersion: gemini-free-demo-v1`; a fictional PDF uploaded through production returned a complete, signed extraction (`sourceMode: custom`); the sample journey recovered after the Gemini key rotation (old key disabled at AI Studio and in Secret Manager version 1).
 
