@@ -97,11 +97,13 @@ gcloud 583.0.0, node 22 (bookworm-slim in image).
 - Upload UI: "Demo uploads only" warning, full Free-tier notice with
   unticked acknowledgment gating "Try with a fictional PDF", honest
   closed-state copy (no env-var instructions in public UI).
-- **Ops incident recorded:** a second agent deployed revisions `00007`/
-  `00008` concurrently without the env file while traffic stayed pinned to
-  `00006` (bound to disabled secret v1) → 500s. Fixed by redeploying
-  `00009-stc` with full config and forcing 100% traffic + re-pointing the
-  `staging` tag. Rule going forward: one deploy actor at a time.
+- **Ops incident recorded:** revisions `00007`/`00008` appeared without the
+  env file while traffic stayed pinned to `00006` (bound to disabled secret
+  v1) → 500s. Fixed by redeploying `00009-stc` with full config and forcing
+  100% traffic + re-pointing the `staging` tag. Owner confirms no other
+  actor touched Cloud Run; cause of the stray revisions not conclusively
+  established. Lesson: verify `status.traffic` after every deploy and force
+  it explicitly — never trust the deploy command's success output.
 - Residual risk (accepted by owner, recorded in MT-10): the notice cannot
   guarantee users upload only fictional documents. Rollback: set
   `CUSTOM_UPLOAD_ENABLED: "false"` + redeploy.
