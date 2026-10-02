@@ -45,7 +45,9 @@ Also publish absolute counts for `present/absent/unclear/unreadable`, failure/pa
 
 | Release/build | Corpus revision | Provider/model | Sanity/KB release | Passed/total by measure | p50/p95 and conditions | Open failures |
 | --- | --- | --- | --- | --- | --- | --- |
-| Not run | Pending | Pending | Pending | No achieved measurements | No observed timing | Corpus, code, curation, and staging deployment pending |
+| `main` @ `0e73d68`+harness (`d986f32`), live revision `wazehterms-00009-stc`, 2026-10-02 | `test-corpus/` @ `04d241c` (15 cases, truth v1; freeze `test-corpus/eval/freeze-2026-10-02.json`) | Gemini API Free tier, `gemini-3.5-flash-lite`, prompt `api/src/services/gemini/prompt.ts` @ `a3d4665e2905be61` | 44 approved published records (`production`); KB `kbynAP4r8P6m`; retrieval live | Field accuracy **46/49 (94%)**; mismatch recall **8/13 (62%)**; precision (human-adjusted) **6/28 (21%)** — see review record; citation support 1/1 structural, **owner sign-off pending**; abstention **0 violations**; hallucinated quotes **0** | machine end-to-end p50 ≈ 20 s / p95 ≈ 27 s (extraction 16.5/22.5 s + analysis 3.5/4.6 s), production HTTP, Free tier, 13 s pacing | Recall + precision below targets — root causes and fixes in `plans/phase-15/replanning-items.md`; review: `test-corpus/eval/eval-2026-10-02-review.md` |
+
+15 samples leave wide uncertainty; these are development checks, not legal-validation promises. Targets stay targets: ≥95% accuracy, ≥90% recall, ≥85% precision, 100% citation support were **not** met in this run (citation gate pending owner confirmation of the single TC-012 finding; abstention safety and the no-global-verdict invariant passed).
 
 Store dated machine-readable results and a concise human review record with the project when implemented. Do not include worker data or provider secrets in test artifacts.
 
@@ -54,7 +56,7 @@ Store dated machine-readable results and a concise human review record with the 
 | Gate | Test evidence needed | Public state until passed |
 | --- | --- | --- |
 | English PDF sample demo | 15 labelled fixtures evaluated, five production samples reproducible, both document comparison and approved pinpointed rule case verified, abstention and partial paths, observed latency/limits. | Do not claim the vertical slice is shipped before tests run. |
-| Real custom upload | `SECURITY.md` provider-tier/API/notice/consent review; upload rejection and cleanup tests; secrets and logs audit; measured resource and abuse limits. | `customUploadEnabled: false`; all arbitrary files rejected. |
+| Real custom upload | `SECURITY.md` provider-tier/API/notice/consent review; upload rejection and cleanup tests; secrets and logs audit; measured resource and abuse limits. **Distinct from the MT-10 demo** (2026-10-02): `customUploadEnabled: true` on the live demo covers **fictional, non-sensitive documents only** behind the approved `gemini-free-demo-v1` notice with an unticked acknowledgment; real employment documents stay excluded until a paid provider path, revised notice, tests, and owner approval. | Demo upload open on Free-tier terms; real documents still gated. |
 | JPG/PNG | Separate representative phone photos and scans across page quality; correct quotes/page mapping where possible; strong abstention on ambiguous passages; approved image limits and UI copy. | Do not advertise images in `/capabilities` or UI. |
 | Urdu explanation | Human bilingual review of amounts, negation, obligations, exceptions, uncertainty, and source labels; original English evidence visible. | `supportedAnalysisLanguages: ["en"]`. |
 | Source-backed findings | Reviewed official Pakistan/UAE records where relevant; exact primary passage, provenance, live MCP candidate, direct Sanity match, adverse stale/conflict tests. | Suppress unapproved claims; keep document-only findings with partial/source limitation. |

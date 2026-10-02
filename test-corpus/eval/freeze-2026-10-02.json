@@ -51,7 +51,7 @@
       "ruleRevision": 1,
       "sourceKey": "uae-federal-decree-law-33-2021",
       "versionKey": "base-text-2022",
-      "pinpoint": "Article (6), clause (4)"
+      "pinpoint": "Article (6) Recruitment and Employment of Workers, clause (4)"
     }
   ],
   "supersededAbstentions": {
@@ -59,5 +59,8 @@
       "no_rule_claims"
     ]
   },
-  "supersededAbstentionsRationale": "TC-012 truth predates Phase 09/10 approved content; Rule 1 (Article 6(4)) is now approved and claimable for the worker-charge topic (documented in Phase 10 live checks). no_global_verdict stays enforced everywhere. Owner sign-off pending in eval review record."
+  "supersededAbstentionsRationale": "TC-012 truth predates Phase 09/10 approved content; Rule 1 (Article 6(4)) is now approved and claimable for the worker-charge topic (documented in Phase 10 live checks). no_global_verdict stays enforced everywhere. Owner sign-off pending in eval review record.",
+  "frozenAmendments": [
+    "2026-10-02: approvedRules[0].pinpoint corrected to the exact approved label (pre-freeze value was abbreviated); amended before scoring, after the run — label identity only, no semantic change."
+  ]
 }
