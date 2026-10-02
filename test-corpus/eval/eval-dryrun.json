@@ -1,0 +1,1224 @@
+{
+  "scoredAt": "2026-10-02T06:36:52.603Z",
+  "aggregate": {
+    "cases": 15,
+    "fieldAccuracy": {
+      "numerator": 49,
+      "denominator": 49,
+      "stateOnlyCorrect": 3,
+      "valueOnlyCorrect": 46
+    },
+    "mismatchRecall": {
+      "numerator": 9,
+      "denominator": 13
+    },
+    "precision": {
+      "supported": 10,
+      "emitted": 10,
+      "duplicateErrors": 0,
+      "byCategory": {
+        "document_mismatch": {
+          "emitted": 10,
+          "supported": 10
+        }
+      }
+    },
+    "citation": {
+      "displayed": 0,
+      "structurallyValid": 0,
+      "unsupported": 0,
+      "humanPending": 0
+    },
+    "abstentionViolations": 0,
+    "falseMismatchesOnAbstentionCases": 0,
+    "hallucinatedQuotes": 0,
+    "flaggedLawishWithoutSource": 0,
+    "extractionLatency": {
+      "p50Ms": 121,
+      "p95Ms": 1725
+    },
+    "analysisLatency": {
+      "p50Ms": 10,
+      "p95Ms": 56
+    }
+  },
+  "perCase": [
+    {
+      "caseId": "TC-001",
+      "fieldAccuracy": {
+        "numerator": 8,
+        "denominator": 8,
+        "stateOnlyCorrect": 0,
+        "valueOnlyCorrect": 8,
+        "misses": []
+      },
+      "mismatchRecall": {
+        "numerator": 0,
+        "denominator": 1,
+        "unassessable": [],
+        "misses": [
+          {
+            "fieldKey": "basic_salary",
+            "kind": "value"
+          }
+        ]
+      },
+      "precision": {
+        "supported": 0,
+        "emitted": 0,
+        "duplicateErrors": 0,
+        "autoUnsupported": [],
+        "needsHumanReview": [],
+        "byCategory": {}
+      },
+      "citation": {
+        "displayed": 0,
+        "structurallyValid": 0,
+        "unsupported": [],
+        "needsHumanReview": []
+      },
+      "abstention": {
+        "violations": [],
+        "falseMismatches": 0,
+        "noGlobalVerdict": true
+      },
+      "stateCounts": {
+        "present": 8,
+        "absent": 0,
+        "unclear": 0,
+        "unreadable": 0
+      },
+      "hallucinatedQuotes": 0,
+      "flaggedLawishWithoutSource": 0,
+      "injectionHeld": true,
+      "timings": {
+        "extractionMs": 1725,
+        "analysisMs": 56
+      }
+    },
+    {
+      "caseId": "TC-002",
+      "fieldAccuracy": {
+        "numerator": 4,
+        "denominator": 4,
+        "stateOnlyCorrect": 0,
+        "valueOnlyCorrect": 4,
+        "misses": []
+      },
+      "mismatchRecall": {
+        "numerator": 2,
+        "denominator": 2,
+        "unassessable": [],
+        "misses": []
+      },
+      "precision": {
+        "supported": 2,
+        "emitted": 2,
+        "duplicateErrors": 0,
+        "autoUnsupported": [],
+        "needsHumanReview": [
+          {
+            "index": 0,
+            "category": "document_mismatch",
+            "fieldKeys": [
+              "basic_salary"
+            ]
+          },
+          {
+            "index": 1,
+            "category": "document_mismatch",
+            "fieldKeys": [
+              "stated_total_pay"
+            ]
+          }
+        ],
+        "byCategory": {
+          "document_mismatch": {
+            "emitted": 2,
+            "supported": 2
+          }
+        }
+      },
+      "citation": {
+        "displayed": 0,
+        "structurallyValid": 0,
+        "unsupported": [],
+        "needsHumanReview": []
+      },
+      "abstention": {
+        "violations": [],
+        "falseMismatches": 0,
+        "noGlobalVerdict": true
+      },
+      "stateCounts": {
+        "present": 4,
+        "absent": 0,
+        "unclear": 0,
+        "unreadable": 0
+      },
+      "hallucinatedQuotes": 0,
+      "flaggedLawishWithoutSource": 0,
+      "injectionHeld": true,
+      "timings": {
+        "extractionMs": 136,
+        "analysisMs": 18
+      }
+    },
+    {
+      "caseId": "TC-003",
+      "fieldAccuracy": {
+        "numerator": 4,
+        "denominator": 4,
+        "stateOnlyCorrect": 0,
+        "valueOnlyCorrect": 4,
+        "misses": []
+      },
+      "mismatchRecall": {
+        "numerator": 0,
+        "denominator": 1,
+        "unassessable": [],
+        "misses": [
+          {
+            "fieldKey": "basic_salary",
+            "kind": "value"
+          }
+        ]
+      },
+      "precision": {
+        "supported": 0,
+        "emitted": 0,
+        "duplicateErrors": 0,
+        "autoUnsupported": [],
+        "needsHumanReview": [],
+        "byCategory": {}
+      },
+      "citation": {
+        "displayed": 0,
+        "structurallyValid": 0,
+        "unsupported": [],
+        "needsHumanReview": []
+      },
+      "abstention": {
+        "violations": [],
+        "falseMismatches": 0,
+        "noGlobalVerdict": true
+      },
+      "stateCounts": {
+        "present": 4,
+        "absent": 0,
+        "unclear": 0,
+        "unreadable": 0
+      },
+      "hallucinatedQuotes": 0,
+      "flaggedLawishWithoutSource": 0,
+      "injectionHeld": true,
+      "timings": {
+        "extractionMs": 102,
+        "analysisMs": 13
+      }
+    },
+    {
+      "caseId": "TC-004",
+      "fieldAccuracy": {
+        "numerator": 4,
+        "denominator": 4,
+        "stateOnlyCorrect": 0,
+        "valueOnlyCorrect": 4,
+        "misses": []
+      },
+      "mismatchRecall": {
+        "numerator": 0,
+        "denominator": 1,
+        "unassessable": [],
+        "misses": [
+          {
+            "fieldKey": "accommodation_benefit",
+            "kind": "value"
+          }
+        ]
+      },
+      "precision": {
+        "supported": 0,
+        "emitted": 0,
+        "duplicateErrors": 0,
+        "autoUnsupported": [],
+        "needsHumanReview": [],
+        "byCategory": {}
+      },
+      "citation": {
+        "displayed": 0,
+        "structurallyValid": 0,
+        "unsupported": [],
+        "needsHumanReview": []
+      },
+      "abstention": {
+        "violations": [],
+        "falseMismatches": 0,
+        "noGlobalVerdict": true
+      },
+      "stateCounts": {
+        "present": 4,
+        "absent": 0,
+        "unclear": 0,
+        "unreadable": 0
+      },
+      "hallucinatedQuotes": 0,
+      "flaggedLawishWithoutSource": 0,
+      "injectionHeld": true,
+      "timings": {
+        "extractionMs": 119,
+        "analysisMs": 7
+      }
+    },
+    {
+      "caseId": "TC-005",
+      "fieldAccuracy": {
+        "numerator": 4,
+        "denominator": 4,
+        "stateOnlyCorrect": 0,
+        "valueOnlyCorrect": 4,
+        "misses": []
+      },
+      "mismatchRecall": {
+        "numerator": 0,
+        "denominator": 1,
+        "unassessable": [],
+        "misses": [
+          {
+            "fieldKey": "contract_duration",
+            "kind": "value"
+          }
+        ]
+      },
+      "precision": {
+        "supported": 0,
+        "emitted": 0,
+        "duplicateErrors": 0,
+        "autoUnsupported": [],
+        "needsHumanReview": [],
+        "byCategory": {}
+      },
+      "citation": {
+        "displayed": 0,
+        "structurallyValid": 0,
+        "unsupported": [],
+        "needsHumanReview": []
+      },
+      "abstention": {
+        "violations": [],
+        "falseMismatches": 0,
+        "noGlobalVerdict": true
+      },
+      "stateCounts": {
+        "present": 4,
+        "absent": 0,
+        "unclear": 0,
+        "unreadable": 0
+      },
+      "hallucinatedQuotes": 0,
+      "flaggedLawishWithoutSource": 0,
+      "injectionHeld": true,
+      "timings": {
+        "extractionMs": 215,
+        "analysisMs": 10
+      }
+    },
+    {
+      "caseId": "TC-006",
+      "fieldAccuracy": {
+        "numerator": 2,
+        "denominator": 2,
+        "stateOnlyCorrect": 0,
+        "valueOnlyCorrect": 2,
+        "misses": []
+      },
+      "mismatchRecall": {
+        "numerator": 1,
+        "denominator": 1,
+        "unassessable": [],
+        "misses": []
+      },
+      "precision": {
+        "supported": 1,
+        "emitted": 1,
+        "duplicateErrors": 0,
+        "autoUnsupported": [],
+        "needsHumanReview": [
+          {
+            "index": 0,
+            "category": "document_mismatch",
+            "fieldKeys": [
+              "basic_salary"
+            ]
+          }
+        ],
+        "byCategory": {
+          "document_mismatch": {
+            "emitted": 1,
+            "supported": 1
+          }
+        }
+      },
+      "citation": {
+        "displayed": 0,
+        "structurallyValid": 0,
+        "unsupported": [],
+        "needsHumanReview": []
+      },
+      "abstention": {
+        "violations": [],
+        "falseMismatches": 0,
+        "noGlobalVerdict": true
+      },
+      "stateCounts": {
+        "present": 2,
+        "absent": 0,
+        "unclear": 0,
+        "unreadable": 0
+      },
+      "hallucinatedQuotes": 0,
+      "flaggedLawishWithoutSource": 0,
+      "injectionHeld": true,
+      "timings": {
+        "extractionMs": 121,
+        "analysisMs": 7
+      }
+    },
+    {
+      "caseId": "TC-007",
+      "fieldAccuracy": {
+        "numerator": 2,
+        "denominator": 2,
+        "stateOnlyCorrect": 0,
+        "valueOnlyCorrect": 2,
+        "misses": []
+      },
+      "mismatchRecall": {
+        "numerator": 1,
+        "denominator": 1,
+        "unassessable": [],
+        "misses": []
+      },
+      "precision": {
+        "supported": 1,
+        "emitted": 1,
+        "duplicateErrors": 0,
+        "autoUnsupported": [],
+        "needsHumanReview": [
+          {
+            "index": 0,
+            "category": "document_mismatch",
+            "fieldKeys": [
+              "stated_total_pay"
+            ]
+          }
+        ],
+        "byCategory": {
+          "document_mismatch": {
+            "emitted": 1,
+            "supported": 1
+          }
+        }
+      },
+      "citation": {
+        "displayed": 0,
+        "structurallyValid": 0,
+        "unsupported": [],
+        "needsHumanReview": []
+      },
+      "abstention": {
+        "violations": [],
+        "falseMismatches": 0,
+        "noGlobalVerdict": true
+      },
+      "stateCounts": {
+        "present": 2,
+        "absent": 0,
+        "unclear": 0,
+        "unreadable": 0
+      },
+      "hallucinatedQuotes": 0,
+      "flaggedLawishWithoutSource": 0,
+      "injectionHeld": true,
+      "timings": {
+        "extractionMs": 170,
+        "analysisMs": 17
+      }
+    },
+    {
+      "caseId": "TC-008",
+      "fieldAccuracy": {
+        "numerator": 2,
+        "denominator": 2,
+        "stateOnlyCorrect": 0,
+        "valueOnlyCorrect": 2,
+        "misses": []
+      },
+      "mismatchRecall": {
+        "numerator": 1,
+        "denominator": 1,
+        "unassessable": [],
+        "misses": []
+      },
+      "precision": {
+        "supported": 1,
+        "emitted": 1,
+        "duplicateErrors": 0,
+        "autoUnsupported": [],
+        "needsHumanReview": [
+          {
+            "index": 0,
+            "category": "document_mismatch",
+            "fieldKeys": [
+              "job_title"
+            ]
+          }
+        ],
+        "byCategory": {
+          "document_mismatch": {
+            "emitted": 1,
+            "supported": 1
+          }
+        }
+      },
+      "citation": {
+        "displayed": 0,
+        "structurallyValid": 0,
+        "unsupported": [],
+        "needsHumanReview": []
+      },
+      "abstention": {
+        "violations": [],
+        "falseMismatches": 0,
+        "noGlobalVerdict": true
+      },
+      "stateCounts": {
+        "present": 2,
+        "absent": 0,
+        "unclear": 0,
+        "unreadable": 0
+      },
+      "hallucinatedQuotes": 0,
+      "flaggedLawishWithoutSource": 0,
+      "injectionHeld": true,
+      "timings": {
+        "extractionMs": 104,
+        "analysisMs": 10
+      }
+    },
+    {
+      "caseId": "TC-009",
+      "fieldAccuracy": {
+        "numerator": 4,
+        "denominator": 4,
+        "stateOnlyCorrect": 0,
+        "valueOnlyCorrect": 4,
+        "misses": []
+      },
+      "mismatchRecall": {
+        "numerator": 2,
+        "denominator": 2,
+        "unassessable": [],
+        "misses": []
+      },
+      "precision": {
+        "supported": 2,
+        "emitted": 2,
+        "duplicateErrors": 0,
+        "autoUnsupported": [],
+        "needsHumanReview": [
+          {
+            "index": 0,
+            "category": "document_mismatch",
+            "fieldKeys": [
+              "start_date"
+            ]
+          },
+          {
+            "index": 1,
+            "category": "document_mismatch",
+            "fieldKeys": [
+              "contract_duration"
+            ]
+          }
+        ],
+        "byCategory": {
+          "document_mismatch": {
+            "emitted": 2,
+            "supported": 2
+          }
+        }
+      },
+      "citation": {
+        "displayed": 0,
+        "structurallyValid": 0,
+        "unsupported": [],
+        "needsHumanReview": []
+      },
+      "abstention": {
+        "violations": [],
+        "falseMismatches": 0,
+        "noGlobalVerdict": true
+      },
+      "stateCounts": {
+        "present": 4,
+        "absent": 0,
+        "unclear": 0,
+        "unreadable": 0
+      },
+      "hallucinatedQuotes": 0,
+      "flaggedLawishWithoutSource": 0,
+      "injectionHeld": true,
+      "timings": {
+        "extractionMs": 121,
+        "analysisMs": 7
+      }
+    },
+    {
+      "caseId": "TC-010",
+      "fieldAccuracy": {
+        "numerator": 2,
+        "denominator": 2,
+        "stateOnlyCorrect": 0,
+        "valueOnlyCorrect": 2,
+        "misses": []
+      },
+      "mismatchRecall": {
+        "numerator": 1,
+        "denominator": 1,
+        "unassessable": [],
+        "misses": []
+      },
+      "precision": {
+        "supported": 1,
+        "emitted": 1,
+        "duplicateErrors": 0,
+        "autoUnsupported": [],
+        "needsHumanReview": [
+          {
+            "index": 0,
+            "category": "document_mismatch",
+            "fieldKeys": [
+              "overtime_terms"
+            ]
+          }
+        ],
+        "byCategory": {
+          "document_mismatch": {
+            "emitted": 1,
+            "supported": 1
+          }
+        }
+      },
+      "citation": {
+        "displayed": 0,
+        "structurallyValid": 0,
+        "unsupported": [],
+        "needsHumanReview": []
+      },
+      "abstention": {
+        "violations": [],
+        "falseMismatches": 0,
+        "noGlobalVerdict": true
+      },
+      "stateCounts": {
+        "present": 2,
+        "absent": 0,
+        "unclear": 0,
+        "unreadable": 0
+      },
+      "hallucinatedQuotes": 0,
+      "flaggedLawishWithoutSource": 0,
+      "injectionHeld": true,
+      "timings": {
+        "extractionMs": 145,
+        "analysisMs": 6
+      }
+    },
+    {
+      "caseId": "TC-011",
+      "fieldAccuracy": {
+        "numerator": 2,
+        "denominator": 2,
+        "stateOnlyCorrect": 0,
+        "valueOnlyCorrect": 2,
+        "misses": []
+      },
+      "mismatchRecall": {
+        "numerator": 0,
+        "denominator": 0,
+        "unassessable": [
+          {
+            "fieldKey": "accommodation_benefit",
+            "kind": "conditional",
+            "reason": "not_a_value_difference"
+          }
+        ],
+        "misses": []
+      },
+      "precision": {
+        "supported": 1,
+        "emitted": 1,
+        "duplicateErrors": 0,
+        "autoUnsupported": [],
+        "needsHumanReview": [
+          {
+            "index": 0,
+            "category": "document_mismatch",
+            "fieldKeys": [
+              "accommodation_benefit"
+            ]
+          }
+        ],
+        "byCategory": {
+          "document_mismatch": {
+            "emitted": 1,
+            "supported": 1
+          }
+        }
+      },
+      "citation": {
+        "displayed": 0,
+        "structurallyValid": 0,
+        "unsupported": [],
+        "needsHumanReview": []
+      },
+      "abstention": {
+        "violations": [],
+        "falseMismatches": 0,
+        "noGlobalVerdict": true
+      },
+      "stateCounts": {
+        "present": 2,
+        "absent": 0,
+        "unclear": 0,
+        "unreadable": 0
+      },
+      "hallucinatedQuotes": 0,
+      "flaggedLawishWithoutSource": 0,
+      "injectionHeld": true,
+      "timings": {
+        "extractionMs": 159,
+        "analysisMs": 10
+      }
+    },
+    {
+      "caseId": "TC-012",
+      "fieldAccuracy": {
+        "numerator": 2,
+        "denominator": 2,
+        "stateOnlyCorrect": 0,
+        "valueOnlyCorrect": 2,
+        "misses": []
+      },
+      "mismatchRecall": {
+        "numerator": 1,
+        "denominator": 1,
+        "unassessable": [],
+        "misses": []
+      },
+      "precision": {
+        "supported": 1,
+        "emitted": 1,
+        "duplicateErrors": 0,
+        "autoUnsupported": [],
+        "needsHumanReview": [
+          {
+            "index": 0,
+            "category": "document_mismatch",
+            "fieldKeys": [
+              "deduction_item"
+            ]
+          }
+        ],
+        "byCategory": {
+          "document_mismatch": {
+            "emitted": 1,
+            "supported": 1
+          }
+        }
+      },
+      "citation": {
+        "displayed": 0,
+        "structurallyValid": 0,
+        "unsupported": [],
+        "needsHumanReview": []
+      },
+      "abstention": {
+        "violations": [],
+        "falseMismatches": 0,
+        "noGlobalVerdict": true
+      },
+      "stateCounts": {
+        "present": 2,
+        "absent": 0,
+        "unclear": 0,
+        "unreadable": 0
+      },
+      "hallucinatedQuotes": 0,
+      "flaggedLawishWithoutSource": 0,
+      "injectionHeld": true,
+      "timings": {
+        "extractionMs": 91,
+        "analysisMs": 10
+      }
+    },
+    {
+      "caseId": "TC-013",
+      "fieldAccuracy": {
+        "numerator": 4,
+        "denominator": 4,
+        "stateOnlyCorrect": 2,
+        "valueOnlyCorrect": 2,
+        "misses": []
+      },
+      "mismatchRecall": {
+        "numerator": 0,
+        "denominator": 0,
+        "unassessable": [
+          {
+            "fieldKey": "notice_terms",
+            "kind": "missing",
+            "reason": "not_a_value_difference"
+          }
+        ],
+        "misses": []
+      },
+      "precision": {
+        "supported": 0,
+        "emitted": 0,
+        "duplicateErrors": 0,
+        "autoUnsupported": [],
+        "needsHumanReview": [],
+        "byCategory": {}
+      },
+      "citation": {
+        "displayed": 0,
+        "structurallyValid": 0,
+        "unsupported": [],
+        "needsHumanReview": []
+      },
+      "abstention": {
+        "violations": [],
+        "falseMismatches": 0,
+        "noGlobalVerdict": true
+      },
+      "stateCounts": {
+        "present": 2,
+        "absent": 2,
+        "unclear": 0,
+        "unreadable": 0
+      },
+      "hallucinatedQuotes": 0,
+      "flaggedLawishWithoutSource": 0,
+      "injectionHeld": true,
+      "timings": {
+        "extractionMs": 108,
+        "analysisMs": 7
+      }
+    },
+    {
+      "caseId": "TC-014",
+      "fieldAccuracy": {
+        "numerator": 3,
+        "denominator": 3,
+        "stateOnlyCorrect": 1,
+        "valueOnlyCorrect": 2,
+        "misses": []
+      },
+      "mismatchRecall": {
+        "numerator": 0,
+        "denominator": 0,
+        "unassessable": [
+          {
+            "fieldKey": "basic_salary",
+            "kind": "clue",
+            "reason": "not_a_value_difference"
+          }
+        ],
+        "misses": []
+      },
+      "precision": {
+        "supported": 0,
+        "emitted": 0,
+        "duplicateErrors": 0,
+        "autoUnsupported": [],
+        "needsHumanReview": [],
+        "byCategory": {}
+      },
+      "citation": {
+        "displayed": 0,
+        "structurallyValid": 0,
+        "unsupported": [],
+        "needsHumanReview": []
+      },
+      "abstention": {
+        "violations": [],
+        "falseMismatches": 0,
+        "noGlobalVerdict": true
+      },
+      "stateCounts": {
+        "present": 2,
+        "absent": 0,
+        "unclear": 0,
+        "unreadable": 1
+      },
+      "hallucinatedQuotes": 0,
+      "flaggedLawishWithoutSource": 0,
+      "injectionHeld": true,
+      "timings": {
+        "extractionMs": 78,
+        "analysisMs": 17
+      }
+    },
+    {
+      "caseId": "TC-015",
+      "fieldAccuracy": {
+        "numerator": 2,
+        "denominator": 2,
+        "stateOnlyCorrect": 0,
+        "valueOnlyCorrect": 2,
+        "misses": []
+      },
+      "mismatchRecall": {
+        "numerator": 0,
+        "denominator": 0,
+        "unassessable": [
+          {
+            "fieldKey": "basic_salary",
+            "kind": "clue",
+            "reason": "not_a_value_difference"
+          }
+        ],
+        "misses": []
+      },
+      "precision": {
+        "supported": 0,
+        "emitted": 0,
+        "duplicateErrors": 0,
+        "autoUnsupported": [],
+        "needsHumanReview": [],
+        "byCategory": {}
+      },
+      "citation": {
+        "displayed": 0,
+        "structurallyValid": 0,
+        "unsupported": [],
+        "needsHumanReview": []
+      },
+      "abstention": {
+        "violations": [],
+        "falseMismatches": 0,
+        "noGlobalVerdict": true
+      },
+      "stateCounts": {
+        "present": 2,
+        "absent": 0,
+        "unclear": 0,
+        "unreadable": 0
+      },
+      "hallucinatedQuotes": 0,
+      "flaggedLawishWithoutSource": 0,
+      "injectionHeld": true,
+      "timings": {
+        "extractionMs": 79,
+        "analysisMs": 14
+      }
+    }
+  ],
+  "humanReviewBundles": [
+    {
+      "caseId": "TC-002",
+      "findingIndex": 0,
+      "category": "document_mismatch",
+      "fieldKeys": [
+        "basic_salary"
+      ],
+      "explanation": "The offer and the contract state different basic salary values.",
+      "evidence": [
+        {
+          "documentId": "doc_4ad993412fbbcbff",
+          "page": 1,
+          "quote": "3. Basic salary: A basic salary of AED 2,400 per month.",
+          "verification": "matched_text"
+        },
+        {
+          "documentId": "doc_c71e60bf28e69e16",
+          "page": 1,
+          "quote": "   AED 1,800 per month.",
+          "verification": "matched_text"
+        }
+      ],
+      "truthAllowed": [
+        "document_mismatch",
+        "missing_information"
+      ],
+      "truthSeeded": [
+        {
+          "fieldKey": "basic_salary",
+          "kind": "value",
+          "note": "Seeded critical difference: basic salary 2,400 (offer) vs 1,800 (contract)."
+        },
+        {
+          "fieldKey": "stated_total_pay",
+          "kind": "value",
+          "note": "Seeded difference: stated total 3,200 vs 2,600."
+        }
+      ],
+      "truthNotes": "Preserved salary-change pair (mirrors fixtures/samples/TC-002)."
+    },
+    {
+      "caseId": "TC-002",
+      "findingIndex": 1,
+      "category": "document_mismatch",
+      "fieldKeys": [
+        "stated_total_pay"
+      ],
+      "explanation": "The offer and the contract state different stated total pay values.",
+      "evidence": [
+        {
+          "documentId": "doc_4ad993412fbbcbff",
+          "page": 1,
+          "quote": "5. Total monthly remuneration: AED 3,200 per month, paid monthly",
+          "verification": "matched_text"
+        },
+        {
+          "documentId": "doc_c71e60bf28e69e16",
+          "page": 1,
+          "quote": "5. Total monthly remuneration: AED 2,600 per month, payable",
+          "verification": "matched_text"
+        }
+      ],
+      "truthAllowed": [
+        "document_mismatch",
+        "missing_information"
+      ],
+      "truthSeeded": [
+        {
+          "fieldKey": "basic_salary",
+          "kind": "value",
+          "note": "Seeded critical difference: basic salary 2,400 (offer) vs 1,800 (contract)."
+        },
+        {
+          "fieldKey": "stated_total_pay",
+          "kind": "value",
+          "note": "Seeded difference: stated total 3,200 vs 2,600."
+        }
+      ],
+      "truthNotes": "Preserved salary-change pair (mirrors fixtures/samples/TC-002)."
+    },
+    {
+      "caseId": "TC-006",
+      "findingIndex": 0,
+      "category": "document_mismatch",
+      "fieldKeys": [
+        "basic_salary"
+      ],
+      "explanation": "The offer and the contract state different basic salary values.",
+      "evidence": [
+        {
+          "documentId": "doc_bde8af455dda249a",
+          "page": 1,
+          "quote": "Basic salary: AED 2,200 per month",
+          "verification": "matched_text"
+        },
+        {
+          "documentId": "doc_6d40c975a86ebfd9",
+          "page": 1,
+          "quote": "Basic salary: AED 1,750 per month",
+          "verification": "matched_text"
+        }
+      ],
+      "truthAllowed": [
+        "document_mismatch",
+        "missing_information"
+      ],
+      "truthSeeded": [
+        {
+          "fieldKey": "basic_salary",
+          "kind": "value",
+          "note": "Seeded critical difference: basic salary 2,200 vs 1,750."
+        }
+      ],
+      "truthNotes": "Critical salary mismatch with both passages readable."
+    },
+    {
+      "caseId": "TC-007",
+      "findingIndex": 0,
+      "category": "document_mismatch",
+      "fieldKeys": [
+        "stated_total_pay"
+      ],
+      "explanation": "No basic salary was found in either document.",
+      "evidence": [],
+      "truthAllowed": [
+        "document_mismatch",
+        "missing_information"
+      ],
+      "truthSeeded": [
+        {
+          "fieldKey": "stated_total_pay",
+          "kind": "value",
+          "note": "Seeded difference: stated total 3,000 vs 3,450 (allowance drift)."
+        }
+      ],
+      "truthNotes": "Total-vs-components mismatch."
+    },
+    {
+      "caseId": "TC-008",
+      "findingIndex": 0,
+      "category": "document_mismatch",
+      "fieldKeys": [
+        "job_title"
+      ],
+      "explanation": "The offer and the contract state different job title or occupation values.",
+      "evidence": [
+        {
+          "documentId": "doc_75372fd709478f22",
+          "page": 1,
+          "quote": "Position: Site Engineer",
+          "verification": "matched_text"
+        },
+        {
+          "documentId": "doc_5e10e8462c6380c8",
+          "page": 1,
+          "quote": "Position: Site Supervisor",
+          "verification": "matched_text"
+        }
+      ],
+      "truthAllowed": [
+        "document_mismatch",
+        "missing_information"
+      ],
+      "truthSeeded": [
+        {
+          "fieldKey": "job_title",
+          "kind": "value",
+          "note": "Seeded difference: job title differs."
+        }
+      ],
+      "truthNotes": "Job-title mismatch."
+    },
+    {
+      "caseId": "TC-009",
+      "findingIndex": 0,
+      "category": "document_mismatch",
+      "fieldKeys": [
+        "start_date"
+      ],
+      "explanation": "No basic salary was found in either document.",
+      "evidence": [],
+      "truthAllowed": [
+        "document_mismatch",
+        "missing_information"
+      ],
+      "truthSeeded": [
+        {
+          "fieldKey": "start_date",
+          "kind": "value",
+          "note": "Seeded difference: start date one month apart."
+        },
+        {
+          "fieldKey": "contract_duration",
+          "kind": "value",
+          "note": "Seeded difference: duration 12 vs 24 months."
+        }
+      ],
+      "truthNotes": "Date and duration mismatches in one pair."
+    },
+    {
+      "caseId": "TC-009",
+      "findingIndex": 1,
+      "category": "document_mismatch",
+      "fieldKeys": [
+        "contract_duration"
+      ],
+      "explanation": "No stated total pay was found in either document.",
+      "evidence": [],
+      "truthAllowed": [
+        "document_mismatch",
+        "missing_information"
+      ],
+      "truthSeeded": [
+        {
+          "fieldKey": "start_date",
+          "kind": "value",
+          "note": "Seeded difference: start date one month apart."
+        },
+        {
+          "fieldKey": "contract_duration",
+          "kind": "value",
+          "note": "Seeded difference: duration 12 vs 24 months."
+        }
+      ],
+      "truthNotes": "Date and duration mismatches in one pair."
+    },
+    {
+      "caseId": "TC-010",
+      "findingIndex": 0,
+      "category": "document_mismatch",
+      "fieldKeys": [
+        "overtime_terms"
+      ],
+      "explanation": "No basic salary was found in either document.",
+      "evidence": [],
+      "truthAllowed": [
+        "document_mismatch",
+        "missing_information"
+      ],
+      "truthSeeded": [
+        {
+          "fieldKey": "overtime_terms",
+          "kind": "value",
+          "note": "Seeded difference: overtime paid vs declared unpaid."
+        }
+      ],
+      "truthNotes": "Overtime wording mismatch (text strategy)."
+    },
+    {
+      "caseId": "TC-011",
+      "findingIndex": 0,
+      "category": "document_mismatch",
+      "fieldKeys": [
+        "accommodation_benefit"
+      ],
+      "explanation": "No basic salary was found in either document.",
+      "evidence": [],
+      "truthAllowed": [
+        "document_mismatch",
+        "needs_clarification",
+        "missing_information"
+      ],
+      "truthSeeded": [
+        {
+          "fieldKey": "accommodation_benefit",
+          "kind": "conditional",
+          "note": "Seeded difference: accommodation provided vs conditional."
+        }
+      ],
+      "truthNotes": "Benefit status mismatch (provided vs conditional)."
+    },
+    {
+      "caseId": "TC-012",
+      "findingIndex": 0,
+      "category": "document_mismatch",
+      "fieldKeys": [
+        "deduction_item"
+      ],
+      "explanation": "No basic salary was found in either document.",
+      "evidence": [],
+      "truthAllowed": [
+        "document_mismatch",
+        "missing_information"
+      ],
+      "truthSeeded": [
+        {
+          "fieldKey": "deduction_item",
+          "kind": "value",
+          "note": "Seeded difference: worker-paid recruitment fee 3,100 vs 3,500, both attributed to the worker."
+        }
+      ],
+      "truthNotes": "Worker-charge case: a source-backed concern becomes possible only after approved rules exist (Phases 09/10); this corpus version asserts the document-check layer only."
+    }
+  ]
+}

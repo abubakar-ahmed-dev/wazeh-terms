@@ -12,7 +12,7 @@
  * case context needs to leak through the Gemini service interface.
  */
 import { createHash } from 'node:crypto';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -41,6 +41,19 @@ function buildCaseIndex(manifest: SampleManifest): Map<string, string> {
   for (const entry of manifest.entries) {
     for (const document of entry.documents) {
       index.set(fixtureSha256(path.join(manifest.rootDir, entry.sampleCaseId, document.file)), entry.sampleCaseId);
+    }
+  }
+  // Test-path extension (Phase 15 dry runs): also index the corpus tree
+  // itself — corpus PDF bytes can drift from the bundled fixture copies,
+  // and the dry run uploads corpus files.
+  if (existsSync(corpusDir)) {
+    for (const caseDir of readdirSync(corpusDir)) {
+      if (!/^TC-\d{3}$/.test(caseDir)) continue;
+      const casePath = path.join(corpusDir, caseDir);
+      for (const file of readdirSync(casePath)) {
+        if (!file.toLowerCase().endsWith('.pdf')) continue;
+        index.set(fixtureSha256(path.join(casePath, file)), caseDir);
+      }
     }
   }
   return index;
