@@ -1,0 +1,59 @@
+{
+  "frozenAt": "2026-10-03T00:00:00Z",
+  "freezeId": "freeze-2026-10-03-prod2",
+  "purpose": "Fresh production evaluation after owner evidence decisions D1-D7 (accepted), D10-A (TC-014 relabel), the corrected worker-charge concern wording, and truth pageCount correction. Supersedes freeze-2026-10-03-prod.json as the run manifest; that file and freeze-2026-10-02.json stay untouched.",
+  "ownerDecisions": {
+    "D1-D6": "accepted (passages verified in generated PDFs)",
+    "D7": "accepted (TC-012 recruitment_cost rekey + one-time worker-paid value)",
+    "D8": "PENDING - semantic sign-off of the narrowed worker-charge claim; run gated on it",
+    "D9": "provisionally accepted (paired passages); explanation check via test-corpus/eval/verdict-corrections-2026-10-02.json",
+    "D10-A": "applied - TC-014 basic_salary relabelled present; corpus has no validated unreadable-page case"
+  },
+  "contentChange": "rule.ae-recruitment-costs-employer-bears r1 plainEnglish narrowed (owner-directed wording correction, published 2026-10-03): states the Article 6(4) prohibition, names the third-party-recruiter attribution gap, drops the unsupported visa/residency/medical/travel enumeration and the affirmative must-pay phrasing. claimText and pinpoint unchanged; revision stays 1; KB mapping unaffected.",
+  "truthChanges": [
+    "TC-014 basic_salary unreadable -> present (AED 2,900 monthly; PDF line verified readable, page 1)",
+    "TC-012 evidence pages 1 -> 2 (PDF-verified)",
+    "all cases: documents.pageCount corrected from fiction (1) to actual generated page counts (2 per document in pairs; 1 for TC-014)",
+    "TC-001/003/004/005/006/007/012 rebaseline from freeze-2026-10-02 amendments carries forward unchanged"
+  ],
+  "codeBranch": "submission-prep-2 (merged to dev before the run; the run's review record states the exact dev HEAD sha)",
+  "model": "gemini-3.5-flash-lite",
+  "promptFile": "api/src/services/gemini/prompt.ts",
+  "promptSha256_16": "a3d4665e2905be61",
+  "sanityContentRelease": {
+    "project": "8g0kllu0",
+    "dataset": "production",
+    "publishedApprovedRecords": 44,
+    "approvedRules": [
+      {
+        "ruleKey": "ae-recruitment-costs-employer-bears",
+        "ruleRevision": 1,
+        "sourceKey": "uae-federal-decree-law-33-2021",
+        "versionKey": "base-text-2022",
+        "pinpoint": "Article (6) Recruitment and Employment of Workers, clause (4)"
+      }
+    ]
+  },
+  "knowledgeBase": {
+    "id": "kbynAP4r8P6m",
+    "endpoint": "https://api.sanity.io/v1/context/organizations/on41l5b0b/mcp/wazeh-terms-mcp"
+  },
+  "deployed": {
+    "service": "wazehterms",
+    "region": "asia-south1",
+    "revisionAtFreeze": "wazehterms-00016-run",
+    "note": "runner cap + truth changes below need a NEW revision deployed from the run branch before starting; record the revision here at run time"
+  },
+  "runPolicy": {
+    "geminiCallsExpected": 15,
+    "geminiCallsHardCap": 45,
+    "hardCapEnforcedBy": "run-eval.ts --max-calls (charges every extraction POST attempt incl. runner retries; blocks the attempt that would exceed the cap; dry-tested at --max-calls=2)",
+    "resume": "JSONL append; recorded caseIds skipped; failed cases re-run only via explicit --cases",
+    "noSelectiveReruns": true,
+    "outputFiles": "results-2026-10-03-prod2.jsonl + eval-2026-10-03-prod2.json + review record addendum; all run-1 and smoke files stay immutable"
+  },
+  "providerBilling": {
+    "ownerStatement": "Free tier",
+    "openQuestion": "2026-10-01 failure was 402 RESOURCE_EXHAUSTED (prepayment credits) - owner verifying the key's AI Studio plan and billing attachment before the run; if paid, Free-tier claims and the privacy notice must be corrected before publishing"
+  }
+}

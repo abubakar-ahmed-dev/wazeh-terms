@@ -3,9 +3,9 @@
     "documentId": "doc-contract",
     "role": "contract",
     "mimeType": "application/pdf",
-    "pageCount": 2,
+    "pageCount": 1,
     "sha256": "27af5a89db8c8e6dafb1ce9d33fc7aa24cb2a80a5a033bf0f3126e55a2511d8c",
-    "extractionStatus": "partial",
+    "extractionStatus": "completed",
     "fields": [
       {
         "fieldKey": "employer_name",
@@ -57,10 +57,24 @@
       {
         "fieldKey": "basic_salary",
         "instanceId": "basic_salary:0",
-        "state": "unreadable",
-        "rawText": null,
-        "value": null,
-        "evidence": [],
+        "state": "present",
+        "rawText": "Basic salary: AED 2,900 per month",
+        "value": {
+          "kind": "money",
+          "amount": "2900.00",
+          "currency": "AED",
+          "frequency": "monthly",
+          "component": "basic_salary",
+          "payer": null
+        },
+        "evidence": [
+          {
+            "documentId": "doc-contract",
+            "page": 1,
+            "quote": "Basic salary: AED 2,900 per month",
+            "verification": "matched_text"
+          }
+        ],
         "qualityNotes": []
       },
       {
@@ -325,8 +339,6 @@
         "qualityNotes": []
       }
     ],
-    "unreadablePages": [
-      2
-    ]
+    "unreadablePages": []
   }
 }

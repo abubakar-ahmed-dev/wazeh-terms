@@ -11,7 +11,7 @@
     {
       "role": "offer",
       "file": "offer.pdf",
-      "pageCount": 1,
+      "pageCount": 2,
       "readablePages": [
         1
       ]
@@ -19,7 +19,7 @@
     {
       "role": "contract",
       "file": "contract.pdf",
-      "pageCount": 1,
+      "pageCount": 2,
       "readablePages": [
         1
       ]
@@ -39,7 +39,7 @@
         "payer": "worker"
       },
       "evidence": {
-        "page": 1,
+        "page": 2,
         "role": "offer",
         "line": 28
       }
@@ -57,7 +57,7 @@
         "payer": "worker"
       },
       "evidence": {
-        "page": 1,
+        "page": 2,
         "role": "contract",
         "line": 28
       }
@@ -85,5 +85,5 @@
   "expectedAbstentions": [
     "no_global_verdict"
   ],
-  "notes": "Worker-charge case: a source-backed concern becomes possible only after approved rules exist (Phases 09/10); this corpus version asserts the document-check layer only Rebaseline 2026-10-02 (release-polish WI-4, agent re-inspection; owner ratification pending): the worker-charge clause maps to registry recruitment_cost (recruitment_and_travel_costs group), not deduction_item — the live model and the clause wording both name recruitment; approved rule ae-recruitment-costs-employer-bears rev 1 now backs the source-backed concern, superseding the no_rule_claims abstention and the source_backed_concern prohibition recorded before Phase 09/10 content existed Value annotation corrected to the stated text: the fee is one-time (per_contract) and worker-paid (payer worker), not monthly with no stated payer."
+  "notes": "Worker-charge case: a source-backed concern becomes possible only after approved rules exist (Phases 09/10); this corpus version asserts the document-check layer only Rebaseline 2026-10-02 (release-polish WI-4, agent re-inspection; owner ratification pending): the worker-charge clause maps to registry recruitment_cost (recruitment_and_travel_costs group), not deduction_item — the live model and the clause wording both name recruitment; approved rule ae-recruitment-costs-employer-bears rev 1 now backs the source-backed concern, superseding the no_rule_claims abstention and the source_backed_concern prohibition recorded before Phase 09/10 content existed Value annotation corrected to the stated text: the fee is one-time (per_contract) and worker-paid (payer worker), not monthly with no stated payer Evidence page corrected 1 to 2 (submission-prep): the generated PDF places both recruitment-fee lines on page 2, verified by direct text extraction."
 }

@@ -40,6 +40,13 @@ interface Args {
   results?: string;
   /** `--freeze=<file>`: freeze manifest (default freeze-2026-10-02.json). */
   freeze: string;
+  /**
+   * `--max-calls=<n>`: hard stop on extraction POST attempts (each attempt
+   * is one potential Gemini provider call, including runner-level
+   * retries). Default 45 for a 15-case run (freeze-2026-10-03-prod.json
+   * runPolicy.geminiCallsHardCap). A budget alert is not a cap; this is.
+   */
+  maxCalls: number;
 }
 
 function parseArgs(): Args {
@@ -57,6 +64,7 @@ function parseArgs(): Args {
     cases: get('cases')?.split(','),
     results: get('results'),
     freeze: get('freeze') ?? 'freeze-2026-10-02.json',
+    maxCalls: Number(get('max-calls') ?? 45),
   };
 }
 
@@ -102,9 +110,17 @@ async function timedFetch(url: string, init: RequestInit): Promise<FetchOutcome>
   return { status: response.status, body, ms: Date.now() - started };
 }
 
-async function postWithRetry(url: string, init: RequestInit, attempts = 3): Promise<FetchOutcome> {
+/** Retries re-fire the provider call, so the budget charges each attempt. */
+async function postWithRetry(
+  url: string,
+  init: RequestInit,
+  attempts = 3,
+  budget?: { attempts: number },
+  maxCalls?: number,
+): Promise<FetchOutcome> {
   let last: FetchOutcome | null = null;
   for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    if (attempt > 1 && budget && maxCalls) chargeExtractionAttempt(budget, maxCalls);
     last = await timedFetch(url, init);
     if (last.status !== 429 && last.status !== 503) return last;
     const retryAfter = Number((last.body as { error?: { retryAfterSeconds?: number } })?.error?.retryAfterSeconds ?? 20);
@@ -114,14 +130,38 @@ async function postWithRetry(url: string, init: RequestInit, attempts = 3): Prom
   return last as FetchOutcome;
 }
 
-async function runCase(caseId: string, truth: Truth, baseUrl: string): Promise<Record<string, unknown>> {
+/** Abort when the provider-call budget is spent; the run stays resumable. */
+class CallBudgetExhausted extends Error {}
+function chargeExtractionAttempt(budget: { attempts: number }, maxCalls: number): void {
+  budget.attempts += 1;
+  if (budget.attempts > maxCalls) {
+    throw new CallBudgetExhausted(
+      `extraction-call budget exhausted: ${maxCalls} POST attempts charged (hard cap, freeze runPolicy)`,
+    );
+  }
+}
+
+async function runCase(
+  caseId: string,
+  truth: Truth,
+  baseUrl: string,
+  budget: { attempts: number },
+  maxCalls: number,
+): Promise<Record<string, unknown>> {
   const errors: string[] = [];
   const form = new FormData();
   for (const document of truth.documents) {
     const bytes = readFileSync(path.join(corpusDir, caseId, document.file));
     form.append(document.role, new Blob([new Uint8Array(bytes)], { type: 'application/pdf' }), document.file);
   }
-  const extraction = await postWithRetry(`${baseUrl}/api/v1/extractions`, { method: 'POST', body: form });
+  chargeExtractionAttempt(budget, maxCalls);
+  const extraction = await postWithRetry(
+    `${baseUrl}/api/v1/extractions`,
+    { method: 'POST', body: form },
+    3,
+    budget,
+    maxCalls,
+  );
   if (extraction.status !== 200) {
     errors.push(`extraction:${extraction.status}`);
     return { caseId, mode: 'error', errors, extractionMs: extraction.ms, analysisMs: 0, issued: null, report: null };
@@ -210,6 +250,7 @@ async function main(): Promise<void> {
 
   let stopServer: (() => void) | null = null;
   let baseUrl = args.baseUrl;
+  const callBudget = { attempts: 0 };
   if (args.mode === 'dry') {
     console.log('== dry run: e2e-server with fixture Gemini, no Sanity ==');
     const started = await startDryServer();
@@ -219,7 +260,7 @@ async function main(): Promise<void> {
     baseUrl = 'http://localhost:3000';
     console.log(`== local live server expected at ${baseUrl} ==`);
   } else {
-    console.log(`== production run against ${baseUrl} (paced ${SLEEP_MS_BETWEEN_CASES / 1000}s) ==`);
+    console.log(`== production run against ${baseUrl} (paced ${SLEEP_MS_BETWEEN_CASES / 1000}s, extraction-call cap ${args.maxCalls}) ==`);
   }
 
   try {
@@ -231,7 +272,7 @@ async function main(): Promise<void> {
       }
       const truth = loadTruth(caseId);
       console.log(`[${index + 1}/${caseIds.length}] ${caseId} …`);
-      const result = await runCase(caseId, truth, baseUrl);
+      const result = await runCase(caseId, truth, baseUrl, callBudget, args.maxCalls);
       appendFileSync(jsonlPath, `${JSON.stringify({ recordedAt: new Date().toISOString(), ...result })}\n`);
       console.log(`  ${result.mode} (${result.errors.join(',') || 'clean'}) ext=${result.extractionMs}ms ana=${result.analysisMs}ms`);
       if (index < caseIds.length - 1) await sleep(SLEEP_MS_BETWEEN_CASES);
@@ -241,6 +282,8 @@ async function main(): Promise<void> {
   }
   console.log(`== done: ${jsonlPath} ==`);
 }
+
+export const _callBudgetInternal = { CallBudgetExhausted, chargeExtractionAttempt };
 
 function jsonlHas(jsonlPath: string, caseId: string): boolean {
   if (!existsSync(jsonlPath)) return false;
@@ -315,6 +358,11 @@ function scoreResultsFile(jsonlPath: string, date: string, freezeFile: string): 
 }
 
 main().catch((error: unknown) => {
+  if (error instanceof CallBudgetExhausted) {
+    console.error(`== STOPPED: ${String(error.message)} ==`);
+    console.error('== completed cases are already in the JSONL; resume with --cases for the remainder ==');
+    return;
+  }
   console.error(error);
   process.exitCode = 1;
 });

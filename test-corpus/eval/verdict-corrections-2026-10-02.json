@@ -1,0 +1,141 @@
+{
+  "description": "Complete emitted finding records backing review-record verdict corrections 1-4 (agent first pass wrong; owner provisionally accepted 2026-10-03). Extracted verbatim from results-2026-10-02.jsonl.",
+  "records": [
+    {
+      "caseId": "TC-009",
+      "findingIndex": 1,
+      "finding": {
+        "id": "finding-2",
+        "category": "document_mismatch",
+        "fieldKeys": [
+          "start_date"
+        ],
+        "importance": "medium",
+        "explanation": "The offer and the contract state different start date values.",
+        "documentEvidence": [
+          {
+            "documentId": "doc_bcbda4dfb46efdc4",
+            "page": 1,
+            "quote": "Start date: 1 March 2026",
+            "verification": "matched_text"
+          },
+          {
+            "documentId": "doc_e0c3f80a3f043cae",
+            "page": 1,
+            "quote": "Start date: 1 April 2026",
+            "verification": "matched_text"
+          }
+        ],
+        "valueOrigins": [
+          "document",
+          "document"
+        ],
+        "comparisonRuleKey": "date_equality",
+        "uncertaintyReasons": [],
+        "suggestedQuestionOrStep": "Ask the employer which start date applies before you sign."
+      }
+    },
+    {
+      "caseId": "TC-009",
+      "findingIndex": 2,
+      "finding": {
+        "id": "finding-3",
+        "category": "document_mismatch",
+        "fieldKeys": [
+          "contract_duration"
+        ],
+        "importance": "medium",
+        "explanation": "The offer and the contract state different contract duration values.",
+        "documentEvidence": [
+          {
+            "documentId": "doc_bcbda4dfb46efdc4",
+            "page": 1,
+            "quote": "Contract duration: 12 months",
+            "verification": "matched_text"
+          },
+          {
+            "documentId": "doc_e0c3f80a3f043cae",
+            "page": 1,
+            "quote": "Contract duration: 24 months",
+            "verification": "matched_text"
+          }
+        ],
+        "valueOrigins": [
+          "document",
+          "document"
+        ],
+        "comparisonRuleKey": "duration_equality",
+        "uncertaintyReasons": [],
+        "suggestedQuestionOrStep": "Ask the employer which contract duration applies before you sign."
+      }
+    },
+    {
+      "caseId": "TC-010",
+      "findingIndex": 1,
+      "finding": {
+        "id": "finding-2",
+        "category": "document_mismatch",
+        "fieldKeys": [
+          "overtime_terms"
+        ],
+        "importance": "medium",
+        "explanation": "The offer and the contract state different overtime wording values.",
+        "documentEvidence": [
+          {
+            "documentId": "doc_6f0102a7e48e1f08",
+            "page": 1,
+            "quote": "Overtime: Paid at 125 percent after ordinary hours",
+            "verification": "matched_text"
+          },
+          {
+            "documentId": "doc_d022a90ff466b70d",
+            "page": 1,
+            "quote": "Overtime: Unpaid and included in the salary",
+            "verification": "matched_text"
+          }
+        ],
+        "valueOrigins": [
+          "document",
+          "document"
+        ],
+        "comparisonRuleKey": "text_equality",
+        "uncertaintyReasons": [],
+        "suggestedQuestionOrStep": "Ask the employer which overtime wording applies before you sign."
+      }
+    },
+    {
+      "caseId": "TC-011",
+      "findingIndex": 2,
+      "finding": {
+        "id": "finding-3",
+        "category": "document_mismatch",
+        "fieldKeys": [
+          "accommodation_benefit"
+        ],
+        "importance": "high",
+        "explanation": "The offer and the contract state different accommodation benefit values.",
+        "documentEvidence": [
+          {
+            "documentId": "doc_e861ef74aec11f35",
+            "page": 2,
+            "quote": "Accommodation: Provided by the company",
+            "verification": "matched_text"
+          },
+          {
+            "documentId": "doc_d10ca29d70f29ea5",
+            "page": 2,
+            "quote": "Accommodation: Subject to availability at the company camp",
+            "verification": "matched_text"
+          }
+        ],
+        "valueOrigins": [
+          "document",
+          "document"
+        ],
+        "comparisonRuleKey": "benefit_state_equality",
+        "uncertaintyReasons": [],
+        "suggestedQuestionOrStep": "Ask the employer which accommodation benefit applies before you sign."
+      }
+    }
+  ]
+}

@@ -3,9 +3,9 @@
     "documentId": "doc-offer",
     "role": "offer",
     "mimeType": "application/pdf",
-    "pageCount": 1,
+    "pageCount": 2,
     "sha256": "e2875ad27c154e215cbcfeffe302f7548655c6029065b75627bcc52bbe76519f",
-    "extractionStatus": "completed",
+    "extractionStatus": "partial",
     "fields": [
       {
         "fieldKey": "employer_name",
@@ -176,7 +176,7 @@
         "evidence": [
           {
             "documentId": "doc-offer",
-            "page": 1,
+            "page": 2,
             "quote": "Recruitment fee: AED 3,100 to be paid by the worker to the recruiter in Pakistan",
             "verification": "matched_text"
           }
@@ -319,15 +319,17 @@
         "qualityNotes": []
       }
     ],
-    "unreadablePages": []
+    "unreadablePages": [
+      2
+    ]
   },
   "contract": {
     "documentId": "doc-contract",
     "role": "contract",
     "mimeType": "application/pdf",
-    "pageCount": 1,
+    "pageCount": 2,
     "sha256": "beee4e1ff3fcf4412b5b27c832125e7bc0799bf1e486e235fb850cfc3ece9cbd",
-    "extractionStatus": "completed",
+    "extractionStatus": "partial",
     "fields": [
       {
         "fieldKey": "employer_name",
@@ -498,7 +500,7 @@
         "evidence": [
           {
             "documentId": "doc-contract",
-            "page": 1,
+            "page": 2,
             "quote": "Recruitment fee: AED 3,500 to be paid by the worker before visa stamping",
             "verification": "matched_text"
           }
@@ -641,6 +643,8 @@
         "qualityNotes": []
       }
     ],
-    "unreadablePages": []
+    "unreadablePages": [
+      2
+    ]
   }
 }

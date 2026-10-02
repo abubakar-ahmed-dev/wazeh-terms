@@ -112,11 +112,14 @@ describe('corpus runner (fixture extraction → analyses → truth assertions)',
     expect(finding?.category).toBe('missing_information');
   });
 
-  it('TC-014: single document — comparison not applicable, unreadable coverage, no fabricated absence', () => {
+  it('TC-014: single document — comparison not applicable, salary read, no fabricated absence', () => {
     const body = report('TC-014');
     expect(body.stages.comparison).toBe('not_applicable');
     expect(body.coverage.documentIds).toHaveLength(1);
-    expect(body.coverage.unreadableFieldKeys).toContain('basic_salary');
+    // Owner decision D10-A: the salary line was verified readable in the
+    // generated PDF; the old unreadable label is retired (no validated
+    // unreadable-page case in this corpus).
+    expect(body.coverage.unreadableFieldKeys).not.toContain('basic_salary');
     expect(categoriesOf('TC-014')).not.toContain('missing_information');
   });
 
