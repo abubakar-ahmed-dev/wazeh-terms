@@ -122,7 +122,7 @@ export function loadBundledSampleManifest(): SampleManifest {
       entry(
         'TC-014',
         'Fictional single contract (abstention)',
-        'Only a fictional contract from Coastal Star General Trading LLC, and its salary page is unreadable. Shows an honest partial result instead of guessed answers.',
+        'Only a fictional contract from Coastal Star General Trading LLC. With a single document there is nothing to compare: the review shows the terms found and flags what a one-document check cannot determine, without guessing.',
         [{ role: 'contract', file: 'contract.pdf' }],
       ),
       entry(

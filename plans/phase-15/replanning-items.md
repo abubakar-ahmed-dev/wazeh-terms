@@ -21,8 +21,11 @@ none are silent extensions.
    false mismatches in the run).
    **Status (release-polish): FIXED** — registry `expectedToDiffer` on
    `document_date`, `document_reference`, `verification_reference`,
-   `annex_reference` (17 metadata-family findings in the run); comparison
-   never emits them; scorer counts them `policyExempt`.
+   `annex_reference`; comparison never emits them; scorer counts them
+   `policyExempt`. Authoritative count for the 2026-10-02 run: **15**
+   (an earlier note and the fix commit message said 17 — an estimate from
+   the first-pass breakdown that mixed metadata with duplicate and
+   forbidden-category reasons; superseded by the rescored artifact).
 3. **Conditional-seed routing** — seeded `conditional` differences should
    produce `needs_clarification`, not evidence-less `document_mismatch`
    (TC-010/011).
