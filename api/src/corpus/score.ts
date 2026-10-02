@@ -47,7 +47,7 @@ export interface SourceCitationView {
   readonly ruleRevision: number;
   readonly sourceKey: string;
   readonly versionKey: string;
-  readonly pinpoint: string;
+  readonly pinpoint: { label: string; quote?: string };
   readonly sourceCheckedAt: string;
 }
 
@@ -87,6 +87,7 @@ export interface ApprovedRuleSnapshot {
   readonly ruleRevision: number;
   readonly sourceKey: string;
   readonly versionKey: string;
+  /** Approved pinpoint label (string) — citations carry { label, quote }. */
   readonly pinpoint: string;
 }
 
@@ -150,7 +151,7 @@ export interface CitationScore {
   readonly displayed: number;
   readonly structurallyValid: number;
   readonly unsupported: ReadonlyArray<{ ruleKey: string; reason: string }>;
-  readonly needsHumanReview: ReadonlyArray<{ index: number; ruleKey: string; pinpoint: string }>;
+  readonly needsHumanReview: ReadonlyArray<{ index: number; ruleKey: string; pinpoint: string; pinpointQuote?: string }>;
 }
 
 export interface AbstentionScore {
@@ -335,13 +336,13 @@ export function scoreCase(run: CaseRun, options: ScoreOptions): CaseScore {
       source.ruleRevision !== approved.ruleRevision ||
       source.sourceKey !== approved.sourceKey ||
       source.versionKey !== approved.versionKey ||
-      normalized(source.pinpoint) !== normalized(approved.pinpoint)
+      normalized(source.pinpoint.label) !== normalized(approved.pinpoint)
     ) {
       unsupported.push({ ruleKey: source.ruleKey, reason: 'revision_source_or_pinpoint_mismatch' });
       return;
     }
     structurallyValid += 1;
-    citationHuman.push({ index: report.findings.indexOf(finding), ruleKey: source.ruleKey, pinpoint: source.pinpoint });
+    citationHuman.push({ index: report.findings.indexOf(finding), ruleKey: source.ruleKey, pinpoint: source.pinpoint.label, pinpointQuote: source.pinpoint.quote });
   });
 
   // ---- Abstention safety (row 5) ----------------------------------------
@@ -369,7 +370,11 @@ export function scoreCase(run: CaseRun, options: ScoreOptions): CaseScore {
     for (const evidence of finding.documentEvidence) {
       const role = docRoleOf(issued, evidence.documentId);
       const lines = role ? run.sampleText[role] ?? [] : [];
-      const found = lines.some((line) => normalized(line).includes(normalized(evidence.quote)));
+      if (typeof evidence.quote !== "string" || evidence.quote.length === 0) continue;
+      // Quotes may span wrapped PDF lines — match against the flattened
+      // whitespace-normalized document text, not individual lines.
+      const flattened = normalized(lines.filter((line) => typeof line === "string").join(" "));
+      const found = flattened.includes(normalized(evidence.quote));
       if (lines.length > 0 && !found) hallucinatedQuotes += 1;
     }
   }

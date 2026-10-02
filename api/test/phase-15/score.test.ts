@@ -13,7 +13,7 @@ const APPROVED = [
     ruleRevision: 1,
     sourceKey: 'uae-federal-decree-law-33-2021',
     versionKey: 'base-text-2022',
-    pinpoint: 'Article (6), clause (4)',
+    pinpoint: 'Article (6) Recruitment and Employment of Workers, clause (4)',
   },
 ];
 
@@ -177,7 +177,7 @@ describe('corpus scorer — precision + citation', () => {
     };
     const run = baseRun({
       truth,
-      report: { status: 'complete', findings: [finding, finding] } as unknown as ReportView,
+      report: { status: 'complete', findings: [finding, finding] } as ReportView,
     });
     const score = scoreCase(run, opts);
     expect(score.precision.emitted).toBe(2);
@@ -202,7 +202,7 @@ describe('corpus scorer — precision + citation', () => {
               ruleRevision: 1,
               sourceKey: 'uae-federal-decree-law-33-2021',
               versionKey: 'base-text-2022',
-              pinpoint: 'Article (7), clause (1)',
+              pinpoint: { label: 'Article (7), clause (1)' },
               sourceCheckedAt: '2026-09-30T00:00:00.000Z',
             },
           },
@@ -238,7 +238,7 @@ describe('corpus scorer — abstention + artifacts', () => {
             fieldKeys: ['deduction_item'],
             explanation: 'x',
             documentEvidence: [],
-            source: { ruleKey: APPROVED[0]!.ruleKey, ruleRevision: APPROVED[0]!.ruleRevision, sourceKey: APPROVED[0]!.sourceKey, versionKey: APPROVED[0]!.versionKey, sourceCheckedAt: '2026-09-30T00:00:00.000Z', pinpoint: APPROVED[0]!.pinpoint },
+            source: { ruleKey: APPROVED[0]!.ruleKey, ruleRevision: APPROVED[0]!.ruleRevision, sourceKey: APPROVED[0]!.sourceKey, versionKey: APPROVED[0]!.versionKey, sourceCheckedAt: '2026-09-30T00:00:00.000Z', pinpoint: { label: APPROVED[0]!.pinpoint } },
           },
         ],
       } as ReportView,

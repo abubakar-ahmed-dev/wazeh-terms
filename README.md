@@ -209,8 +209,18 @@ Recent phase logs record the following successful checks:
 Not yet recorded as complete:
 
 - Full Playwright browser journey against the live URL (smoke so far is HTTP-level).
-- Corpus evaluation metrics (Phase 15): field accuracy, mismatch recall, citation support, latency.
 - Acceptance of real employment documents — deliberately out of scope; requires a paid provider path, revised notice, tests, and owner approval (MT-10 demo scope covers fictional documents only).
+
+**First corpus evaluation (2026-10-02, 15 frozen cases, live production stack):**
+achieved results with numerators/denominators — field accuracy 46/49 (94%),
+critical mismatch recall 8/13 (62%), human-adjusted finding precision 6/28
+(21%), citation support 1/1 structurally valid (owner sign-off pending),
+abstention safety 0 violations, machine latency p50 ≈ 20 s / p95 ≈ 27 s.
+Targets (≥95% / ≥90% / ≥85% / 100%) are **targets, not achieved results**;
+the recall/precision gaps have identified engineering causes recorded in
+`plans/phase-15/replanning-items.md`. Full record:
+`test-corpus/eval/eval-2026-10-02-review.md`. Fifteen samples leave wide
+uncertainty; these are development checks, not legal-validation promises.
 
 MT-10 demo-upload verification (2026-10-02): `/capabilities` reports `customUploadEnabled: true` + `privacyNoticeVersion: gemini-free-demo-v1`; a fictional PDF uploaded through production returned a complete, signed extraction (`sourceMode: custom`); the sample journey recovered after the Gemini key rotation (old key disabled at AI Studio and in Secret Manager version 1).
 
