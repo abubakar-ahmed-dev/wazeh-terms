@@ -44,7 +44,13 @@ disabled; 2 earlier smoke calls same day.
 | Source-backed citation support | 1 displayed, 1 structurally valid, 0 unsupported; **D8 semantic sign-off given by owner 2026-10-03** on the narrowed wording; whole-finding audit clean ("Charge to question: Recruitment cost" heading, no violation-established language) | 100% — met |
 | Abstention safety | **0 violations**, 0 false mismatches, no global verdict, TC-015 injection held | met |
 | Hallucinated quotations | **0** | — |
-| Machine latency | extraction p50 14.9 s / p95 17.9 s; analysis p50 3.5 s / p95 4.4 s; **end-to-end p50 ≈ 18.4 s / p95 ≈ 22.2 s** | p50 <45 s — met |
+| Machine latency | extraction p50 14.9 s / p95 17.9 s; analysis p50 3.5 s / p95 4.4 s; **end-to-end p50 18.6 s / p95 21.5 s** (n=15, measured per-case totals `extractionMs + analysisMs`; range 11.4–21.5 s) | p50 <45 s — met |
+
+## Correction (2026-10-03, post-run)
+
+The initially written end-to-end figures (≈18.4 s / ≈22.2 s) summed the two
+stages' percentiles — an estimate, not a measurement. The table now uses
+the measured per-case totals. No other figure changes.
 
 ## Caveats (unchanged posture)
 
