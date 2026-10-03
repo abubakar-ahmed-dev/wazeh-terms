@@ -52,6 +52,15 @@ The initially written end-to-end figures (≈18.4 s / ≈22.2 s) summed the two
 stages' percentiles — an estimate, not a measurement. The table now uses
 the measured per-case totals. No other figure changes.
 
+## Post-run note (2026-10-03)
+
+This run was measured on revision `wazehterms-00016-run`. Re-auditing the
+saved reports found the summary wording bug fixed in PR #27 (a displayed
+citation beside "the official-source check was not performed"); production
+now runs `wazehterms-00018-qas` with that wording fix only — findings and
+scoring inputs are unchanged, and the saved prod2 reports keep their
+original summary text. See `freeze-2026-10-03-prod2.correction-2.json`.
+
 ## Caveats (unchanged posture)
 
 Fifteen samples leave wide uncertainty; development check, not legal
