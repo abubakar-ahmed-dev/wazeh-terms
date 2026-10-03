@@ -1,0 +1,15 @@
+{
+  "correctionId": "freeze-2026-10-03-prod2.correction-2",
+  "dated": "2026-10-03",
+  "corrects": "freeze-2026-10-03-prod2.json deployed revision reference (file stays byte-identical)",
+  "corrections": [
+    {
+      "field": "deployed.revisionAtFreeze / deployedRevision",
+      "now": "Production was repromoted after the run: revision wazehterms-00018-qas (image wazehterms:fa30020, digest sha256:ac3aa7a218dfd7f6de5ae66ae67c1b1df3707f596b9e9d4c3536c1c3ee3ddd9d, dev @ fa30020) serves 100% since 2026-10-03. **The 15-case prod2 evaluation itself was measured on wazehterms-00016-run (cc4d1e2)**; the only runtime change in 00018 is report summary/limitation wording (PR #27) — findings, scoring inputs, and the evaluation numbers are unaffected, and the saved prod2 reports retain the pre-fix summary text."
+    },
+    {
+      "field": "post-run wording fix evidence",
+      "now": "Unit-pinned wording matrix (api/test/submission-prep/report-summary.test.ts, suite 347/347) plus one targeted TC-012 smoke on the 00018 staging tag (1 provider call): status partial, summary 'Partial review: 1 finding carries an official-source citation; 2 other possible official-source concerns were withheld...', limitations prefix '2 other possible...'. Verified live before promotion; traffic pin verified."
+    }
+  ]
+}
