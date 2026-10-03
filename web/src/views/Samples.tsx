@@ -18,6 +18,8 @@ function scenarioTag(caseId: string): string {
       return 'Missing Notice Clause';
     case 'TC-014':
       return 'Single Contract / Abstention';
+    case 'TC-015':
+      return 'Adversarial Instructions';
     default:
       return 'Document Scenario';
   }

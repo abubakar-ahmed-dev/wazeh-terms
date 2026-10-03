@@ -3,9 +3,9 @@
     "documentId": "doc-offer",
     "role": "offer",
     "mimeType": "application/pdf",
-    "pageCount": 1,
+    "pageCount": 2,
     "sha256": "abdabce889fbfb95e3e7cc446763d4234748e0e5e447112a448b3c01b2aba4b9",
-    "extractionStatus": "completed",
+    "extractionStatus": "partial",
     "fields": [
       {
         "fieldKey": "employer_name",
@@ -69,10 +69,24 @@
       {
         "fieldKey": "stated_total_pay",
         "instanceId": "stated_total_pay:0",
-        "state": "absent",
-        "rawText": null,
-        "value": null,
-        "evidence": [],
+        "state": "present",
+        "rawText": "Stated total monthly pay: AED 2,700",
+        "value": {
+          "kind": "money",
+          "amount": "2700.00",
+          "currency": "AED",
+          "frequency": "monthly",
+          "component": "stated_total",
+          "payer": null
+        },
+        "evidence": [
+          {
+            "documentId": "doc-offer",
+            "page": 1,
+            "quote": "Stated total monthly pay: AED 2,700",
+            "verification": "matched_text"
+          }
+        ],
         "qualityNotes": []
       },
       {
@@ -319,15 +333,17 @@
         "qualityNotes": []
       }
     ],
-    "unreadablePages": []
+    "unreadablePages": [
+      2
+    ]
   },
   "contract": {
     "documentId": "doc-contract",
     "role": "contract",
     "mimeType": "application/pdf",
-    "pageCount": 1,
+    "pageCount": 2,
     "sha256": "f8b3c5f7c58fdff38b542fe667c1d3b54ad4032ceb281f0b782154b4feb11b34",
-    "extractionStatus": "completed",
+    "extractionStatus": "partial",
     "fields": [
       {
         "fieldKey": "employer_name",
@@ -391,10 +407,24 @@
       {
         "fieldKey": "stated_total_pay",
         "instanceId": "stated_total_pay:0",
-        "state": "absent",
-        "rawText": null,
-        "value": null,
-        "evidence": [],
+        "state": "present",
+        "rawText": "Stated total monthly pay: AED 2,250",
+        "value": {
+          "kind": "money",
+          "amount": "2250.00",
+          "currency": "AED",
+          "frequency": "monthly",
+          "component": "stated_total",
+          "payer": null
+        },
+        "evidence": [
+          {
+            "documentId": "doc-contract",
+            "page": 1,
+            "quote": "Stated total monthly pay: AED 2,250",
+            "verification": "matched_text"
+          }
+        ],
         "qualityNotes": []
       },
       {
@@ -641,6 +671,8 @@
         "qualityNotes": []
       }
     ],
-    "unreadablePages": []
+    "unreadablePages": [
+      2
+    ]
   }
 }

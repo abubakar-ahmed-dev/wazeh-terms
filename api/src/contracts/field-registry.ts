@@ -88,6 +88,14 @@ export interface FieldDefinition {
    * (`docs/DATABASE_SCHEMA.md` §7). Does not declare a legal requirement.
    */
   readonly importantIfAbsent: boolean;
+  /**
+   * Metadata whose two documents are expected to differ: each document
+   * carries its own identifier, issuance date, or annex pointer. A
+   * difference in these fields is not a term difference and is never
+   * emitted as a `document_mismatch` (Phase: release-polish WI-1; the
+   * offer and the contract are different documents by design).
+   */
+  readonly expectedToDiffer: boolean;
 }
 
 const text = (
@@ -104,6 +112,7 @@ const text = (
   repeatable: false,
   expectedMoneyComponent: null,
   importantIfAbsent,
+  expectedToDiffer: false,
 });
 
 const money = (
@@ -122,6 +131,7 @@ const money = (
   repeatable,
   expectedMoneyComponent: component,
   importantIfAbsent,
+  expectedToDiffer: false,
 });
 
 const typed = (
@@ -131,6 +141,7 @@ const typed = (
   valueKind: ValueKind,
   comparisonStrategyKey: ComparisonStrategyKey,
   importantIfAbsent = false,
+  expectedToDiffer = false,
 ): FieldDefinition => ({
   fieldKey,
   groupKey,
@@ -140,6 +151,7 @@ const typed = (
   repeatable: false,
   expectedMoneyComponent: null,
   importantIfAbsent,
+  expectedToDiffer,
 });
 
 export const FIELD_DEFINITIONS: readonly FieldDefinition[] = [
@@ -172,10 +184,34 @@ export const FIELD_DEFINITIONS: readonly FieldDefinition[] = [
   typed('return_ticket_benefit', 'benefits', 'Travel or return ticket benefit', 'benefit_state', 'benefit_state_equality'),
   text('document_language', 'document_details', 'Document language'),
   typed('signature_presence', 'document_details', 'Signature presence', 'boolean', 'boolean_equality', true),
-  typed('document_date', 'document_details', 'Document date', 'date', 'date_equality'),
-  typed('document_reference', 'document_details', 'Document reference', 'reference_text', 'reference_text_equality'),
-  typed('verification_reference', 'document_details', 'Verification reference', 'reference_text', 'reference_text_equality'),
-  typed('annex_reference', 'document_details', 'Annex or policy reference', 'reference_text', 'reference_text_equality'),
+  typed('document_date', 'document_details', 'Document date', 'date', 'date_equality', false, true),
+  typed(
+    'document_reference',
+    'document_details',
+    'Document reference',
+    'reference_text',
+    'reference_text_equality',
+    false,
+    true,
+  ),
+  typed(
+    'verification_reference',
+    'document_details',
+    'Verification reference',
+    'reference_text',
+    'reference_text_equality',
+    false,
+    true,
+  ),
+  typed(
+    'annex_reference',
+    'document_details',
+    'Annex or policy reference',
+    'reference_text',
+    'reference_text_equality',
+    false,
+    true,
+  ),
 ];
 
 export type FieldKey = (typeof FIELD_DEFINITIONS)[number]['fieldKey'];

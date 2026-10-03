@@ -48,7 +48,7 @@ export function findSampleEntry(
   return manifest.entries.find((entry) => entry.sampleCaseId === sampleCaseId);
 }
 
-/** Repository-bundled manifest: the five production demo samples (Phase 07/11). */
+/** Repository-bundled manifest: the six production demo samples (Phase 07/11, release-polish WI-8). */
 export function loadBundledSampleManifest(): SampleManifest {
   const rootDir = fileURLToPath(new URL('../../../fixtures/samples', import.meta.url));
   const entry = (
@@ -122,8 +122,17 @@ export function loadBundledSampleManifest(): SampleManifest {
       entry(
         'TC-014',
         'Fictional single contract (abstention)',
-        'Only a fictional contract from Coastal Star General Trading LLC, and its salary page is unreadable. Shows an honest partial result instead of guessed answers.',
+        'Only a fictional contract from Coastal Star General Trading LLC. With a single document there is nothing to compare: the review shows the terms found and flags what a one-document check cannot determine, without guessing.',
         [{ role: 'contract', file: 'contract.pdf' }],
+      ),
+      entry(
+        'TC-015',
+        'Fictional adversarial instructions',
+        'A fictional pair from Sandstorm Marine Equipment LLC with sentences embedded in the documents that try to instruct automated systems. Shows instructions being treated as data: no injected content, no seeded-value effect, and an honest partial report.',
+        [
+          { role: 'offer', file: 'offer.pdf' },
+          { role: 'contract', file: 'contract.pdf' },
+        ],
       ),
     ],
   };

@@ -72,7 +72,7 @@ function fakeGemini(manifest: SampleManifest): GeminiExtractionService {
   };
 }
 
-describe('Phase 11 five-sample local flow', () => {
+describe('Phase 11 six-sample local flow', () => {
   const manifest = loadBundledSampleManifest();
   const app = buildApp({
     config: testConfig(),
@@ -80,7 +80,7 @@ describe('Phase 11 five-sample local flow', () => {
     manifest,
   });
 
-  it('lists exactly the five allowlisted fictional production samples', async () => {
+  it('lists exactly the six allowlisted fictional production samples', async () => {
     const response = await request(app).get('/api/v1/samples');
     expect(response.status).toBe(200);
     expect(response.body.samples.map((sample: { sampleCaseId: string }) => sample.sampleCaseId)).toEqual([
@@ -89,6 +89,7 @@ describe('Phase 11 five-sample local flow', () => {
       'TC-012',
       'TC-013',
       'TC-014',
+      'TC-015',
     ]);
     for (const sample of response.body.samples as Array<{ documents: Array<{ previewUrl: string }> }>) {
       for (const document of sample.documents) {
@@ -97,9 +98,9 @@ describe('Phase 11 five-sample local flow', () => {
     }
   });
 
-  it('runs choose -> extract -> analyze for all five samples with truthful outcomes', async () => {
+  it('runs choose -> extract -> analyze for all six samples with truthful outcomes', async () => {
     const reports = new Map<string, RenderedReport>();
-    for (const sampleCaseId of ['TC-001', 'TC-002', 'TC-012', 'TC-013', 'TC-014']) {
+    for (const sampleCaseId of ['TC-001', 'TC-002', 'TC-012', 'TC-013', 'TC-014', 'TC-015']) {
       const extraction = await request(app).post('/api/v1/extractions').send({ sampleCaseId });
       expect(extraction.status, `${sampleCaseId} extraction`).toBe(200);
       expect(extraction.body.issuedExtraction.sourceMode).toBe('sample');
@@ -118,10 +119,10 @@ describe('Phase 11 five-sample local flow', () => {
 
     expect(reports.get('TC-001')!.findings.some((finding: { category: string }) => finding.category === 'document_mismatch')).toBe(false);
     expect(reports.get('TC-002')!.findings.some((finding) => finding.category === 'document_mismatch' && finding.fieldKeys.includes('basic_salary'))).toBe(true);
-    expect(reports.get('TC-012')!.findings.some((finding) => finding.category === 'document_mismatch' && finding.fieldKeys.includes('deduction_item'))).toBe(true);
+    expect(reports.get('TC-012')!.findings.some((finding) => finding.category === 'document_mismatch' && finding.fieldKeys.includes('recruitment_cost'))).toBe(true);
     expect(reports.get('TC-013')!.findings.some((finding) => finding.category === 'missing_information' && finding.fieldKeys.includes('notice_terms'))).toBe(true);
     expect(reports.get('TC-014')!.stages.comparison).toBe('not_applicable');
-    expect(reports.get('TC-014')!.coverage.unreadableFieldKeys).toContain('basic_salary');
+    expect(reports.get('TC-014')!.coverage.unreadableFieldKeys).not.toContain('basic_salary');
 
     for (const [sampleCaseId, report] of reports) {
       expect(report.status, sampleCaseId).toBe('partial');

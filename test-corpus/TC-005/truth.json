@@ -11,7 +11,7 @@
     {
       "role": "offer",
       "file": "offer.pdf",
-      "pageCount": 1,
+      "pageCount": 2,
       "readablePages": [
         1
       ]
@@ -19,7 +19,7 @@
     {
       "role": "contract",
       "file": "contract.pdf",
-      "pageCount": 1,
+      "pageCount": 2,
       "readablePages": [
         1
       ]
@@ -85,13 +85,7 @@
       }
     }
   ],
-  "seededDifferences": [
-    {
-      "fieldKey": "contract_duration",
-      "kind": "value",
-      "note": "Duration identical at 36 months."
-    }
-  ],
+  "seededDifferences": [],
   "allowedFindingCategories": [
     "missing_information"
   ],
@@ -103,5 +97,5 @@
   "expectedAbstentions": [
     "no_global_verdict"
   ],
-  "notes": "Consistent pair with a 36-month duration."
+  "notes": "Consistent pair with a 36-month duration. Rebaseline 2026-10-02 (release-polish WI-4, agent re-inspection; owner ratification pending): removed phantom contract_duration seed — sample-text lines are identical across both documents and the 2026-10-02 production run extracted equal values; the case stays a consistent pair."
 }

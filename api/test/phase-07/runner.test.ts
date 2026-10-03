@@ -88,7 +88,7 @@ describe('corpus runner (fixture extraction → analyses → truth assertions)',
       ['TC-009', 'start_date'],
       ['TC-009', 'contract_duration'],
       ['TC-010', 'overtime_terms'],
-      ['TC-012', 'deduction_item'],
+      ['TC-012', 'recruitment_cost'],
     ];
     for (const [caseId, fieldKey] of pairs) {
       const finding = report(caseId).findings.find(
@@ -112,11 +112,14 @@ describe('corpus runner (fixture extraction → analyses → truth assertions)',
     expect(finding?.category).toBe('missing_information');
   });
 
-  it('TC-014: single document — comparison not applicable, unreadable coverage, no fabricated absence', () => {
+  it('TC-014: single document — comparison not applicable, salary read, no fabricated absence', () => {
     const body = report('TC-014');
     expect(body.stages.comparison).toBe('not_applicable');
     expect(body.coverage.documentIds).toHaveLength(1);
-    expect(body.coverage.unreadableFieldKeys).toContain('basic_salary');
+    // Owner decision D10-A: the salary line was verified readable in the
+    // generated PDF; the old unreadable label is retired (no validated
+    // unreadable-page case in this corpus).
+    expect(body.coverage.unreadableFieldKeys).not.toContain('basic_salary');
     expect(categoriesOf('TC-014')).not.toContain('missing_information');
   });
 
@@ -142,9 +145,14 @@ describe('corpus runner (fixture extraction → analyses → truth assertions)',
     }
   });
 
-  it('TC-012 asserts the document-check layer only (no rule claims)', () => {
+  it('TC-012 document layer works without rule claims in the fixture runner', () => {
+    // Truth rebaseline (release-polish WI-4): the approved worker-charge rule
+    // is referenced in truth, but the fixture runner has no retrieval stage,
+    // so no source-backed concern can or may appear here.
     const truth = loadTruth('TC-012');
-    expect(truth.requiredRuleRefs).toEqual([]);
+    expect(truth.requiredRuleRefs).toEqual([
+      { ruleKey: 'ae-recruitment-costs-employer-bears', ruleRevision: 1 },
+    ]);
     expect(categoriesOf('TC-012')).not.toContain('source_backed_concern');
   });
 });

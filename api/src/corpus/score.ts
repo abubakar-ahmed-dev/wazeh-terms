@@ -9,7 +9,7 @@ import type { Truth } from './truth-schema.js';
 
 import { compareTerm } from '../compare/strategies.js';
 import { normalizeValue, type ComparableTerm } from '../compare/normalize.js';
-import type { FindingCategory, NormalizedValue } from '../contracts/index.js';
+import { FIELD_DEFINITIONS, type FindingCategory, type NormalizedValue } from '../contracts/index.js';
 
 // ---------------------------------------------------------------------------
 // Structural views of API payloads
@@ -47,7 +47,7 @@ export interface SourceCitationView {
   readonly ruleRevision: number;
   readonly sourceKey: string;
   readonly versionKey: string;
-  readonly pinpoint: string;
+  readonly pinpoint: { label: string; quote?: string };
   readonly sourceCheckedAt: string;
 }
 
@@ -87,6 +87,7 @@ export interface ApprovedRuleSnapshot {
   readonly ruleRevision: number;
   readonly sourceKey: string;
   readonly versionKey: string;
+  /** Approved pinpoint label (string) — citations carry { label, quote }. */
   readonly pinpoint: string;
 }
 
@@ -115,6 +116,17 @@ function normalized(text: string): string {
   return text.replace(/\s+/g, ' ').trim().toLowerCase();
 }
 
+/**
+ * Metadata fields the comparison engine exempts from mismatch emission
+ * (registry `expectedToDiffer`). Runs made before that engine change still
+ * contain such findings; they are counted as `policyExempt`, not as
+ * precision errors and not in the precision denominator (documented
+ * rebaseline, release-polish WI-1).
+ */
+const METADATA_DIFFER_KEYS: ReadonlySet<string> = new Set(
+  FIELD_DEFINITIONS.filter((definition) => definition.expectedToDiffer).map((definition) => definition.fieldKey),
+);
+
 // ---------------------------------------------------------------------------
 // Per-case scoring
 // ---------------------------------------------------------------------------
@@ -138,7 +150,10 @@ export interface MismatchRecallScore {
 
 export interface PrecisionScore {
   readonly supported: number;
+  /** Substantive emitted findings — the precision denominator. */
   readonly emitted: number;
+  /** Metadata-only mismatch findings exempt by the expectedToDiffer policy. */
+  readonly policyExempt: number;
   readonly duplicateErrors: number;
   readonly autoUnsupported: ReadonlyArray<{ category: FindingCategory; reason: string }>;
   /** Findings needing the human pass (bundles rendered separately). */
@@ -150,7 +165,7 @@ export interface CitationScore {
   readonly displayed: number;
   readonly structurallyValid: number;
   readonly unsupported: ReadonlyArray<{ ruleKey: string; reason: string }>;
-  readonly needsHumanReview: ReadonlyArray<{ index: number; ruleKey: string; pinpoint: string }>;
+  readonly needsHumanReview: ReadonlyArray<{ index: number; ruleKey: string; pinpoint: string; pinpointQuote?: string }>;
 }
 
 export interface AbstentionScore {
@@ -277,10 +292,19 @@ export function scoreCase(run: CaseRun, options: ScoreOptions): CaseScore {
   const byCategory: Record<string, { emitted: number; supported: number }> = {};
   const seen = new Set<string>();
   let duplicateErrors = 0;
-  const substantive = report.findings.filter(
-    (finding) => finding.category === 'document_mismatch' || finding.category === 'source_backed_concern',
-  );
-  for (const [index, finding] of substantive.entries()) {
+  let policyExempt = 0;
+  let emittedSubstantive = 0;
+  // `index` must stay the index into report.findings — run-eval bundles
+  // resolve findings by it. expectedToDiffer metadata mismatches are a
+  // pre-fix emission artifact: exempt from the denominator and from error
+  // counting (WI-1 policy), but they do not shift later indices.
+  for (const [index, finding] of report.findings.entries()) {
+    if (finding.category !== 'document_mismatch' && finding.category !== 'source_backed_concern') continue;
+    if (finding.fieldKeys.length > 0 && finding.fieldKeys.every((fieldKey) => METADATA_DIFFER_KEYS.has(fieldKey))) {
+      policyExempt += 1;
+      continue;
+    }
+    emittedSubstantive += 1;
     const bucket = (byCategory[finding.category] ??= { emitted: 0, supported: 0 });
     bucket.emitted += 1;
     const dedupeKey = `${finding.category}:${[...finding.fieldKeys].sort().join(',')}`;
@@ -335,13 +359,13 @@ export function scoreCase(run: CaseRun, options: ScoreOptions): CaseScore {
       source.ruleRevision !== approved.ruleRevision ||
       source.sourceKey !== approved.sourceKey ||
       source.versionKey !== approved.versionKey ||
-      normalized(source.pinpoint) !== normalized(approved.pinpoint)
+      normalized(source.pinpoint.label) !== normalized(approved.pinpoint)
     ) {
       unsupported.push({ ruleKey: source.ruleKey, reason: 'revision_source_or_pinpoint_mismatch' });
       return;
     }
     structurallyValid += 1;
-    citationHuman.push({ index: report.findings.indexOf(finding), ruleKey: source.ruleKey, pinpoint: source.pinpoint });
+    citationHuman.push({ index: report.findings.indexOf(finding), ruleKey: source.ruleKey, pinpoint: source.pinpoint.label, pinpointQuote: source.pinpoint.quote });
   });
 
   // ---- Abstention safety (row 5) ----------------------------------------
@@ -360,7 +384,9 @@ export function scoreCase(run: CaseRun, options: ScoreOptions): CaseScore {
     }
   }
   const falseMismatches = emittedMismatches.filter(
-    (finding) => !finding.fieldKeys.some((fieldKey) => truth.seededDifferences.some((seed) => seed.fieldKey === fieldKey)),
+    (finding) =>
+      !finding.fieldKeys.some((fieldKey) => METADATA_DIFFER_KEYS.has(fieldKey)) &&
+      !finding.fieldKeys.some((fieldKey) => truth.seededDifferences.some((seed) => seed.fieldKey === fieldKey)),
   ).length;
 
   // ---- Absolute counts / hallucination / law-ish flags -------------------
@@ -369,7 +395,11 @@ export function scoreCase(run: CaseRun, options: ScoreOptions): CaseScore {
     for (const evidence of finding.documentEvidence) {
       const role = docRoleOf(issued, evidence.documentId);
       const lines = role ? run.sampleText[role] ?? [] : [];
-      const found = lines.some((line) => normalized(line).includes(normalized(evidence.quote)));
+      if (typeof evidence.quote !== "string" || evidence.quote.length === 0) continue;
+      // Quotes may span wrapped PDF lines — match against the flattened
+      // whitespace-normalized document text, not individual lines.
+      const flattened = normalized(lines.filter((line) => typeof line === "string").join(" "));
+      const found = flattened.includes(normalized(evidence.quote));
       if (lines.length > 0 && !found) hallucinatedQuotes += 1;
     }
   }
@@ -392,7 +422,8 @@ export function scoreCase(run: CaseRun, options: ScoreOptions): CaseScore {
     mismatchRecall,
     precision: {
       supported: needsHumanReview.length,
-      emitted: substantive.length,
+      emitted: emittedSubstantive,
+      policyExempt,
       duplicateErrors,
       autoUnsupported,
       needsHumanReview,
@@ -421,7 +452,7 @@ export interface Aggregate {
   readonly cases: number;
   readonly fieldAccuracy: { numerator: number; denominator: number; stateOnlyCorrect: number; valueOnlyCorrect: number };
   readonly mismatchRecall: { numerator: number; denominator: number };
-  readonly precision: { supported: number; emitted: number; duplicateErrors: number; byCategory: Record<string, { emitted: number; supported: number }> };
+  readonly precision: { supported: number; emitted: number; policyExempt: number; duplicateErrors: number; byCategory: Record<string, { emitted: number; supported: number }> };
   readonly citation: { displayed: number; structurallyValid: number; unsupported: number; humanPending: number };
   readonly abstentionViolations: number;
   readonly falseMismatchesOnAbstentionCases: number;
@@ -464,6 +495,7 @@ export function scoreRun(scores: ReadonlyArray<CaseScore>): Aggregate {
     precision: {
       supported: sum((score) => score.precision.supported),
       emitted: sum((score) => score.precision.emitted),
+      policyExempt: sum((score) => score.precision.policyExempt),
       duplicateErrors: sum((score) => score.precision.duplicateErrors),
       byCategory,
     },

@@ -62,7 +62,15 @@ export const TruthSchema = z.object({
   seededDifferences: z.array(TruthSeededDifferenceSchema),
   allowedFindingCategories: z.array(FindingCategorySchema),
   forbiddenFindingCategories: z.array(FindingCategorySchema),
-  requiredRuleRefs: z.array(z.never()), // empty until approved content exists
+  /**
+   * Approved rule revisions a case is allowed (expected) to cite. Empty for
+   * most cases; `release-polish` WI-4 widened the shape from
+   * `z.never()` (frozen-empty placeholder) now that approved content exists
+   * (Phase 09/10). Non-breaking: every v1 file still parses.
+   */
+  requiredRuleRefs: z.array(
+    z.object({ ruleKey: z.string().min(1).max(128), ruleRevision: z.number().int().min(1) }),
+  ),
   expectedAbstentions: z.array(z.string().min(1).max(64)),
   notes: z.string().max(2000),
 });

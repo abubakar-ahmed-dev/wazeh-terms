@@ -11,7 +11,7 @@
     {
       "role": "offer",
       "file": "offer.pdf",
-      "pageCount": 1,
+      "pageCount": 2,
       "readablePages": [
         1
       ]
@@ -19,7 +19,7 @@
     {
       "role": "contract",
       "file": "contract.pdf",
-      "pageCount": 1,
+      "pageCount": 2,
       "readablePages": [
         1
       ]
@@ -91,13 +91,7 @@
       }
     }
   ],
-  "seededDifferences": [
-    {
-      "fieldKey": "basic_salary",
-      "kind": "value",
-      "note": "No seeded difference: the pair is consistent."
-    }
-  ],
+  "seededDifferences": [],
   "allowedFindingCategories": [
     "missing_information"
   ],
@@ -109,5 +103,5 @@
   "expectedAbstentions": [
     "no_global_verdict"
   ],
-  "notes": "Consistent pair with a different fictional employer and role."
+  "notes": "Consistent pair with a different fictional employer and role. Rebaseline 2026-10-02 (release-polish WI-4, agent re-inspection; owner ratification pending): removed phantom basic_salary seed — sample-text lines are identical across both documents and the 2026-10-02 production run extracted equal values; the case stays a consistent pair."
 }

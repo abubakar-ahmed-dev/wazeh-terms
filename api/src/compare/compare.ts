@@ -111,6 +111,12 @@ export function compareDocuments(sides: {
     const category = resolveCategory({ stateA, stateB, compared, importantIfAbsent: definition.importantIfAbsent });
     if (category === null) continue;
 
+    // Metadata fields (document identifiers, issuance dates, annex pointers)
+    // differ between two distinct documents by design; their difference is
+    // not a term difference (registry `expectedToDiffer`). Still counted in
+    // `checkedFieldKeys`; never emitted as a finding.
+    if (category === 'document_mismatch' && definition.expectedToDiffer) continue;
+
     if (category === 'document_mismatch') {
       const evidenceA = entriesA[0]!.evidence[0];
       const evidenceB = entriesB[0]!.evidence[0];
@@ -251,6 +257,9 @@ function compareRepeated(
       continue;
     }
     if (compareTerm(normalizeValue(entryA.value!), normalizeValue(entryB.value!)) === 'different') {
+      // Same expected-to-differ policy as single fields (defensive: no
+      // current registry field is both repeatable and expectedToDiffer).
+      if (definition.expectedToDiffer) continue;
       const evidenceA = entryA.evidence[0];
       const evidenceB = entryB.evidence[0];
       if (!evidenceA || !evidenceB) {

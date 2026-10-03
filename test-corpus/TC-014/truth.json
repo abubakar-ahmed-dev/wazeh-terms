@@ -11,7 +11,7 @@
     {
       "role": "contract",
       "file": "contract.pdf",
-      "pageCount": 2,
+      "pageCount": 1,
       "readablePages": [
         1
       ]
@@ -49,15 +49,27 @@
     {
       "role": "contract",
       "fieldKey": "basic_salary",
-      "state": "unreadable",
-      "value": null
+      "state": "present",
+      "value": {
+        "kind": "money",
+        "amount": "2900.00",
+        "currency": "AED",
+        "frequency": "monthly",
+        "component": "basic_salary",
+        "payer": null
+      },
+      "evidence": {
+        "page": 1,
+        "role": "contract",
+        "line": 10
+      }
     }
   ],
   "seededDifferences": [
     {
       "fieldKey": "basic_salary",
       "kind": "clue",
-      "note": "Salary falls on the unreadable page; the field stays unreadable, never absent."
+      "note": "Correlation clue: the salary line sits on the page once labelled unreadable; relabelled present after direct PDF inspection (submission-prep, owner decision D10-A)."
     }
   ],
   "allowedFindingCategories": [
@@ -73,5 +85,5 @@
     "no_comparison_single_document",
     "no_global_verdict"
   ],
-  "notes": "Single-document low-quality case: page 2 unreadable in truth, no offer, comparison not applicable."
+  "notes": "Single-document case: no offer, comparison not applicable. Correction 2026-10-03 (owner decision D10-A): basic_salary was labelled unreadable, but direct inspection of the generated PDF shows the salary line as plain readable text on page 1 (\"Basic salary: AED 2,900 per month\"); relabelled present. The corpus currently has no validated unreadable-page case — genuinely text-free pages belong with the JPG/PNG scan gate."
 }

@@ -1,0 +1,31 @@
+{
+  "correctionId": "freeze-2026-10-03-prod2.correction-1",
+  "dated": "2026-10-03",
+  "corrects": "freeze-2026-10-03-prod2.json (that committed file stays byte-identical; this correction rides with it for the run)",
+  "corrections": [
+    {
+      "field": "deployed.note",
+      "was": "runner cap + truth changes need a NEW revision deployed from the run branch before starting",
+      "now": "No redeploy is needed and none was made for the run. `api/src` is byte-identical between the deployed image source (cc4d1e2) and dev HEAD (529e818) — verified by empty `git diff cc4d1e2..origin/dev -- api/src`. The call cap and truth corrections are runner-side (local); the narrowed rule wording is Sanity-side (per-request canonical read). The run evaluates revision `wazehterms-00016-run`, image `wazehterms:cc4d1e2`, digest `sha256:9a76258f299e3fc1dadd51c86c2298a4c33fe66df77120834191a5e38b6cf82c`, at 100% traffic."
+    },
+    {
+      "field": "runPolicy.call accounting",
+      "was": "--max-calls described as a Gemini provider-call cap",
+      "now": "--max-calls counts extraction HTTP POST attempts (including runner-level retries). Each attempt can make up to TWO Gemini provider calls (server MAX_ATTEMPTS=2, retried only on malformed/invalid model JSON; network errors are not retried). The run uses --max-calls=22, bounding this run to at most 44 provider calls; expected 15 attempts ≈ 15 provider calls. Other usage on the same project (gen-lang-client-0448639879, billing disabled) today before the run: 2 smoke calls (TC-013 staging smoke, TC-012 post-deploy smoke on 2026-10-02). Sanity MCP/Content Lake calls do not consume Gemini quota."
+    },
+    {
+      "field": "state record (accurate at run start)",
+      "now": {
+        "corpusTruthRevision": "dev @ 529e818 (Merge PR #22); truth carries D1-D7 rebaseline, TC-014 basic_salary present (AED 2,900, page 1 of 1), TC-012 recruitment_cost evidence pages 2/2 with documents.pageCount 2/2, all documents.pageCount corrected to actual generated PDF page counts",
+        "runnerCommit": "529e818 (run-eval.ts --max-calls implemented and dry-tested)",
+        "sanityState": "project 8g0kllu0 dataset production; 44 approved published records; rule.ae-recruitment-costs-employer-bears r1 (revision 1) recordStatus current, reviewStatus approved, plainEnglish narrowed per owner D8 (published 2026-10-03), claimText/pinpoint unchanged",
+        "knowledgeBase": "kbynAP4r8P6m via https://api.sanity.io/v1/context/organizations/on41l5b0b/mcp/wazeh-terms-mcp",
+        "deployedRevision": "wazehterms-00016-run at 100% traffic (verified 2026-10-02)"
+      }
+    }
+  ],
+  "ownerConditionsSatisfied": {
+    "D9": "all four verdict-correction records verified: explanation matches field, two matched passages each (test-corpus/eval/verdict-corrections-2026-10-02.json)",
+    "D8": "owner approved the narrowed wording; full live finding audited — heading 'Charge to question: Recruitment cost', 'High priority' chip, narrowed explanation, neutral question step, no violation-established language anywhere (code + content)"
+  }
+}

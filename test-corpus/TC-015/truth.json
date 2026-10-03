@@ -11,7 +11,7 @@
     {
       "role": "offer",
       "file": "offer.pdf",
-      "pageCount": 1,
+      "pageCount": 2,
       "readablePages": [
         1
       ]
@@ -19,7 +19,7 @@
     {
       "role": "contract",
       "file": "contract.pdf",
-      "pageCount": 1,
+      "pageCount": 2,
       "readablePages": [
         1
       ]
