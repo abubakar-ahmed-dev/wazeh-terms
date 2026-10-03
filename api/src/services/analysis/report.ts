@@ -22,13 +22,19 @@ import { scopeApplicability } from './scope.js';
 export const ALL_CLEAR_SUMMARY = 'No concern detected in the fields checked.';
 export const PARTIAL_SUMMARY =
   'Partial review: the document comparison finished, but the official-source check was not performed.';
+export const PARTIAL_SUMMARY_WITH_CITATION = (cited: number, withheld: number): string =>
+  `Partial review: ${cited} finding${cited === 1 ? ' carries' : 's carry'} an official-source citation; ${withheld} other possible official-source concern${withheld === 1 ? ' was' : 's were'} withheld because ${withheld === 1 ? 'it' : 'they'} could not be fully verified against ${withheld === 1 ? 'its' : 'their'} approved source. The document findings below still stand.`;
+export const PARTIAL_SUMMARY_WITHHELD = (withheld: number): string =>
+  `Partial review: the document comparison finished; the official-source check ran, but ${withheld} possible concern${withheld === 1 ? ' was' : 's were'} withheld because ${withheld === 1 ? 'it' : 'they'} could not be fully verified against ${withheld === 1 ? 'its' : 'their'} approved source.`;
+export const PARTIAL_SUMMARY_INCOMPLETE =
+  'Partial review: some checks did not complete to a verified result; see the limitations below.';
 export const COMPLETE_WITH_FINDINGS_SUMMARY =
   'Review complete. Address the findings below before you sign.';
 
 const SOURCE_REVIEW_LIMITATION =
   'The official-source check was not performed: no Knowledge Base endpoint is configured on this deployment, so no rule-backed concerns are shown.';
-const WITHHELD_LIMITATION = (count: number): string =>
-  `${count} possible official-source concern${count === 1 ? ' was' : 's were'} withheld because the cited rule could not be fully verified against its approved source. The document findings below still stand.`;
+const WITHHELD_LIMITATION = (count: number, otherThanCited: boolean): string =>
+  `${count} ${otherThanCited ? 'other ' : ''}possible official-source concern${count === 1 ? ' was' : 's were'} withheld because the cited rule could not be fully verified against its approved source. The document findings below still stand.`;
 const SCOPE_LIMITATIONS: Partial<Record<string, string>> = {
   conflicting:
     'The documents contain wording that conflicts with the declared employment category, so category-specific rules were withheld.',
@@ -218,8 +224,11 @@ export function assembleReport(input: AssembleInput): AnalysisResponse {
   if (!retrieval || retrievalStage === 'not_started' || retrievalStage === 'failed') {
     limitations.push(SOURCE_REVIEW_LIMITATION);
   }
+  const citedCount = findings.filter(
+    (finding) => finding.category === 'source_backed_concern' && finding.source,
+  ).length;
   if (retrieval && retrieval.withheld.length > 0) {
-    limitations.push(WITHHELD_LIMITATION(retrieval.withheld.length));
+    limitations.push(WITHHELD_LIMITATION(retrieval.withheld.length, citedCount > 0));
   }
   const scopeLimitation = SCOPE_LIMITATIONS[applicability];
   if (scopeLimitation) limitations.push(scopeLimitation);
@@ -244,11 +253,23 @@ export function assembleReport(input: AssembleInput): AnalysisResponse {
     (retrieval?.withheld.length ?? 0) === 0 &&
     unreadableFieldKeys.length === 0;
 
+  // The summary must state what actually happened to the official-source
+  // check: a completed retrieval that verified one citation while gate-
+  // withholding other candidates is NOT "not performed" (submission-prep
+  // fix after the 2026-10-03 prod2 run). "Not performed" stays reserved
+  // for unconfigured/failed/not-started retrieval.
+  const withheldCount = retrieval?.withheld.length ?? 0;
   const summary = complete
     ? findings.length > 0
       ? COMPLETE_WITH_FINDINGS_SUMMARY
       : ALL_CLEAR_SUMMARY
-    : PARTIAL_SUMMARY;
+    : retrievalStage === 'completed' && citedCount > 0
+      ? PARTIAL_SUMMARY_WITH_CITATION(citedCount, withheldCount)
+      : retrievalStage === 'completed' && withheldCount > 0
+        ? PARTIAL_SUMMARY_WITHHELD(withheldCount)
+        : retrievalStage === 'completed'
+          ? PARTIAL_SUMMARY_INCOMPLETE
+          : PARTIAL_SUMMARY;
 
   return AnalysisResponseSchema.parse({
     requestId,
