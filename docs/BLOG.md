@@ -104,7 +104,7 @@ That structure buys three things a keyword search over documents cannot:
 
 - **Applicability, not just relevance.** A search can find the sentence "the employer shall bear recruitment costs". It cannot check that the rule is current, applies to UAE mainland private-sector employment, and matches the worker category in the documents. The structured records can, and the check fails closed when they cannot.
 - **Versioning with consequences.** When a rule is superseded or a source version changes, the approved revision changes with it, and concerns tied to the old revision stop appearing. The content, not the prompt, decides what may be claimed.
-- **Honest conflicts.** Where two sources disagree, the system keeps them distinct instead of blending them: each claim stays linked to its own source and version, and uncertainty is shown rather than resolved by a confident-sounding guess.
+- **Designed for honest conflicts.** The content model keeps claims distinct — each linked to its own source and version, with uncertainty shown rather than blended away; a public side-by-side conflict case is on the roadmap.
 
 The same structure is also what keeps the system quiet. If retrieval is unavailable, or verification cannot complete within its budget, the report says the official-source check was not performed and labels itself partial. Document-only findings still appear, clearly separated from rule-backed claims. Withholding is a designed outcome, not a failure state.
 
