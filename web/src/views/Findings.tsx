@@ -190,31 +190,38 @@ export function Findings({
     <div className="view">
       <div className="view__inner view__inner--wide findings-view">
         <div className="findings-overview">
-          <span className="eyebrow">Step 4 of 4 · Findings report</span>
+          <div className="findings-overview__top-bar">
+            <span className="eyebrow">Step 4 of 4 · Findings report</span>
+            <span className="chip chip--scenario">Pakistan → UAE Mainland Private</span>
+          </div>
           <div className="findings-overview__header">
             <div>
-              <h1 tabIndex={-1} style={{ margin: 0, fontSize: '1.75rem' }}>
+              <h1 tabIndex={-1} className="findings-overview__title">
                 Your document review
               </h1>
-              <p style={{ margin: '0.4rem 0 0', color: 'var(--ink-secondary)', fontSize: '0.92rem' }}>
+              <div className="findings-overview__meta">
                 <span
                   className={`chip ${partial ? 'chip--state-unclear' : 'chip--state-found'}`}
                   aria-describedby={undefined}
                 >
                   {partial ? 'Partial review' : 'Complete review'}
                 </span>{' '}
-                <InfoTip label="What the status means" unit={unit('fnd.tip.status')} /> · reviewed{' '}
-                {formatDateTime(report.reviewedAsOf)} · documents:{' '}
-                <strong style={{ color: 'var(--ink)' }}>
-                  {report.coverage.documentIds.length > 0
-                    ? report.coverage.documentIds.map((_, index) => (index === 0 ? 'offer' : 'contract')).join(' + ')
-                    : 'none'}
-                </strong>
-              </p>
+                <InfoTip label="What the status means" unit={unit('fnd.tip.status')} />
+                <span className="findings-overview__meta-sep">·</span>
+                <span>reviewed {formatDateTime(report.reviewedAsOf)}</span>
+                <span className="findings-overview__meta-sep">·</span>
+                <span>
+                  documents:{' '}
+                  <strong style={{ color: 'var(--ink)' }}>
+                    {report.coverage.documentIds.length > 0
+                      ? report.coverage.documentIds.map((_, index) => (index === 0 ? 'offer' : 'contract')).join(' + ')
+                      : 'none'}
+                  </strong>
+                </span>
+              </div>
             </div>
-            <span className="chip chip--scenario">Pakistan → UAE Mainland Private</span>
           </div>
-          <p style={{ fontSize: '0.92rem', color: 'var(--ink-secondary)', margin: '0.75rem 0 0', lineHeight: 1.5 }}>
+          <p className="findings-overview__route-note">
             {report.scopeApplicability === 'supported'
               ? 'Applicability for the Pakistan → UAE mainland private-sector route was checked. That checks the route, not the offer.'
               : report.scopeApplicability === 'conflicting'
@@ -230,38 +237,52 @@ export function Findings({
 
         {partial ? (
           <div className="notice notice--incomplete partial-banner" role="status">
-            <span className="notice__title">
-              <Icon name="alert" size={16} /> Partial review
-            </span>
-            <p className="partial-banner__summary">{report.summary}</p>
+            <div className="partial-banner__main">
+              <span className="notice__title">
+                <Icon name="alert" size={18} /> Partial review
+              </span>
+              <span className="partial-banner__divider" aria-hidden="true">—</span>
+              <p className="partial-banner__summary">{report.summary}</p>
+            </div>
             {report.limitations.map((limitation) => (
               <p className="partial-banner__limitation" key={limitation}>
                 {limitation}
               </p>
             ))}
-            <a
-              className="guide-link"
-              href="#findings-coverage"
-              onClick={(event) => {
-                event.preventDefault();
-                document.getElementById('findings-coverage')?.scrollIntoView({ block: 'start' });
-              }}
-            >
-              What was withheld, and what remains usable →
-            </a>
+            <div className="partial-banner__action">
+              <a
+                className="guide-link"
+                href="#findings-coverage"
+                onClick={(event) => {
+                  event.preventDefault();
+                  document.getElementById('findings-coverage')?.scrollIntoView({ block: 'start' });
+                }}
+              >
+                What was withheld, and what remains usable →
+              </a>
+            </div>
           </div>
         ) : null}
 
         <section className="findings-attention" aria-label="Findings">
           <div className="findings-toolbar">
-            <h2 style={{ fontSize: '1.35rem', margin: 0 }}>What needs your attention</h2>
-            {report.findings.length > 0 ? (
-              <p className="findings-start-here">
-                {highPriorityFindings.length > 0
-                  ? `Start here: ${highPriorityFindings.length} high-priority item${highPriorityFindings.length === 1 ? '' : 's'} across ${highPriorityCategories.size} categor${highPriorityCategories.size === 1 ? 'y' : 'ies'}.`
-                  : `Start here: ${report.findings.length} finding${report.findings.length === 1 ? '' : 's'} across ${presentCategories.length} categor${presentCategories.length === 1 ? 'y' : 'ies'}.`}
-              </p>
-            ) : null}
+            <div className="findings-toolbar__top">
+              <div className="findings-toolbar__title-row">
+                <h2 className="findings-toolbar__heading">What needs your attention</h2>
+                {highPriorityFindings.length > 0 ? (
+                  <span className="chip chip--priority-high">
+                    {highPriorityFindings.length} High priority
+                  </span>
+                ) : null}
+              </div>
+              {report.findings.length > 0 ? (
+                <p className="findings-start-here">
+                  {highPriorityFindings.length > 0
+                    ? `Start here: ${highPriorityFindings.length} high-priority item${highPriorityFindings.length === 1 ? '' : 's'} across ${highPriorityCategories.size} categor${highPriorityCategories.size === 1 ? 'y' : 'ies'}.`
+                    : `Start here: ${report.findings.length} finding${report.findings.length === 1 ? '' : 's'} across ${presentCategories.length} categor${presentCategories.length === 1 ? 'y' : 'ies'}.`}
+                </p>
+              ) : null}
+            </div>
             <div className="findings-toolbar__controls">
               <label className="findings-toolbar__search">
                 <span className="sr-only">Search findings</span>
@@ -297,21 +318,23 @@ export function Findings({
                   <option value="low">Low ({priorityCounts.low})</option>
                 </select>
               </label>
-              <button type="button" className="link-button" onClick={resetFilters} disabled={!filtersActive}>
+              <button type="button" className="link-button findings-toolbar__reset" onClick={resetFilters} disabled={!filtersActive}>
                 Reset
               </button>
             </div>
-            <p className="findings-count" role="status">
-              {filtered.length} of {report.findings.length} finding
-              {report.findings.length === 1 ? '' : 's'} shown
-              {filtersActive ? ' with current filters' : ''} ·{' '}
-              <InfoTip label="What priority means" unit={unit('fnd.tip.priority')} /> priority orders reading, not risk
-            </p>
-            {absentCategories.length > 0 && !filtersActive ? (
-              <p className="findings-absent">
-                Not flagged by finished checks: {absentCategories.join(' · ')}
+            <div className="findings-toolbar__status-row">
+              <p className="findings-count" role="status">
+                {filtered.length} of {report.findings.length} finding
+                {report.findings.length === 1 ? '' : 's'} shown
+                {filtersActive ? ' with current filters' : ''} ·{' '}
+                <InfoTip label="What priority means" unit={unit('fnd.tip.priority')} /> priority orders reading, not risk
               </p>
-            ) : null}
+              {absentCategories.length > 0 && !filtersActive ? (
+                <p className="findings-absent">
+                  Not flagged by finished checks: {absentCategories.join(' · ')}
+                </p>
+              ) : null}
+            </div>
           </div>
 
           {report.findings.length === 0 ? (
@@ -462,189 +485,203 @@ function FindingCard({
           </span>
         ) : null}
       </div>
-      <h3 style={{ margin: '0.35rem 0 0', fontSize: '1.15rem' }}>{headingFor(finding)}</h3>
-      <p style={{ fontSize: '0.95rem', lineHeight: 1.5, color: 'var(--ink)', margin: '0.5rem 0 1rem' }}>
-        {finding.explanation}
-      </p>
+      <div className="finding__body">
+        <h3 className="finding__title" style={{ margin: '0 0 0.35rem', fontSize: '1.2rem', fontWeight: 700 }}>
+          {headingFor(finding)}
+        </h3>
+        <p className="finding__explanation" style={{ fontSize: '0.95rem', lineHeight: 1.55, color: 'var(--ink-secondary)', margin: '0 0 1rem' }}>
+          {finding.explanation}
+        </p>
 
-      {/* Category-specific anatomy (P4 §7.3) */}
-      {finding.category === 'document_mismatch' ? (
-        <>
-          {finding.documentEvidence.length > 0 ? (
-            <div className="mismatch-box">
-              {finding.documentEvidence.map((evidence, index) => {
-                const role = documentRoleMap.get(evidence.documentId) ?? (index === 0 ? 'offer' : 'contract');
-                return (
-                  <div
-                    key={index}
-                    className={`mismatch-pane ${role === 'offer' ? 'mismatch-pane--offer' : 'mismatch-pane--contract'}`}
-                  >
-                    <div className="mismatch-pane__head">{role === 'offer' ? 'Offer wording' : 'Contract wording'}</div>
-                    <EvidenceQuote evidence={evidence} role={role} />
-                  </div>
-                );
-              })}
+        {/* Category-specific anatomy (P4 §7.3) */}
+        {finding.category === 'document_mismatch' ? (
+          <>
+            {finding.documentEvidence.length > 0 ? (
+              <div className="mismatch-box">
+                {finding.documentEvidence.map((evidence, index) => {
+                  const role = documentRoleMap.get(evidence.documentId) ?? (index === 0 ? 'offer' : 'contract');
+                  return (
+                    <div
+                      key={index}
+                      className={`mismatch-pane ${role === 'offer' ? 'mismatch-pane--offer' : 'mismatch-pane--contract'}`}
+                    >
+                      <div className="mismatch-pane__head">{role === 'offer' ? 'Offer wording' : 'Contract wording'}</div>
+                      <EvidenceQuote evidence={evidence} role={role} />
+                    </div>
+                  );
+                })}
+              </div>
+            ) : null}
+
+            {finding.valueOrigins.includes('user') ? (
+              <p className="evidence__label" style={{ marginTop: '0.5rem', color: 'var(--incomplete-ink)' }}>
+                Part of this difference comes from your correction — it is labelled as yours.
+              </p>
+            ) : null}
+
+            <div className="action-step-box">
+              <div className="action-step-box__icon">
+                <Icon name="info" size={18} />
+              </div>
+              <div className="action-step-box__content">
+                <strong>Suggested question or step:</strong> <span>{finding.suggestedQuestionOrStep}</span>
+              </div>
             </div>
-          ) : null}
 
-          {finding.valueOrigins.includes('user') ? (
-            <p className="evidence__label" style={{ marginTop: '0.5rem', color: 'var(--incomplete-ink)' }}>
-              Part of this difference comes from your correction — it is labelled as yours.
+            <div className="finding__footer">
+              <button
+                type="button"
+                className="guide-link"
+                onClick={() => onOpenHelp?.('reading-findings', 'document-differences')}
+              >
+                How to evaluate different wording →
+              </button>
+            </div>
+          </>
+        ) : finding.category === 'source_backed_concern' ? (
+          <>
+            {finding.documentEvidence.length > 0 ? (
+              <div style={{ marginBottom: '0.75rem' }}>
+                <span className="evidence__label" style={{ display: 'block', marginBottom: '0.25rem' }}>
+                  What your document says:
+                </span>
+                {finding.documentEvidence.map((evidence, index) => {
+                  const role = documentRoleMap.get(evidence.documentId);
+                  return <EvidenceQuote key={index} evidence={evidence} role={role} />;
+                })}
+              </div>
+            ) : null}
+
+            {finding.source ? <Citation source={finding.source} /> : null}
+
+            {finding.uncertaintyReasons.length > 0 ? (
+              <p className="evidence__label" style={{ marginTop: '0.5rem' }}>
+                Why we are careful here: {finding.uncertaintyReasons.join(', ')}
+              </p>
+            ) : null}
+
+            <div className="action-step-box">
+              <div className="action-step-box__icon">
+                <Icon name="info" size={18} />
+              </div>
+              <div className="action-step-box__content">
+                <strong>Suggested question or step:</strong> <span>{finding.suggestedQuestionOrStep}</span>
+              </div>
+            </div>
+
+            <div className="finding__footer">
+              <button
+                type="button"
+                className="guide-link"
+                onClick={() => onOpenHelp?.('evidence-and-sources')}
+              >
+                About official sources and rules →
+              </button>
+            </div>
+          </>
+        ) : finding.category === 'missing_information' ? (
+          <>
+            <p className="evidence__label" style={{ marginTop: '0.45rem' }}>
+              Check{' '}
+              <a
+                href="#findings-coverage"
+                className="guide-link"
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.getElementById('findings-coverage')?.scrollIntoView({ block: 'start' });
+                }}
+              >
+                What we checked
+              </a>{' '}
+              if pages were unreadable.
             </p>
-          ) : null}
 
-          <div className="action-step-box">
-            <Icon name="info" size={18} />
-            <div className="action-step-box__content">
-              <strong>Suggested question or step:</strong> <span>{finding.suggestedQuestionOrStep}</span>
+            {finding.documentEvidence.map((evidence, index) => {
+              const role = documentRoleMap.get(evidence.documentId);
+              return <EvidenceQuote key={index} evidence={evidence} role={role} />;
+            })}
+
+            <div className="action-step-box">
+              <div className="action-step-box__icon">
+                <Icon name="info" size={18} />
+              </div>
+              <div className="action-step-box__content">
+                <strong>Suggested question or step:</strong> <span>{finding.suggestedQuestionOrStep}</span>
+              </div>
             </div>
-          </div>
 
-          <div className="finding__footer">
-            <button
-              type="button"
-              className="guide-link"
-              onClick={() => onOpenHelp?.('reading-findings', 'document-differences')}
-            >
-              How to evaluate different wording →
-            </button>
-          </div>
-        </>
-      ) : finding.category === 'source_backed_concern' ? (
-        <>
-          {finding.documentEvidence.length > 0 ? (
-            <div style={{ marginBottom: '0.75rem' }}>
-              <span className="evidence__label" style={{ display: 'block', marginBottom: '0.25rem' }}>
-                What your document says:
-              </span>
-              {finding.documentEvidence.map((evidence, index) => {
-                const role = documentRoleMap.get(evidence.documentId);
-                return <EvidenceQuote key={index} evidence={evidence} role={role} />;
-              })}
+            <div className="finding__footer">
+              <button
+                type="button"
+                className="guide-link"
+                onClick={() => onOpenHelp?.('reading-findings', 'missing-information')}
+              >
+                How missing terms are handled →
+              </button>
             </div>
-          ) : null}
-
-          {finding.source ? <Citation source={finding.source} /> : null}
-
-          {finding.uncertaintyReasons.length > 0 ? (
-            <p className="evidence__label" style={{ marginTop: '0.5rem' }}>
-              Why we are careful here: {finding.uncertaintyReasons.join(', ')}
-            </p>
-          ) : null}
-
-          <div className="action-step-box">
-            <Icon name="info" size={18} />
-            <div className="action-step-box__content">
-              <strong>Suggested question or step:</strong> <span>{finding.suggestedQuestionOrStep}</span>
+          </>
+        ) : finding.category === 'needs_clarification' ? (
+          <>
+            <div className="action-step-box action-step-box--primary">
+              <div className="action-step-box__icon">
+                <Icon name="info" size={18} />
+              </div>
+              <div className="action-step-box__content">
+                <strong>Key question to clarify:</strong> <span>{finding.suggestedQuestionOrStep}</span>
+              </div>
             </div>
-          </div>
 
-          <div className="finding__footer">
-            <button
-              type="button"
-              className="guide-link"
-              onClick={() => onOpenHelp?.('evidence-and-sources')}
-            >
-              About official sources and rules →
-            </button>
-          </div>
-        </>
-      ) : finding.category === 'missing_information' ? (
-        <>
-          <p className="evidence__label" style={{ marginTop: '0.45rem' }}>
-            Check{' '}
-            <a
-              href="#findings-coverage"
-              className="guide-link"
-              onClick={(e) => {
-                e.preventDefault();
-                document.getElementById('findings-coverage')?.scrollIntoView({ block: 'start' });
-              }}
-            >
-              What we checked
-            </a>{' '}
-            if pages were unreadable.
-          </p>
+            {finding.documentEvidence.map((evidence, index) => {
+              const role = documentRoleMap.get(evidence.documentId);
+              return <EvidenceQuote key={index} evidence={evidence} role={role} />;
+            })}
 
-          {finding.documentEvidence.map((evidence, index) => {
-            const role = documentRoleMap.get(evidence.documentId);
-            return <EvidenceQuote key={index} evidence={evidence} role={role} />;
-          })}
-
-          <div className="action-step-box">
-            <Icon name="info" size={18} />
-            <div className="action-step-box__content">
-              <strong>Suggested question or step:</strong> <span>{finding.suggestedQuestionOrStep}</span>
+            <div className="finding__footer">
+              <button
+                type="button"
+                className="guide-link"
+                onClick={() => onOpenHelp?.('reading-findings', 'questions-to-clarify')}
+              >
+                Clarifying terms with your employer →
+              </button>
             </div>
-          </div>
-
-          <div className="finding__footer">
-            <button
-              type="button"
-              className="guide-link"
-              onClick={() => onOpenHelp?.('reading-findings', 'missing-information')}
-            >
-              How missing terms are handled →
-            </button>
-          </div>
-        </>
-      ) : finding.category === 'needs_clarification' ? (
-        <>
-          <div className="action-step-box action-step-box--primary">
-            <Icon name="info" size={18} />
-            <div className="action-step-box__content">
-              <strong>Key question to clarify:</strong> <span>{finding.suggestedQuestionOrStep}</span>
+          </>
+        ) : (
+          /* unable_to_determine */
+          <>
+            <div className="uncertainty-box">
+              <strong>Blocker:</strong>{' '}
+              {finding.uncertaintyReasons.length > 0
+                ? finding.uncertaintyReasons.join(', ')
+                : 'Check could not determine the result from the readable text.'}
             </div>
-          </div>
 
-          {finding.documentEvidence.map((evidence, index) => {
-            const role = documentRoleMap.get(evidence.documentId);
-            return <EvidenceQuote key={index} evidence={evidence} role={role} />;
-          })}
+            {finding.documentEvidence.map((evidence, index) => {
+              const role = documentRoleMap.get(evidence.documentId);
+              return <EvidenceQuote key={index} evidence={evidence} role={role} />;
+            })}
 
-          <div className="finding__footer">
-            <button
-              type="button"
-              className="guide-link"
-              onClick={() => onOpenHelp?.('reading-findings', 'questions-to-clarify')}
-            >
-              Clarifying terms with your employer →
-            </button>
-          </div>
-        </>
-      ) : (
-        /* unable_to_determine */
-        <>
-          <div className="uncertainty-box">
-            <strong>Blocker:</strong>{' '}
-            {finding.uncertaintyReasons.length > 0
-              ? finding.uncertaintyReasons.join(', ')
-              : 'Check could not determine the result from the readable text.'}
-          </div>
-
-          {finding.documentEvidence.map((evidence, index) => {
-            const role = documentRoleMap.get(evidence.documentId);
-            return <EvidenceQuote key={index} evidence={evidence} role={role} />;
-          })}
-
-          <div className="action-step-box">
-            <Icon name="info" size={18} />
-            <div className="action-step-box__content">
-              <strong>Suggested step:</strong> <span>{finding.suggestedQuestionOrStep}</span>
+            <div className="action-step-box">
+              <div className="action-step-box__icon">
+                <Icon name="info" size={18} />
+              </div>
+              <div className="action-step-box__content">
+                <strong>Suggested step:</strong> <span>{finding.suggestedQuestionOrStep}</span>
+              </div>
             </div>
-          </div>
 
-          <div className="finding__footer">
-            <button
-              type="button"
-              className="guide-link"
-              onClick={() => onOpenHelp?.('reading-findings', 'could-not-determine')}
-            >
-              Why some checks cannot be determined →
-            </button>
-          </div>
-        </>
-      )}
+            <div className="finding__footer">
+              <button
+                type="button"
+                className="guide-link"
+                onClick={() => onOpenHelp?.('reading-findings', 'could-not-determine')}
+              >
+                Why some checks cannot be determined →
+              </button>
+            </div>
+          </>
+        )}
+      </div>
     </article>
   );
 }
