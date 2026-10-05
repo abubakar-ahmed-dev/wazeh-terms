@@ -510,13 +510,431 @@ const EVIDENCE_AND_SOURCES: Article = {
   ],
 };
 
+
+const GETTING_STARTED: Article = {
+  slug: 'getting-started',
+  title: 'Getting started with WazehTerms',
+  intro: [
+    'WazehTerms reads the written terms in a Pakistan-to-UAE job offer, employment contract, or both — and shows you what it found, with the original wording and page for every value, before you sign.',
+  ],
+  sections: [
+    {
+      id: 'what-wazehterms-does',
+      heading: 'What WazehTerms does',
+      blocks: [
+        p(
+          'You give it documents. It reads them, lists every term it found (salary, dates, benefits, charges, and more), and lets you check each one against the original page. Then it compares the two documents, checks approved official sources where they apply, and produces a findings report: differences, missing terms, questions to ask, and — only when a checked official source supports it, whether written law or an authority\'s guidance — a source-backed concern.',
+        ),
+        p(
+          'What you never get: a verdict. No "this contract is safe" or "this employer is genuine". WazehTerms shows evidence and questions; the judgment is yours, and real help may still be needed.',
+        ),
+      ],
+    },
+    {
+      id: 'who-its-for',
+      heading: 'Who it is for',
+      blocks: [
+        p(
+          'People in Pakistan considering private-sector employment in the UAE (mainland, non-domestic work — office, retail, construction, hospitality, and similar). If your situation is different — domestic work, another country — the document reading can still help, but rule checks may be withheld.',
+        ),
+      ],
+    },
+    {
+      id: 'fictional-only',
+      heading: 'Fictional documents only, for now',
+      blocks: [
+        p(
+          'This is a demonstration. Upload only fictional documents that contain no personal, sensitive, or confidential information. Documents based on a real offer or contract are excluded even if you rename them or remove the names — anonymized real documents are still real documents, and this demo is not the place for them. A guide to preparing fictional documents: Uploading documents.',
+        ),
+      ],
+    },
+    {
+      id: 'the-four-steps',
+      heading: 'The four steps',
+      blocks: [
+        bullets([
+          'Choose documents — pick a fictional sample, or upload your own fictional PDFs (offer, contract, or both).',
+          'Read documents — WazehTerms reads the pages and extracts the written terms. One step, one wait.',
+          'Verify terms — you check what was read, value by value, against the original pages, and correct anything wrong.',
+          'Findings report — differences, missing terms, questions, and source-backed concerns, each with evidence.',
+        ]),
+        p('At every step, links marked "guide" open the relevant section.'),
+      ],
+    },
+    {
+      id: 'one-or-two-documents',
+      heading: 'One document or two',
+      blocks: [
+        p(
+          'One document can be read and checked, and the report can flag missing or unclear terms — but two documents (offer + contract) allow the comparison that finds differences between them. With one document, the report says comparison is not applicable rather than pretending it ran.',
+        ),
+      ],
+    },
+    {
+      id: 'accounts-and-data',
+      heading: 'Accounts and your data',
+      blocks: [
+        p(
+          "No account. No sign-up. Your review lives in the browser's memory only: a page refresh or a closed tab ends it, by design. Nothing you upload is stored by WazehTerms. Details and limits: Scope, limitations, and privacy.",
+        ),
+      ],
+    },
+    {
+      id: 'where-to-go-next',
+      heading: 'Where to go next',
+      blocks: [
+        bullets([
+          'Start with a sample: open the fictional samples — or read how samples work first.',
+          'Use your own fictional documents: go to upload — or read how to prepare them.',
+          'Something failed? See Troubleshooting.',
+          'Curious how it works inside? The technical section explains the engineering.',
+        ]),
+        p('During an active review, links that leave the working pages warn you first — an in-progress review cannot be restored.'),
+      ],
+    },
+  ],
+};
+
+const TRYING_SAMPLES: Article = {
+  slug: 'trying-samples',
+  title: 'Trying fictional samples',
+  intro: [
+    'Samples are complete fictional document pairs (one is a single contract) that let you watch a full review in minutes. Every employer, person, and amount in them is invented.',
+  ],
+  sections: [
+    {
+      id: 'what-samples-are',
+      heading: 'What happens when you start',
+      blocks: [
+        p(
+          'Choosing Review this sample sends that sample\'s fictional PDFs to be read — this is live processing, the same path your own documents would take. It usually takes well under a minute. Then the review opens: you check what was read, continue, and read the findings report.',
+        ),
+        p('If processing is unavailable, the page says so. Trying again later is fine — repeated rapid retries only add load.'),
+      ],
+    },
+    {
+      id: 'choosing-a-scenario',
+      heading: 'The scenarios',
+      blocks: [
+        p('Each sample demonstrates a situation people actually face. What to look for in each:'),
+        bullets([
+          'Consistent terms — an offer and contract that agree. Look for: a clean check, and what the report does with terms that are missing from both documents — a consistent pair can still lack things worth asking about.',
+          'Changed salary — the contract states different pay than the offer. Look for: the difference shown with both passages side by side, pages included.',
+          'Worker recruitment charge — the documents state charges the worker pays for recruitment. Look for: how each document words the charge and who pays, and — if the official-source check completes and the rule verifies — a concern citing the official passage on who bears recruitment costs. Source checks can withhold; a withheld check is explained in the report, not hidden.',
+          'Missing notice clause — notice and termination wording absent. Look for: how "not found" is reported — as missing information, not as a denial.',
+          'Single contract (abstention) — one document only. Look for: the report marking comparison not applicable instead of inventing one, and how absence is handled when there is no second document.',
+          'Adversarial instructions — a document containing text that tries to instruct automated readers ("ignore previous rules…"). Look for: whether the embedded instructions appear as document content rather than being acted on — the review is designed to treat them as text, and the evaluation includes a case that checks exactly this.',
+        ]),
+        p('These are illustrative: what the report shows is produced by reading the actual documents, so treat the samples as demonstrations, not guaranteed outputs.'),
+      ],
+    },
+    {
+      id: 'previewing',
+      heading: 'Preview files',
+      blocks: [
+        p(
+          'Preview files opens the sample\'s actual PDFs in a new tab — the same bytes that will be read. Preview problems (a blocked pop-up, a PDF viewer issue) have nothing to do with processing; the review itself does not depend on the preview opening.',
+        ),
+      ],
+    },
+    {
+      id: 'evaluators-path',
+      heading: "Evaluators' path",
+      blocks: [
+        p(
+          'If you are assessing this project: start with Changed salary (clear difference with paired evidence), then Worker recruitment charge (the official-source citation path), then Single contract (abstention behavior). The technical section describes how quality is measured.',
+        ),
+      ],
+    },
+  ],
+};
+
+const UPLOADING_DOCUMENTS: Article = {
+  slug: 'uploading-documents',
+  title: 'Preparing and uploading fictional documents',
+  intro: [
+    'The upload page takes up to two fictional PDFs: a job offer and an employment contract. This guide explains which file goes where, what "fictional" means here, and what happens after you click.',
+  ],
+  sections: [
+    {
+      id: 'offer-vs-contract',
+      heading: 'Offer vs contract',
+      blocks: [
+        bullets([
+          'Job Offer Letter — the pre-contract document: an offer letter, term sheet, or similar that states what the employer proposes.',
+          'Employment Contract — the agreement to be signed: the contract that sets the actual terms.',
+        ]),
+        p(
+          'Decide by what the document is, not by its filename. A file named "offer.pdf" that is actually a signed contract belongs in the contract slot.',
+        ),
+      ],
+    },
+    {
+      id: 'one-or-both',
+      heading: 'One document or both',
+      blocks: [
+        p(
+          'Both is best: with a pair, the findings report can compare them term by term and flag differences. One document alone still works — it can be read and checked, and missing or unclear terms can be reported — but there is nothing to compare against, and the report says so.',
+        ),
+      ],
+    },
+    {
+      id: 'requirements',
+      heading: 'Requirements',
+      blocks: [
+        bullets([
+          'Format: PDF only. Other types, including images of pages, are rejected.',
+          'Size: up to 8 MB per file, and no more than 16 MB combined.',
+          'Pages: up to 15 pages per PDF.',
+          'Language: English. The written terms are extracted in English.',
+          'Readable text: WazehTerms is built and tested around digital PDFs with a text layer — the kind produced by word processors and most export tools. Encrypted or password-protected files are rejected outright. Scanned pages (pages that are photographs) have no assured support: such a file may fail to produce a review, and any values that are read from pages without a text layer are labelled as needing your check. When in doubt, use a digital PDF.',
+        ]),
+        p('The values above come from the live capabilities of this deployment; the upload page always shows the current ones.'),
+      ],
+    },
+    {
+      id: 'fictional-only',
+      heading: 'What "fictional" means here',
+      blocks: [
+        p(
+          'Upload documents that contain no real personal, sensitive, or confidential information — invented employers, invented people, invented amounts. Documents based on a real offer with the names changed still count as real documents for this purpose: do not upload them. This is a demonstration boundary, not advice about anonymizing your paperwork.',
+        ),
+      ],
+    },
+    {
+      id: 'before-you-upload',
+      heading: 'Before you upload',
+      blocks: [
+        p('A 30-second checklist:'),
+        bullets([
+          'the file is the right role (offer vs contract);',
+          'the text is legible and selectable, not a scan;',
+          'pages it references (annexes, policy documents) are either included or knowingly absent — WazehTerms reads only what you give it;',
+          'the file opens in a PDF reader without a password.',
+        ]),
+      ],
+    },
+    {
+      id: 'scope',
+      heading: 'Scope and how it is decided',
+      blocks: [
+        p(
+          'WazehTerms checks official rules for one route: Pakistan to UAE mainland, non-domestic private-sector employment. You do not declare a category — the service infers applicability from the documents themselves. When the documents conflict or the category cannot be established, rule-based conclusions are withheld and the report says so; document reading and comparison still work.',
+        ),
+      ],
+    },
+    {
+      id: 'processing-and-privacy',
+      heading: 'Processing and privacy',
+      blocks: [
+        p(
+          "When you submit, the document content is sent to Google's Gemini API for extraction. On the Free tier, Google may use submitted content and responses to improve its products, and human reviewers may examine them. WazehTerms itself processes files in memory only and stores nothing — but it cannot promise zero retention by the provider.",
+        ),
+        p(
+          'The acknowledgment checkbox records that you understand this and are uploading only a fictional document. The full notice is linked beside the checkbox; the version shown on the page is the authoritative one.',
+        ),
+      ],
+    },
+    {
+      id: 'after-upload',
+      heading: 'After you upload',
+      blocks: [
+        bullets([
+          'Reading takes a moment. The screen says what is happening — no fake progress bars; the client cannot see inside the extraction.',
+          'Partial reading: if some pages could not be read, the review still opens, with a notice naming the affected pages.',
+          'Failure: if no usable review could be produced, you get a clear message and return to the upload page. The message distinguishes what it can: a rejected file type or protected file names the problem; a general "nothing usable" result means reading did not produce a workable extraction — the specific cause cannot be diagnosed from the message alone. Your other selections stay where possible.',
+        ]),
+      ],
+    },
+    {
+      id: 'why-no-replacement',
+      heading: 'Why a file cannot be replaced mid-review',
+      blocks: [
+        p(
+          'Once documents are read, the review is sealed against that exact reading. Swapping one file for another inside the same review would let the report mix values from different documents. To use a different file, start the review again — reading is quick.',
+        ),
+      ],
+    },
+  ],
+};
+
+const TROUBLESHOOTING: Article = {
+  slug: 'troubleshooting',
+  title: 'Troubleshooting and starting again',
+  intro: ['Find your problem below. Each section says what happened, what you still have, and what to do.'],
+  sections: [
+    {
+      id: 'file-rejected',
+      heading: 'My file was rejected',
+      blocks: [
+        p(
+          'The upload page rejects files at selection time with a message naming the problem: not a PDF, or over the 8 MB per-file limit. Fix the file (export as PDF, compress it) and choose it again. The other slot keeps its selection.',
+        ),
+      ],
+    },
+    {
+      id: 'cannot-read-document',
+      heading: 'My document cannot be read',
+      blocks: [
+        p(
+          '"No usable text could be read…" means reading did not produce a usable result. The distinct messages first: a password-protected file is rejected with its own message, and a structurally broken PDF is named as unreadable. The general "nothing usable" result means the extraction produced nothing workable — which can happen with image-only scans. WazehTerms is built and tested around digital PDFs with a text layer; scanned pages have no assured support, and anything read from them is labelled for checking. Use a digital PDF with selectable text, or pick a sample instead.',
+        ),
+      ],
+    },
+    {
+      id: 'busy-or-rate-limited',
+      heading: 'The service is busy',
+      blocks: [
+        p(
+          'A busy or rate-limited response means the service cannot take the operation right now — not that your document is wrong. Wait a little and try again. Avoid rapid repeated clicks; each attempt is a real request. When the page shows "try again available in N seconds", it is counting down the server\'s requested wait.',
+        ),
+      ],
+    },
+    {
+      id: 'processing-failed',
+      heading: 'Processing failed',
+      blocks: [
+        p(
+          'Reading or analyzing can fail for service-side reasons. The message says which step failed. From a failed read: return to the upload page or samples and start again. Your document never left your browser except for the processing request, and nothing is stored.',
+        ),
+        p(
+          "When an analysis fails while the review is still valid, the page offers to retry the same review — trying again resends exactly what you checked. Cancelling stops the request in your browser; processing on the provider's side may still complete.",
+        ),
+      ],
+    },
+    {
+      id: 'review-expired',
+      heading: 'My review expired',
+      blocks: [
+        p(
+          'Reviews stay open for about 30 minutes; the timer in the review header shows the remaining time. After expiry the review cannot continue — reading is quick, so start again. There is nothing to recover: WazehTerms keeps no copy of the review. Expiry ends the ability to continue this review; it is not a statement about the processing provider\'s separate handling (see the privacy notice).',
+        ),
+      ],
+    },
+    {
+      id: 'page-refreshed',
+      heading: 'I refreshed or closed the page',
+      blocks: [
+        p(
+          'The review lives in the browser\'s memory only, so a refresh, a closed tab, or a crashed browser ends it. This is deliberate: WazehTerms keeps no copy of your review to restore. What the processing provider handles under its own terms is a separate matter, described in the privacy notice. Start again from the samples or the upload page.',
+        ),
+        p(
+          'If the browser warns you before leaving the page, that warning is protecting an in-progress review — stay and finish, or leave and start over.',
+        ),
+      ],
+    },
+    {
+      id: 'opened-a-step-directly',
+      heading: 'I opened a review or report link directly',
+      blocks: [
+        p(
+          '/review and /result need the review your browser was holding. Opening them fresh shows "Nothing to review yet" or "No report to show" — honest endpoints, not errors. Pick a sample or upload to begin.',
+        ),
+      ],
+    },
+    {
+      id: 'correction-not-saved',
+      heading: 'My correction did not save',
+      blocks: [
+        p(
+          'The correction editor takes plain values: text, a decimal amount with currency, or a YYYY-MM-DD date. Invalid values show an inline message beside the input. If the analysis step later cannot use a correction, the review is kept and the page asks you to fix or remove that correction — nothing else is lost.',
+        ),
+      ],
+    },
+    {
+      id: 'preview-wont-open',
+      heading: 'The preview will not open',
+      blocks: [
+        p(
+          'Sample previews and uploaded-document views open PDFs in the browser or in a new tab. If nothing opens, your browser may be blocking pop-ups or the PDF viewer — a preview problem only, never a processing problem. The review itself does not depend on the preview opening.',
+        ),
+      ],
+    },
+    {
+      id: 'source-check-incomplete',
+      heading: 'The source check did not complete',
+      blocks: [
+        p(
+          'When the official-source check cannot finish — or finishes without a verifiable result — the report is marked partial, the banner explains what was withheld, and the document findings remain usable. A withheld concern is not displayed: the conclusion was not established to the required standard. It is neither confirmed nor disproven.',
+        ),
+      ],
+    },
+    {
+      id: 'search-no-matches',
+      heading: 'Search found no matches',
+      blocks: [
+        p(
+          'A filtered view with no matches means your filters excluded everything, not that the report is clean. Use Reset to see all findings again — the report itself never changes.',
+        ),
+      ],
+    },
+  ],
+};
+
 const SCOPE_AND_PRIVACY: Article = {
   slug: 'scope-and-privacy',
   title: 'Scope, limitations, and privacy',
-  intro: [
-    'What WazehTerms can and cannot do, and what happens to your data. Plainly. (The full scope guide arrives with the help hub; this page carries the section the application links to.)',
-  ],
+  intro: ['What WazehTerms can and cannot do, and what happens to your data. Plainly.'],
   sections: [
+    {
+      id: 'supported-scope',
+      heading: 'Supported scope',
+      blocks: [
+        p(
+          'Rule checks target one route: Pakistan to UAE mainland, non-domestic, private-sector employment, and only when applicability can be established from the documents. Outside that route, reading and comparison still work, but rule-based conclusions are withheld and the report says why.',
+        ),
+      ],
+    },
+    {
+      id: 'what-it-does-not-do',
+      heading: 'What WazehTerms does not do',
+      blocks: [
+        bullets([
+          'It does not verify employers, visas, or documents, or detect fraud.',
+          'It does not give legal advice, and it never issues an overall verdict — no "safe", "compliant", or "clean" judgment exists in the product.',
+          'It does not read minds: a term it could not read is not a term that does not exist, and silence in a document is not an answer.',
+          'It does not check everything. Coverage is listed term by term in the report\'s What we checked section.',
+        ]),
+      ],
+    },
+    {
+      id: 'document-limits',
+      heading: 'Document limits',
+      blocks: [
+        bullets([
+          'One document cannot produce a comparison; the report marks it not applicable rather than pretending.',
+          'Unreadable pages hide their terms from every check; the report names unreadable fields.',
+          'Annexes, schedules, and referenced policies are only seen if you supply them.',
+        ]),
+      ],
+    },
+    {
+      id: 'when-things-are-withheld',
+      heading: 'When conclusions are withheld',
+      blocks: [
+        p(
+          'When a check fails, times out, or cannot verify a rule against its approved source, WazehTerms withholds the conclusion and marks the review partial — naming how many candidate concerns were withheld and why. Withheld is not the same as untrue; it means not demonstrated to the standard this product requires.',
+        ),
+      ],
+    },
+    {
+      id: 'evaluation-limits',
+      heading: 'How good is it, really?',
+      blocks: [
+        p(
+          'Measured on a 15-case synthetic corpus under frozen conditions; the numbers, dates, and denominators are published in the technical section. That corpus is small and fictional: it demonstrates the machinery; it is not proof of accuracy on real-world documents, and no accuracy badge is shown in the product for that reason.',
+        ),
+      ],
+    },
+    {
+      id: 'fictional-only-policy',
+      heading: 'Fictional-only policy',
+      blocks: [
+        p(
+          'This deployment accepts fictional documents only. Documents based on real offers — even with names changed — do not belong here. The boundary exists because real documents deserve the stronger protections of a reviewed production pathway, which this demo does not claim to be.',
+        ),
+      ],
+    },
     {
       id: 'your-data',
       heading: 'Your data',
@@ -529,15 +947,37 @@ const SCOPE_AND_PRIVACY: Article = {
         ]),
       ],
     },
+    {
+      id: 'getting-real-help',
+      heading: 'Getting real help',
+      blocks: [
+        p(
+          'When a finding matters — before signing anything — pair the report with real channels: the employer or recruiter, in writing; official resources such as the protection pages linked in the report; and, where stakes are high, qualified advice. WazehTerms organizes evidence and questions; it does not replace any of those.',
+        ),
+      ],
+    },
   ],
 };
 
 export const ARTICLES: Readonly<Record<string, Article>> = {
+  'getting-started': GETTING_STARTED,
+  'trying-samples': TRYING_SAMPLES,
+  'uploading-documents': UPLOADING_DOCUMENTS,
   'checking-terms': CHECKING_TERMS,
   'reading-findings': READING_FINDINGS,
   'evidence-and-sources': EVIDENCE_AND_SOURCES,
+  'troubleshooting': TROUBLESHOOTING,
   'scope-and-privacy': SCOPE_AND_PRIVACY,
 };
+
+/** Help-hub grouping (P4 8.1): task-first index of the practical guides. */
+export const HELP_HUB_GROUPS: ReadonlyArray<{ label: string; slugs: readonly string[] }> = [
+  { label: 'Start', slugs: ['getting-started', 'trying-samples', 'uploading-documents'] },
+  { label: 'Check', slugs: ['checking-terms'] },
+  { label: 'Understand', slugs: ['reading-findings', 'evidence-and-sources'] },
+  { label: 'Recover', slugs: ['troubleshooting'] },
+  { label: 'Boundaries', slugs: ['scope-and-privacy'] },
+];
 
 /** Anchor set served by the pilot doc router: "slug" and "slug#section". */
 export function servedAnchorSet(): Set<string> {

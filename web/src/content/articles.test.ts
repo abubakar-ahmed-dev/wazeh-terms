@@ -7,7 +7,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { GUIDE_UNITS } from './guides';
-import { ARTICLES, servedAnchorSet } from './articles';
+import { ARTICLES, HELP_HUB_GROUPS, servedAnchorSet } from './articles';
 
 describe('registry links resolve to served pilot articles (R31)', () => {
   const served = servedAnchorSet();
@@ -58,4 +58,43 @@ describe('registry links resolve to served pilot articles (R31)', () => {
       expect(section?.blocks.length ?? 0).toBeGreaterThanOrEqual(2);
     }
   });
+
+  it('serves the complete U1-U8 article suite and HELP_HUB_GROUPS', () => {
+    const expectedSlugs = [
+      'getting-started',
+      'trying-samples',
+      'uploading-documents',
+      'checking-terms',
+      'reading-findings',
+      'evidence-and-sources',
+      'troubleshooting',
+      'scope-and-privacy',
+    ];
+    expect(Object.keys(ARTICLES).sort()).toEqual(expectedSlugs.sort());
+
+    const groupedSlugs = HELP_HUB_GROUPS.flatMap((g) => g.slugs);
+    expect(groupedSlugs.sort()).toEqual(expectedSlugs.sort());
+  });
+
+  it('troubleshooting serves all 11 problem-specific recovery anchors', () => {
+    const trouble = ARTICLES['troubleshooting'];
+    expect(trouble).toBeTruthy();
+    if (!trouble) return;
+    const expectedSections = [
+      'file-rejected',
+      'cannot-read-document',
+      'busy-or-rate-limited',
+      'processing-failed',
+      'review-expired',
+      'page-refreshed',
+      'opened-a-step-directly',
+      'correction-not-saved',
+      'preview-wont-open',
+      'source-check-incomplete',
+      'search-no-matches',
+    ];
+    const sectionIds = trouble.sections.map((s) => s.id);
+    expect(sectionIds).toEqual(expectedSections);
+  });
 });
+
