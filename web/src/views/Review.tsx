@@ -243,49 +243,60 @@ export function Review({ issued, previewUrls, corrections, onCorrect, onUndoCorr
           </div>
         ) : (
           <>
-            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
-              {previewUrls.map((entry) => (
-                <button
-                  key={entry.role}
-                  type="button"
-                  className="button button--secondary"
-                  onClick={(event) => openViewer(entry.role, null, event.currentTarget)}
-                >
-                  Open {roleLabel(entry.role).toLowerCase()} document
-                </button>
-              ))}
-            </div>
-
-            <StepIntro title={unit('rev.intro').title}>
-              {unit('rev.intro').body.map((paragraph) => (
-                <p key={paragraph.slice(0, 32)}>{paragraph}</p>
-              ))}
-              {unit('rev.intro').links?.map(([label, href]) => (
-                <PanelLink
-                  key={href}
-                  label={label}
-                  section={href.includes('#') ? href.split('#')[1] : undefined}
-                  onOpen={openHelp}
-                />
-              ))}
-            </StepIntro>
-
-            <details className="step-intro">
-              <summary className="step-intro__summary">
-                <Icon name="chevron" size={14} />
-                <span>What the chips mean</span>
-              </summary>
-              <div className="step-intro__content">
-                <div className="legend">
-                  {unit('rev.legend.states').body.map((line) => (
-                    <p key={line.slice(0, 24)}>{line}</p>
-                  ))}
-                  <PanelLink label="Field states in full" section="field-states" onOpen={openHelp} />
-                  <p className="legend__sub">{unit('rev.legend.evidence').body.join(' ')}</p>
-                  <PanelLink label="Evidence quality in full" section="evidence-quality" onOpen={openHelp} />
+            <section className="review-guidance" aria-label="Review workspace guidance">
+              <div className="review-guidance__header">
+                <div className="review-guidance__title-group">
+                  <span className="review-guidance__badge">
+                    <Icon name="info" size={14} /> Review Guidance
+                  </span>
+                  <span className="review-guidance__hint">
+                    Check extracted terms against original document pages before continuing.
+                  </span>
                 </div>
+                {previewUrls.length > 0 ? (
+                  <div className="review-guidance__actions">
+                    {previewUrls.map((entry) => (
+                      <button
+                        key={entry.role}
+                        type="button"
+                        className="button button--secondary"
+                        onClick={(event) => openViewer(entry.role, null, event.currentTarget)}
+                      >
+                        <Icon name="doc" size={13} />
+                        <span>Open {roleLabel(entry.role).toLowerCase()} document</span>
+                      </button>
+                    ))}
+                  </div>
+                ) : null}
               </div>
-            </details>
+
+              <div className="review-guidance__grid">
+                <StepIntro title={unit('rev.intro').title}>
+                  {unit('rev.intro').body.map((paragraph) => (
+                    <p key={paragraph.slice(0, 32)}>{paragraph}</p>
+                  ))}
+                  {unit('rev.intro').links?.map(([label, href]) => (
+                    <PanelLink
+                      key={href}
+                      label={label}
+                      section={href.includes('#') ? href.split('#')[1] : undefined}
+                      onOpen={openHelp}
+                    />
+                  ))}
+                </StepIntro>
+
+                <StepIntro title="What the chips mean">
+                  <div className="legend">
+                    {unit('rev.legend.states').body.map((line) => (
+                      <p key={line.slice(0, 24)}>{line}</p>
+                    ))}
+                    <PanelLink label="Field states in full" section="field-states" onOpen={openHelp} />
+                    <p className="legend__sub">{unit('rev.legend.evidence').body.join(' ')}</p>
+                    <PanelLink label="Evidence quality in full" section="evidence-quality" onOpen={openHelp} />
+                  </div>
+                </StepIntro>
+              </div>
+            </section>
 
             <div className="review-layout">
               <nav className="group-nav" aria-label="Field groups">
@@ -527,36 +538,42 @@ function FieldCard({
     return (
       <article className="fieldcard fieldcard--corrected">
         <div className="fieldcard__head">
-          <span className="fieldcard__num">{number}</span>
-          <span className="fieldcard__name">{label}</span>
-          <span className="chip chip--corrected">✎ Corrected by you</span>
-          <span className={`chip ${document.role === 'offer' ? 'chip--offer' : 'chip--contract'}`}>
-            {roleLabel(document.role)}
-          </span>
+          <div className="fieldcard__title-group">
+            <span className="fieldcard__num">{number}</span>
+            <span className="fieldcard__name">{label}</span>
+          </div>
+          <div className="fieldcard__badge-group">
+            <span className="chip chip--corrected">✎ Corrected by you</span>
+            <span className={`chip ${document.role === 'offer' ? 'chip--offer' : 'chip--contract'}`}>
+              {roleLabel(document.role)}
+            </span>
+          </div>
         </div>
-        <p className="typed-value typed-value--effective">
-          <strong>Your correction — used for analysis: </strong>
-          {corrected.value ? formatValue(corrected.value) : STATE_LABELS[corrected.state]}
-        </p>
-        <div className="fieldcard__original">
-          <p className="typed-value">
-            <strong>Read as: </strong>
-            {field.value && field.state === 'present' ? formatValue(field.value) : '—'}
+        <div className="fieldcard__body">
+          <p className="typed-value typed-value--effective">
+            <strong>Your correction — used for analysis: </strong>
+            {corrected.value ? formatValue(corrected.value) : STATE_LABELS[corrected.state]}
           </p>
-          {field.rawText ? (
+          <div className="fieldcard__original">
             <p className="typed-value">
-              <strong>As written: </strong>
-              {field.rawText}
+              <strong>Read as: </strong>
+              {field.value && field.state === 'present' ? formatValue(field.value) : '—'}
             </p>
-          ) : null}
-          {field.evidence.map((evidence) => (
-            <EvidenceQuote key={`${evidence.page}:${evidence.quote.slice(0, 12)}`} evidence={evidence} />
-          ))}
-        </div>
-        <div className="doc-pane__toolbar">
-          <button type="button" className="link-button" onClick={onUndo}>
-            Remove correction
-          </button>
+            {field.rawText ? (
+              <p className="typed-value">
+                <strong>As written: </strong>
+                {field.rawText}
+              </p>
+            ) : null}
+            {field.evidence.map((evidence) => (
+              <EvidenceQuote key={`${evidence.page}:${evidence.quote.slice(0, 12)}`} evidence={evidence} />
+            ))}
+          </div>
+          <div className="doc-pane__toolbar">
+            <button type="button" className="link-button" onClick={onUndo}>
+              Remove correction
+            </button>
+          </div>
         </div>
       </article>
     );
@@ -568,94 +585,100 @@ function FieldCard({
   return (
     <article className={`fieldcard ${isAbsent ? 'fieldcard--absent' : ''}`}>
       <div className="fieldcard__head">
-        <span className="fieldcard__num">{number}</span>
-        <span className="fieldcard__name">{label}</span>
-        <span className={STATE_CHIP_CLASS[field.state]}>{STATE_LABELS[field.state]}</span>
-        <span className={`chip ${document.role === 'offer' ? 'chip--offer' : 'chip--contract'}`}>
-          {roleLabel(document.role)}
-        </span>
+        <div className="fieldcard__title-group">
+          <span className="fieldcard__num">{number}</span>
+          <span className="fieldcard__name">{label}</span>
+        </div>
+        <div className="fieldcard__badge-group">
+          <span className={STATE_CHIP_CLASS[field.state]}>{STATE_LABELS[field.state]}</span>
+          <span className={`chip ${document.role === 'offer' ? 'chip--offer' : 'chip--contract'}`}>
+            {roleLabel(document.role)}
+          </span>
+        </div>
       </div>
 
-      {isAbsent ? (
-        <>
-          <p className="fieldcard__hint">{unit('rev.empty.absentCard').body[0] ?? ''}</p>
-          <div className="doc-pane__toolbar">
-            {firstPage ? (
-              <button
-                type="button"
-                className="link-button"
-                onClick={(event) => onOpenPage(firstPage, event.currentTarget)}
-              >
-                <Icon name="search" size={14} /> View page {firstPage}
+      <div className="fieldcard__body">
+        {isAbsent ? (
+          <>
+            <p className="fieldcard__hint">{unit('rev.empty.absentCard').body[0] ?? ''}</p>
+            <div className="doc-pane__toolbar">
+              {firstPage ? (
+                <button
+                  type="button"
+                  className="link-button"
+                  onClick={(event) => onOpenPage(firstPage, event.currentTarget)}
+                >
+                  <Icon name="search" size={14} /> View page {firstPage}
+                </button>
+              ) : null}
+              <button type="button" className="link-button" onClick={() => setEditing(true)}>
+                Correct value
               </button>
+            </div>
+          </>
+        ) : (
+          <>
+            {field.rawText ? (
+              <p className="typed-value">
+                <strong>As written: </strong>
+                {field.rawText}
+              </p>
             ) : null}
-            <button type="button" className="link-button" onClick={() => setEditing(true)}>
-              Correct value
-            </button>
-          </div>
-        </>
-      ) : (
-        <>
-          {field.rawText ? (
-            <p className="typed-value">
-              <strong>As written: </strong>
-              {field.rawText}
-            </p>
-          ) : null}
-          {field.value && field.state === 'present' ? (
-            <p className="typed-value typed-value--primary">
-              <strong>Read as: </strong>
-              {formatValue(field.value)}
-            </p>
-          ) : null}
-          {field.state === 'unreadable' ? <p className="fieldcard__hint">{unit('rev.unreadableNote').body[0] ?? ''}</p> : null}
-          {field.evidence.map((evidence) => (
-            <EvidenceQuote key={`${evidence.page}:${evidence.quote.slice(0, 12)}`} evidence={evidence} />
-          ))}
-          {field.qualityNotes.length > 0 ? (
-            <p className="evidence__label" style={{ color: 'var(--incomplete-ink)' }}>
-              Notes: {field.qualityNotes.join(', ')}
-            </p>
-          ) : null}
-          <div className="doc-pane__toolbar">
-            {firstPage ? (
-              <button type="button" className="link-button" onClick={(event) => onOpenPage(firstPage, event.currentTarget)}>
-                <Icon name="search" size={14} /> View page {firstPage}
-              </button>
+            {field.value && field.state === 'present' ? (
+              <p className="typed-value typed-value--primary">
+                <strong>Read as: </strong>
+                {formatValue(field.value)}
+              </p>
             ) : null}
-            {field.state !== 'unreadable' ? (
-              <button
-                type="button"
-                className="link-button"
-                aria-expanded={editorOpen}
-                onClick={() => {
-                  if (draft !== undefined && editing) {
-                    onDraftCancel();
-                  }
-                  setEditing(!editing);
+            {field.state === 'unreadable' ? <p className="fieldcard__hint">{unit('rev.unreadableNote').body[0] ?? ''}</p> : null}
+            {field.evidence.map((evidence) => (
+              <EvidenceQuote key={`${evidence.page}:${evidence.quote.slice(0, 12)}`} evidence={evidence} />
+            ))}
+            {field.qualityNotes.length > 0 ? (
+              <p className="evidence__label" style={{ color: 'var(--incomplete-ink)' }}>
+                Notes: {field.qualityNotes.join(', ')}
+              </p>
+            ) : null}
+            <div className="doc-pane__toolbar">
+              {firstPage ? (
+                <button type="button" className="link-button" onClick={(event) => onOpenPage(firstPage, event.currentTarget)}>
+                  <Icon name="search" size={14} /> View page {firstPage}
+                </button>
+              ) : null}
+              {field.state !== 'unreadable' ? (
+                <button
+                  type="button"
+                  className="link-button"
+                  aria-expanded={editorOpen}
+                  onClick={() => {
+                    if (draft !== undefined && editing) {
+                      onDraftCancel();
+                    }
+                    setEditing(!editing);
+                  }}
+                >
+                  {editorOpen ? 'Close editor' : 'Correct value'}
+                </button>
+              ) : null}
+            </div>
+            {editorOpen ? (
+              <CorrectionEditor
+                field={field}
+                draft={draft}
+                onDraft={onDraft}
+                onCancel={() => {
+                  onDraftCancel();
+                  setEditing(false);
                 }}
-              >
-                {editorOpen ? 'Close editor' : 'Correct value'}
-              </button>
+                onSave={(saved) => {
+                  onSaveDraft(saved);
+                  setEditing(false);
+                }}
+              />
             ) : null}
-          </div>
-          {editorOpen ? (
-            <CorrectionEditor
-              field={field}
-              draft={draft}
-              onDraft={onDraft}
-              onCancel={() => {
-                onDraftCancel();
-                setEditing(false);
-              }}
-              onSave={(saved) => {
-                onSaveDraft(saved);
-                setEditing(false);
-              }}
-            />
-          ) : null}
-        </>
-      )}
+          </>
+        )}
+      </div>
     </article>
   );
 }
