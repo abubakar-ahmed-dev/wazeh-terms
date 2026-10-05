@@ -28,7 +28,7 @@ export function Home({
       <div className="view__inner">
         <section className="hero">
           <span className="eyebrow">
-            <span aria-hidden="true">🇵🇰 → 🇦🇪</span> Pakistan → UAE mainland private-sector job offers
+            Pakistan → UAE mainland private-sector job offers
           </span>
           <h1>Understand your job offer before you sign</h1>
           <p className="hero__lead">
