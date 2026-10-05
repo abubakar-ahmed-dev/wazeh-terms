@@ -108,11 +108,20 @@ const report: AnalysisResponse = {
   officialNextSteps: [{ label: 'BEOE: how to get an emigrant\'s protection (Pakistan)', url: 'https://beoe.gov.pk/how-to-get-emigrants-protection' }],
 };
 
-function setup(overrides?: { report?: AnalysisResponse }) {
+function setup(overrides?: { report?: AnalysisResponse; onOpenHelp?: (slug: string, section?: string) => void }) {
   const onReviewAnother = vi.fn();
   const onReset = vi.fn();
-  render(<Findings report={overrides?.report ?? report} issued={null} onReviewAnother={onReviewAnother} onReset={onReset} />);
-  return { onReviewAnother, onReset };
+  const onOpenHelp = overrides?.onOpenHelp ?? vi.fn();
+  render(
+    <Findings
+      report={overrides?.report ?? report}
+      issued={null}
+      onOpenHelp={onOpenHelp}
+      onReviewAnother={onReviewAnother}
+      onReset={onReset}
+    />,
+  );
+  return { onReviewAnother, onReset, onOpenHelp };
 }
 
 describe('priority-first ordering (P4 §7.2)', () => {
@@ -159,8 +168,9 @@ describe('search, filters, reset (plan §8.12)', () => {
 describe('banner, coverage link, absent categories, citation (issues 11/17)', () => {
   it('renders one slim partial banner with the withheld limitation', () => {
     setup();
-    expect(screen.getAllByText(/Partial review/).length).toBeGreaterThan(0);
-    expect(screen.getByText(/2 possible official-source concerns were withheld/)).toBeTruthy();
+    const banner = document.querySelector('.partial-banner') as HTMLElement;
+    expect(within(banner).getAllByText(/Partial review/).length).toBeGreaterThan(0);
+    expect(within(banner).getByText(/2 possible official-source concerns were withheld/)).toBeTruthy();
     expect(screen.getByText(/Not flagged by finished checks: Question to clarify/)).toBeTruthy();
   });
 
@@ -210,3 +220,98 @@ describe('three zero-states (R20)', () => {
     expect(screen.queryByText(/No concern detected in the fields checked/)).toBeNull();
   });
 });
+
+describe('P8 findings report experience (P4 §7, plan §8.11–§8.13)', () => {
+  it('renders the Start here orientation line summarizing high-priority items and categories', () => {
+    setup();
+    expect(screen.getByText('Start here: 2 high-priority items across 2 categories.')).toBeTruthy();
+  });
+
+  it('displays finding counts in category and priority filter options', () => {
+    setup();
+    expect(screen.getByRole('option', { name: 'All categories (4)' })).toBeTruthy();
+    expect(screen.getByRole('option', { name: 'All priorities (4)' })).toBeTruthy();
+    expect(screen.getByRole('option', { name: 'High (2)' })).toBeTruthy();
+    expect(screen.getByRole('option', { name: 'Medium (1)' })).toBeTruthy();
+  });
+
+  it('renders category-specific card anatomy per P4 §7.3', () => {
+    setup();
+
+    // missing_information has coverage pointer
+    expect(screen.getByText(/if pages were unreadable/)).toBeTruthy();
+    expect(screen.getByRole('link', { name: 'What we checked' })).toBeTruthy();
+
+    // unable_to_determine displays the named blocker in uncertainty box
+    expect(screen.getByText(/Blocker:/)).toBeTruthy();
+    expect(screen.getByText(/unreadable_page/)).toBeTruthy();
+
+    // document_mismatch displays two-pane box
+    expect(screen.getByText('Offer wording')).toBeTruthy();
+    expect(screen.getByText('Contract wording')).toBeTruthy();
+
+    // contextual guide links
+    expect(screen.getByRole('button', { name: 'How to evaluate different wording →' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'About official sources and rules →' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'How missing terms are handled →' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Why some checks cannot be determined →' })).toBeTruthy();
+  });
+
+  it('searches across authority pinpoints and uncertainty reasons', async () => {
+    const user = userEvent.setup();
+    setup();
+
+    // search for authority
+    await user.type(screen.getByLabelText('Search findings'), 'UAE Government');
+    expect(screen.getByText(/1 of 4 findings shown/)).toBeTruthy();
+    expect(screen.getByText(/Charge to question/)).toBeTruthy();
+
+    // search for pinpoint quote
+    await user.clear(screen.getByLabelText('Search findings'));
+    await user.type(screen.getByLabelText('Search findings'), 'Article 6(4)');
+    expect(screen.getByText(/1 of 4 findings shown/)).toBeTruthy();
+
+    // search for uncertainty blocker
+    await user.clear(screen.getByLabelText('Search findings'));
+    await user.type(screen.getByLabelText('Search findings'), 'unreadable_page');
+    expect(screen.getByText(/1 of 4 findings shown/)).toBeTruthy();
+    expect(screen.getByRole('heading', { name: /Could not determine: Visa or residency charge/ })).toBeTruthy();
+  });
+
+  it('renders human-worded processing stages and withheld candidate concerns in coverage', () => {
+    setup();
+    expect(screen.getByText('Reading documents')).toBeTruthy();
+    expect(screen.getByText('Comparing document terms')).toBeTruthy();
+    expect(screen.getByText(/Withheld official-source concerns \(1\)/)).toBeTruthy();
+  });
+
+  it('renders official next steps with boundary disclaimer and external indicator', () => {
+    setup();
+    expect(screen.getByText(/General official resources for workers in this route/)).toBeTruthy();
+    expect(screen.getByText(/BEOE: how to get an emigrant's protection \(Pakistan\) \(leaves WazehTerms\) ↗/)).toBeTruthy();
+  });
+
+  it('falls back to general official resources when report has no next steps', () => {
+    setup({
+      report: {
+        ...report,
+        officialNextSteps: [],
+      },
+    });
+    expect(screen.getByText(/UAE Ministry of Human Resources and Emiratisation \(MOHRE\) \(leaves WazehTerms\) ↗/)).toBeTruthy();
+    expect(screen.getByText(/Bureau of Emigration and Overseas Employment \(Pakistan\) \(leaves WazehTerms\) ↗/)).toBeTruthy();
+  });
+
+  it('invokes onOpenHelp when clicking a finding contextual guide link', async () => {
+    const user = userEvent.setup();
+    const onOpenHelp = vi.fn();
+    setup({ onOpenHelp });
+
+    await user.click(screen.getByRole('button', { name: 'How to evaluate different wording →' }));
+    expect(onOpenHelp).toHaveBeenCalledWith('reading-findings', 'different-wording');
+
+    await user.click(screen.getByRole('button', { name: 'About official sources and rules →' }));
+    expect(onOpenHelp).toHaveBeenCalledWith('evidence-and-sources');
+  });
+});
+
