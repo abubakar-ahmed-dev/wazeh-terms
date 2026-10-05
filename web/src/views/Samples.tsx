@@ -78,46 +78,37 @@ export function Samples({
           </p>
         </header>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
           {samples.map((sample) => {
             const isBusy = busyCaseId === sample.sampleCaseId;
             const isPreviewOpen = previewCase === sample.sampleCaseId;
             return (
-              <article key={sample.sampleCaseId} className="card">
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    flexWrap: 'wrap',
-                    gap: '0.5rem',
-                    marginBottom: '0.5rem',
-                  }}
-                >
+              <article key={sample.sampleCaseId} className="card sample-card">
+                <div className="sample-card__top">
                   <span className="chip">Fictional sample</span>
                   <span className="brand-badge">
-                    {scenarioTag(sample.sampleCaseId)}
+                    <span>{scenarioTag(sample.sampleCaseId)}</span>
                     <InfoTip label={`About the ${scenarioTag(sample.sampleCaseId)} scenario`} unit={unit(scenarioTipId(sample.sampleCaseId))} />
                   </span>
                 </div>
 
-                <h2>{sample.title}</h2>
+                <h2 className="sample-card__title">{sample.title}</h2>
 
-                <div className="card__chips">
+                <div className="sample-card__chips">
                   {sample.documents.map((document) => (
                     <span
                       key={document.role}
                       className={`chip ${document.role === 'offer' ? 'chip--offer' : 'chip--contract'}`}
                     >
-                      <Icon name="doc" size={11} />
-                      {document.role === 'offer' ? 'Job offer (PDF)' : 'Employment contract (PDF)'}
+                      <Icon name="doc" size={13} />
+                      <span>{document.role === 'offer' ? 'Job offer (PDF)' : 'Employment contract (PDF)'}</span>
                     </span>
                   ))}
                 </div>
 
-                <p>{sample.description}</p>
+                <p className="sample-card__desc">{sample.description}</p>
 
-                <div className="doc-pane__toolbar" style={{ marginTop: '1.25rem' }}>
+                <div className="sample-card__actions">
                   <button
                     className="button"
                     disabled={busyCaseId !== null}
