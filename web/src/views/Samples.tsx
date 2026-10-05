@@ -98,7 +98,7 @@ export function Samples({
                       key={document.role}
                       className={`chip ${document.role === 'offer' ? 'chip--offer' : 'chip--contract'}`}
                     >
-                      <Icon name="doc" size={13} />
+                      <Icon name="doc" size={11} />
                       {document.role === 'offer' ? 'Job offer (PDF)' : 'Employment contract (PDF)'}
                     </span>
                   ))}
