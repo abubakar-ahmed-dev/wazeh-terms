@@ -31,7 +31,8 @@ import { Samples } from './views/Samples';
 import { Upload } from './views/Upload';
 import { ARTICLES } from './content/articles';
 import { JOURNEY_STEPS, unit } from './content/guides';
-import { ArticleBody, ConfirmDialog, ErrorPanel, Icon } from './ui';
+import { ConfirmDialog, ErrorPanel, Icon, Notice } from './ui';
+import { ArticlePage, GlossaryPage, HelpHub } from './views/Help';
 
 type View = 'home' | 'examples' | 'upload' | 'start' | 'extracting' | 'review' | 'analyzing' | 'result' | 'doc';
 
@@ -475,6 +476,7 @@ export function App() {
             onTrySample={() => navigate('examples')}
             onUploadClick={() => navigate('upload')}
             onRetryCapabilities={loadCapabilities}
+            onOpenHelp={(slug) => navigate('doc', slug)}
           />
         ) : null}
 
@@ -492,50 +494,43 @@ export function App() {
           />
         ) : null}
 
-        {view === 'examples' ? <Samples samples={samples} onStart={startSample} busyCaseId={busyCaseId} /> : null}
+        {view === 'examples' ? (
+          <Samples
+            samples={samples}
+            onStart={startSample}
+            busyCaseId={busyCaseId}
+            onOpenHelp={(slug) => navigate('doc', slug)}
+          />
+        ) : null}
 
         {view === 'doc' ? (
-          <div className="view">
-            <div className="view__inner">
-              {article ? (
-                <>
-                  <span className="eyebrow">Help</span>
-                  <h1 tabIndex={-1}>{article.title}</h1>
-                  <ArticleBody article={article} />
-                  <p style={{ marginTop: '2rem' }}>
-                    <button type="button" className="link-button" onClick={() => navigate('doc')}>
-                      ← All help topics
-                    </button>
-                  </p>
-                </>
-              ) : (
-                <>
-                  <span className="eyebrow">Help</span>
-                  <h1 tabIndex={-1}>Help with WazehTerms</h1>
-                  <p>
-                    Practical guides for the review journey. The full help hub — troubleshooting, samples, scope —
-                    arrives with the next release; these topics serve the guides the application links to.
-                  </p>
-                  <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '0.9rem' }}>
-                    {Object.values(ARTICLES).map((entry) => (
-                      <li key={entry.slug}>
-                        <button
-                          type="button"
-                          className="guide-link"
-                          onClick={() => {
-                            window.history.pushState({}, '', `/help/${entry.slug}`);
-                            setDocSlug(entry.slug);
-                          }}
-                        >
-                          {entry.title}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              )}
+          docSlug === 'glossary' ? (
+            <GlossaryPage onBackToHelp={() => navigate('doc')} />
+          ) : article ? (
+            <ArticlePage
+              article={article}
+              onBackToHelp={() => navigate('doc')}
+              onNavigateSlug={(slug) => navigate('doc', slug)}
+              onStartReview={() => navigate('examples')}
+            />
+          ) : !docSlug ? (
+            <HelpHub
+              onOpenArticle={(slug) => navigate('doc', slug)}
+              onOpenGlossary={() => navigate('doc', 'glossary')}
+              onTrySample={() => navigate('examples')}
+            />
+          ) : (
+            <div className="view">
+              <div className="view__inner">
+                <Notice kind="incomplete" role="status" title="Guide topic not found">
+                  <p>The requested help guide could not be found.</p>
+                  <button type="button" className="button button--secondary" onClick={() => navigate('doc')}>
+                    ← Back to Help Hub
+                  </button>
+                </Notice>
+              </div>
             </div>
-          </div>
+          )
         ) : null}
 
         {view === 'extracting' ? (
@@ -547,17 +542,26 @@ export function App() {
               <p>{unit('pending.extract.next').body[0]}</p>
               {extractionError ? (
                 <ErrorPanel message={extractionError}>
-                  <button
-                    type="button"
-                    className="button"
-                    onClick={() => {
-                      journeyRef.current += 1;
-                      abortAll();
-                      resetCase(customPreviewUrls.length > 0 ? 'upload' : 'examples');
-                    }}
-                  >
-                    {customPreviewUrls.length > 0 ? 'Try uploading again' : 'Choose another sample'}
-                  </button>
+                  <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                    <button
+                      type="button"
+                      className="button"
+                      onClick={() => {
+                        journeyRef.current += 1;
+                        abortAll();
+                        resetCase(customPreviewUrls.length > 0 ? 'upload' : 'examples');
+                      }}
+                    >
+                      {customPreviewUrls.length > 0 ? 'Try uploading again' : 'Choose another sample'}
+                    </button>
+                    <button
+                      type="button"
+                      className="guide-link"
+                      onClick={() => navigate('doc', 'troubleshooting')}
+                    >
+                      Read troubleshooting guide →
+                    </button>
+                  </div>
                 </ErrorPanel>
               ) : null}
             </div>
@@ -572,6 +576,15 @@ export function App() {
                   <div className="notice notice--incomplete" role="status">
                     <span className="notice__title">One correction needs attention</span>
                     <p>{correctionNotice}</p>
+                    <p style={{ margin: '0.4rem 0 0', fontSize: '0.9rem' }}>
+                      <button
+                        type="button"
+                        className="guide-link"
+                        onClick={() => navigate('doc', 'troubleshooting')}
+                      >
+                        Correction troubleshooting →
+                      </button>
+                    </p>
                   </div>
                 </div>
               </div>
@@ -615,6 +628,15 @@ export function App() {
               <h1 tabIndex={-1}>Nothing to review yet</h1>
               <div className="notice notice--incomplete" role="status">
                 <p>{RELOAD_COPY}</p>
+                <p style={{ margin: '0.4rem 0 0', fontSize: '0.9rem' }}>
+                  <button
+                    type="button"
+                    className="guide-link"
+                    onClick={() => navigate('doc', 'troubleshooting')}
+                  >
+                    Why in-progress reviews cannot be restored →
+                  </button>
+                </p>
               </div>
               <button
                 type="button"
@@ -665,6 +687,15 @@ export function App() {
                       Start a fresh review
                     </button>
                   </div>
+                  <p style={{ marginTop: '0.6rem', textAlign: 'center' }}>
+                    <button
+                      type="button"
+                      className="guide-link"
+                      onClick={() => navigate('doc', 'troubleshooting')}
+                    >
+                      Read troubleshooting guide →
+                    </button>
+                  </p>
                   <p className="evidence__label" style={{ marginTop: '0.75rem' }}>
                     Trying again resends this same review. Cancelling here stops the request in your browser; processing
                     on the provider's side may still complete.
@@ -694,6 +725,15 @@ export function App() {
               <h1 tabIndex={-1}>No report to show</h1>
               <div className="notice notice--incomplete" role="status">
                 <p>{RELOAD_COPY}</p>
+                <p style={{ margin: '0.4rem 0 0', fontSize: '0.9rem' }}>
+                  <button
+                    type="button"
+                    className="guide-link"
+                    onClick={() => navigate('doc', 'troubleshooting')}
+                  >
+                    Why in-progress reviews cannot be restored →
+                  </button>
+                </p>
               </div>
               <button type="button" className="button" onClick={() => navigate('examples')}>
                 Choose a sample
@@ -713,7 +753,25 @@ export function App() {
             </p>
           </div>
           <div className="footer-links">
-            <button type="button" className="link-button" onClick={() => (inReviewFlow ? window.open('/help/scope-and-privacy', '_blank', 'noopener') : navigate('doc', 'scope-and-privacy'))}>
+            <button
+              type="button"
+              className="link-button"
+              onClick={() => (inReviewFlow ? window.open('/help', '_blank', 'noopener') : navigate('doc'))}
+            >
+              Help hub
+            </button>
+            <button
+              type="button"
+              className="link-button"
+              onClick={() => (inReviewFlow ? window.open('/help/glossary', '_blank', 'noopener') : navigate('doc', 'glossary'))}
+            >
+              Glossary
+            </button>
+            <button
+              type="button"
+              className="link-button"
+              onClick={() => (inReviewFlow ? window.open('/help/scope-and-privacy', '_blank', 'noopener') : navigate('doc', 'scope-and-privacy'))}
+            >
               Privacy and scope
             </button>
             <a href="https://ai.google.dev/gemini-api/terms" target="_blank" rel="noreferrer">
