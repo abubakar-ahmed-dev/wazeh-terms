@@ -27,7 +27,6 @@ const mockSample: SampleEntry = {
   sampleCaseId: 'TC-002',
   title: 'Fictional changed pay',
   description: 'Salary changes between offer and formal mainland contract.',
-  situationSummary: 'Candidate receives offer with AED 4,000 salary, but formal contract states AED 3,200.',
   documents: [
     { role: 'offer', previewUrl: '/samples/TC-002/offer.pdf' },
     { role: 'contract', previewUrl: '/samples/TC-002/contract.pdf' },
