@@ -172,10 +172,12 @@ describe('Phase 11 rendered views', () => {
         onReset={() => undefined}
       />,
     );
-    expect(html).toContain('Original wording');
+    // P4 §6.1 anatomy (issue-27 rename): effective value leads, original preserved.
+    expect(html).toContain('Your correction — used for analysis');
+    expect(html).toContain('✎ Corrected by you');
+    expect(html).toContain('Read as');
+    expect(html).toContain('As written');
     expect(html).toContain('Text matched to PDF');
-    expect(html).toContain('Your correction');
-    expect(html).toContain('used for analysis, not a page quote');
   });
 
   it('findings place partial limitations and official citations above next actions', () => {
