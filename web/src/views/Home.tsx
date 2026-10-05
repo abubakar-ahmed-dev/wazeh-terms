@@ -89,19 +89,23 @@ export function Home({
           </div>
 
           <p className="hero__sub">
-            No account needed.{' '}
-            {customUploadEnabled ? (
-              <>Demo mode — try the review with a fictional PDF. Not for real job offers or contracts.</>
-            ) : (
-              <>Personal document upload is not available yet — this public demo works with fictional samples only.</>
-            )}{' '}
-            <button
-              type="button"
-              className="guide-link"
-              onClick={() => onOpenHelp?.('getting-started')}
-            >
-              First time? Read the short guide.
-            </button>
+            <span>
+              No account needed.{' '}
+              {customUploadEnabled ? (
+                <>Demo mode — try the review with a fictional PDF. Not for real job offers or contracts.</>
+              ) : (
+                <>Personal document upload is not available yet — this public demo works with fictional samples only.</>
+              )}
+            </span>
+            <span style={{ display: 'block', marginTop: '0.45rem' }}>
+              <button
+                type="button"
+                className="guide-link"
+                onClick={() => onOpenHelp?.('getting-started')}
+              >
+                First time? Read the short guide →
+              </button>
+            </span>
           </p>
 
           {/* Illustrative Example (P4 §2: Offer vs Contract comparison preview) */}
