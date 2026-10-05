@@ -31,6 +31,26 @@ const IMPORTANCE_RANK: Record<Finding['importance'], number> = {
 type ImportanceFilter = 'all' | Finding['importance'];
 type CategoryFilter = 'all' | Finding['category'];
 
+const STAGE_LABELS: Record<string, string> = {
+  extraction: 'Reading documents',
+  review: 'Checking extracted values',
+  comparison: 'Comparing document terms',
+  retrieval: 'Querying official sources',
+  applicability: 'Corridor applicability',
+  explanation: 'Generating findings report',
+};
+
+const GENERAL_OFFICIAL_RESOURCES = [
+  {
+    label: 'UAE Ministry of Human Resources and Emiratisation (MOHRE)',
+    url: 'https://www.mohre.gov.ae',
+  },
+  {
+    label: 'Bureau of Emigration and Overseas Employment (Pakistan)',
+    url: 'https://beoe.gov.pk',
+  },
+];
+
 const headingFor = (finding: Finding): string => {
   const fieldNames = finding.fieldKeys.map((key) => FIELD_LABELS[key] ?? key).join(', ');
   switch (finding.category) {
@@ -50,11 +70,13 @@ const headingFor = (finding: Finding): string => {
 export function Findings({
   report,
   issued,
+  onOpenHelp,
   onReviewAnother,
   onReset,
 }: {
   report: AnalysisResponse;
   issued?: IssuedExtraction | null;
+  onOpenHelp?: (slug: string, section?: string) => void;
   onReviewAnother: () => void;
   onReset: () => void;
 }) {
@@ -62,6 +84,31 @@ export function Findings({
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('all');
   const [priorityFilter, setPriorityFilter] = useState<ImportanceFilter>('all');
+
+  const highPriorityFindings = useMemo(
+    () => report.findings.filter((f) => f.importance === 'high'),
+    [report.findings],
+  );
+  const highPriorityCategories = useMemo(
+    () => new Set(highPriorityFindings.map((f) => f.category)),
+    [highPriorityFindings],
+  );
+
+  const categoryCounts = useMemo(() => {
+    const counts = new Map<Finding['category'], number>();
+    for (const f of report.findings) {
+      counts.set(f.category, (counts.get(f.category) ?? 0) + 1);
+    }
+    return counts;
+  }, [report.findings]);
+
+  const priorityCounts = useMemo(() => {
+    const counts = { high: 0, medium: 0, low: 0, unknown: 0 };
+    for (const f of report.findings) {
+      counts[f.importance] = (counts[f.importance] ?? 0) + 1;
+    }
+    return counts;
+  }, [report.findings]);
 
   const documentRoleMap = useMemo(() => {
     const map = new Map<string, 'offer' | 'contract'>();
@@ -99,6 +146,11 @@ export function Findings({
         ...finding.fieldKeys.map((key) => FIELD_LABELS[key] ?? key),
         ...finding.documentEvidence.map((evidence) => evidence.quote),
         finding.suggestedQuestionOrStep,
+        finding.source?.issuingAuthority ?? '',
+        finding.source?.responsibleParty ?? '',
+        finding.source?.pinpoint.label ?? '',
+        finding.source?.pinpoint.quote ?? '',
+        ...finding.uncertaintyReasons,
       ];
       map.set(finding.id, parts.join(' ').toLowerCase());
     }
@@ -203,6 +255,13 @@ export function Findings({
         <section className="findings-attention" aria-label="Findings">
           <div className="findings-toolbar">
             <h2 style={{ fontSize: '1.35rem', margin: 0 }}>What needs your attention</h2>
+            {report.findings.length > 0 ? (
+              <p className="findings-start-here">
+                {highPriorityFindings.length > 0
+                  ? `Start here: ${highPriorityFindings.length} high-priority item${highPriorityFindings.length === 1 ? '' : 's'} across ${highPriorityCategories.size} categor${highPriorityCategories.size === 1 ? 'y' : 'ies'}.`
+                  : `Start here: ${report.findings.length} finding${report.findings.length === 1 ? '' : 's'} across ${presentCategories.length} categor${presentCategories.length === 1 ? 'y' : 'ies'}.`}
+              </p>
+            ) : null}
             <div className="findings-toolbar__controls">
               <label className="findings-toolbar__search">
                 <span className="sr-only">Search findings</span>
@@ -218,21 +277,24 @@ export function Findings({
               <label className="findings-toolbar__select">
                 <span className="sr-only">Filter by category</span>
                 <select value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value as CategoryFilter)}>
-                  <option value="all">All categories</option>
-                  {CATEGORY_ORDER.map((category) => (
-                    <option key={category.key} value={category.key}>
-                      {category.heading}
-                    </option>
-                  ))}
+                  <option value="all">All categories ({report.findings.length})</option>
+                  {CATEGORY_ORDER.map((category) => {
+                    const count = categoryCounts.get(category.key) ?? 0;
+                    return (
+                      <option key={category.key} value={category.key}>
+                        {category.heading} ({count})
+                      </option>
+                    );
+                  })}
                 </select>
               </label>
               <label className="findings-toolbar__select">
                 <span className="sr-only">Filter by priority</span>
                 <select value={priorityFilter} onChange={(event) => setPriorityFilter(event.target.value as ImportanceFilter)}>
-                  <option value="all">All priorities</option>
-                  <option value="high">High</option>
-                  <option value="medium">Medium</option>
-                  <option value="low">Low</option>
+                  <option value="all">All priorities ({report.findings.length})</option>
+                  <option value="high">High ({priorityCounts.high})</option>
+                  <option value="medium">Medium ({priorityCounts.medium})</option>
+                  <option value="low">Low ({priorityCounts.low})</option>
                 </select>
               </label>
               <button type="button" className="link-button" onClick={resetFilters} disabled={!filtersActive}>
@@ -274,7 +336,12 @@ export function Findings({
             <ol className="findings-list">
               {filtered.map((finding) => (
                 <li key={finding.id}>
-                  <FindingCard finding={finding} documentRoleMap={documentRoleMap} categoryLabel={categoryLabel(finding.category)} />
+                  <FindingCard
+                    finding={finding}
+                    documentRoleMap={documentRoleMap}
+                    categoryLabel={categoryLabel(finding.category)}
+                    onOpenHelp={onOpenHelp}
+                  />
                 </li>
               ))}
             </ol>
@@ -297,7 +364,7 @@ export function Findings({
             <div className="stage-grid">
               {Object.entries(report.stages).map(([stage, status]) => (
                 <div key={stage} className="stage-item">
-                  <span className="stage-item__name">{stage}</span>
+                  <span className="stage-item__name">{STAGE_LABELS[stage] ?? stage}</span>
                   <span className="stage-item__status">
                     {status === 'not_applicable' && stage === 'comparison'
                       ? 'Not applicable — only one document supplied.'
@@ -324,24 +391,39 @@ export function Findings({
                 {omitted}
               </p>
             ))}
+            {report.limitations.length > 0 ? (
+              <div className="coverage-withheld" style={{ marginTop: '1.25rem', paddingTop: '0.85rem', borderTop: '1px solid var(--rule)' }}>
+                <h4 style={{ margin: '0 0 0.4rem', fontSize: '0.95rem', color: 'var(--incomplete-ink)' }}>
+                  Withheld official-source concerns ({report.limitations.length})
+                </h4>
+                <p style={{ fontSize: '0.88rem', color: 'var(--ink-secondary)', margin: '0 0 0.5rem' }}>
+                  The following candidate concerns could not be verified to the required standard and were withheld from the report:
+                </p>
+                <ul style={{ margin: 0, paddingLeft: '1.25rem', color: 'var(--ink-secondary)', fontSize: '0.9rem' }}>
+                  {report.limitations.map((limitation, i) => (
+                    <li key={i} style={{ marginBottom: '0.35rem' }}>
+                      {limitation}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
           </div>
         </details>
 
-        {report.officialNextSteps.length > 0 ? (
-          <div className="card" style={{ marginTop: '1.5rem' }}>
-            <h2>Official next steps</h2>
-            <p style={{ color: 'var(--ink-secondary)', fontSize: '0.92rem' }}>{unit('fnd.nextSteps.line').body[0]}</p>
-            <ul style={{ listStyle: 'none', padding: 0, margin: '1rem 0 0', display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
-              {report.officialNextSteps.map((step) => (
-                <li key={step.url}>
-                  <a className="button button--secondary" href={step.url} target="_blank" rel="noreferrer" style={{ fontSize: '0.9rem' }}>
-                    {step.label} (leaves WazehTerms) ↗
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ) : null}
+        <div className="card" style={{ marginTop: '1.5rem' }}>
+          <h2>Official next steps</h2>
+          <p style={{ color: 'var(--ink-secondary)', fontSize: '0.92rem' }}>{unit('fnd.nextSteps.line').body[0]}</p>
+          <ul style={{ listStyle: 'none', padding: 0, margin: '1rem 0 0', display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
+            {(report.officialNextSteps.length > 0 ? report.officialNextSteps : GENERAL_OFFICIAL_RESOURCES).map((step) => (
+              <li key={step.url}>
+                <a className="button button--secondary" href={step.url} target="_blank" rel="noreferrer" style={{ fontSize: '0.9rem' }}>
+                  {step.label} (leaves WazehTerms) ↗
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
 
         <div className="findings-actions">
           <button type="button" className="button" onClick={onReviewAnother}>
@@ -360,10 +442,12 @@ function FindingCard({
   finding,
   documentRoleMap,
   categoryLabel,
+  onOpenHelp,
 }: {
   finding: Finding;
   documentRoleMap: Map<string, 'offer' | 'contract'>;
   categoryLabel: string;
+  onOpenHelp?: (slug: string, section?: string) => void;
 }) {
   return (
     <article className={`card finding finding--${finding.category}`}>
@@ -383,50 +467,184 @@ function FindingCard({
         {finding.explanation}
       </p>
 
-      {finding.documentEvidence.length > 0 ? (
-        finding.category === 'document_mismatch' ? (
-          <div className="mismatch-box">
-            {finding.documentEvidence.map((evidence, index) => {
-              const role = documentRoleMap.get(evidence.documentId) ?? (index === 0 ? 'offer' : 'contract');
-              return (
-                <div
-                  key={index}
-                  className={`mismatch-pane ${role === 'offer' ? 'mismatch-pane--offer' : 'mismatch-pane--contract'}`}
-                >
-                  <div className="mismatch-pane__head">{role === 'offer' ? 'Offer wording' : 'Contract wording'}</div>
-                  <EvidenceQuote evidence={evidence} role={role} />
-                </div>
-              );
-            })}
+      {/* Category-specific anatomy (P4 §7.3) */}
+      {finding.category === 'document_mismatch' ? (
+        <>
+          {finding.documentEvidence.length > 0 ? (
+            <div className="mismatch-box">
+              {finding.documentEvidence.map((evidence, index) => {
+                const role = documentRoleMap.get(evidence.documentId) ?? (index === 0 ? 'offer' : 'contract');
+                return (
+                  <div
+                    key={index}
+                    className={`mismatch-pane ${role === 'offer' ? 'mismatch-pane--offer' : 'mismatch-pane--contract'}`}
+                  >
+                    <div className="mismatch-pane__head">{role === 'offer' ? 'Offer wording' : 'Contract wording'}</div>
+                    <EvidenceQuote evidence={evidence} role={role} />
+                  </div>
+                );
+              })}
+            </div>
+          ) : null}
+
+          {finding.valueOrigins.includes('user') ? (
+            <p className="evidence__label" style={{ marginTop: '0.5rem', color: 'var(--incomplete-ink)' }}>
+              Part of this difference comes from your correction — it is labelled as yours.
+            </p>
+          ) : null}
+
+          <div className="action-step-box">
+            <Icon name="info" size={18} />
+            <div className="action-step-box__content">
+              <strong>Suggested question or step:</strong> <span>{finding.suggestedQuestionOrStep}</span>
+            </div>
           </div>
-        ) : (
-          finding.documentEvidence.map((evidence, index) => {
+
+          <div className="finding__footer">
+            <button
+              type="button"
+              className="guide-link"
+              onClick={() => onOpenHelp?.('reading-findings', 'different-wording')}
+            >
+              How to evaluate different wording →
+            </button>
+          </div>
+        </>
+      ) : finding.category === 'source_backed_concern' ? (
+        <>
+          {finding.documentEvidence.length > 0 ? (
+            <div style={{ marginBottom: '0.75rem' }}>
+              <span className="evidence__label" style={{ display: 'block', marginBottom: '0.25rem' }}>
+                What your document says:
+              </span>
+              {finding.documentEvidence.map((evidence, index) => {
+                const role = documentRoleMap.get(evidence.documentId);
+                return <EvidenceQuote key={index} evidence={evidence} role={role} />;
+              })}
+            </div>
+          ) : null}
+
+          {finding.source ? <Citation source={finding.source} /> : null}
+
+          {finding.uncertaintyReasons.length > 0 ? (
+            <p className="evidence__label" style={{ marginTop: '0.5rem' }}>
+              Why we are careful here: {finding.uncertaintyReasons.join(', ')}
+            </p>
+          ) : null}
+
+          <div className="action-step-box">
+            <Icon name="info" size={18} />
+            <div className="action-step-box__content">
+              <strong>Suggested question or step:</strong> <span>{finding.suggestedQuestionOrStep}</span>
+            </div>
+          </div>
+
+          <div className="finding__footer">
+            <button
+              type="button"
+              className="guide-link"
+              onClick={() => onOpenHelp?.('evidence-and-sources')}
+            >
+              About official sources and rules →
+            </button>
+          </div>
+        </>
+      ) : finding.category === 'missing_information' ? (
+        <>
+          <p className="evidence__label" style={{ marginTop: '0.45rem' }}>
+            Check{' '}
+            <a
+              href="#findings-coverage"
+              className="guide-link"
+              onClick={(e) => {
+                e.preventDefault();
+                document.getElementById('findings-coverage')?.scrollIntoView({ block: 'start' });
+              }}
+            >
+              What we checked
+            </a>{' '}
+            if pages were unreadable.
+          </p>
+
+          {finding.documentEvidence.map((evidence, index) => {
             const role = documentRoleMap.get(evidence.documentId);
             return <EvidenceQuote key={index} evidence={evidence} role={role} />;
-          })
-        )
-      ) : null}
+          })}
 
-      {finding.valueOrigins.includes('user') ? (
-        <p className="evidence__label" style={{ marginTop: '0.5rem', color: 'var(--incomplete-ink)' }}>
-          Part of this difference comes from your correction — it is labelled as yours.
-        </p>
-      ) : null}
+          <div className="action-step-box">
+            <Icon name="info" size={18} />
+            <div className="action-step-box__content">
+              <strong>Suggested question or step:</strong> <span>{finding.suggestedQuestionOrStep}</span>
+            </div>
+          </div>
 
-      {finding.source ? <Citation source={finding.source} /> : null}
+          <div className="finding__footer">
+            <button
+              type="button"
+              className="guide-link"
+              onClick={() => onOpenHelp?.('reading-findings', 'missing-information')}
+            >
+              How missing terms are handled →
+            </button>
+          </div>
+        </>
+      ) : finding.category === 'needs_clarification' ? (
+        <>
+          <div className="action-step-box action-step-box--primary">
+            <Icon name="info" size={18} />
+            <div className="action-step-box__content">
+              <strong>Key question to clarify:</strong> <span>{finding.suggestedQuestionOrStep}</span>
+            </div>
+          </div>
 
-      <div className="action-step-box">
-        <Icon name="info" size={18} />
-        <div className="action-step-box__content">
-          <strong>Suggested question or step:</strong> <span>{finding.suggestedQuestionOrStep}</span>
-        </div>
-      </div>
+          {finding.documentEvidence.map((evidence, index) => {
+            const role = documentRoleMap.get(evidence.documentId);
+            return <EvidenceQuote key={index} evidence={evidence} role={role} />;
+          })}
 
-      {finding.uncertaintyReasons.length > 0 ? (
-        <p className="evidence__label" style={{ marginTop: '0.5rem' }}>
-          Why we are careful here: {finding.uncertaintyReasons.join(', ')}
-        </p>
-      ) : null}
+          <div className="finding__footer">
+            <button
+              type="button"
+              className="guide-link"
+              onClick={() => onOpenHelp?.('reading-findings', 'needs-clarification')}
+            >
+              Clarifying terms with your employer →
+            </button>
+          </div>
+        </>
+      ) : (
+        /* unable_to_determine */
+        <>
+          <div className="uncertainty-box">
+            <strong>Blocker:</strong>{' '}
+            {finding.uncertaintyReasons.length > 0
+              ? finding.uncertaintyReasons.join(', ')
+              : 'Check could not determine the result from the readable text.'}
+          </div>
+
+          {finding.documentEvidence.map((evidence, index) => {
+            const role = documentRoleMap.get(evidence.documentId);
+            return <EvidenceQuote key={index} evidence={evidence} role={role} />;
+          })}
+
+          <div className="action-step-box">
+            <Icon name="info" size={18} />
+            <div className="action-step-box__content">
+              <strong>Suggested step:</strong> <span>{finding.suggestedQuestionOrStep}</span>
+            </div>
+          </div>
+
+          <div className="finding__footer">
+            <button
+              type="button"
+              className="guide-link"
+              onClick={() => onOpenHelp?.('reading-findings', 'unresolved')}
+            >
+              Why some checks cannot be determined →
+            </button>
+          </div>
+        </>
+      )}
     </article>
   );
 }

@@ -1751,6 +1751,47 @@ select:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
 .zero-clean h3 { margin: 0 0 0.4rem; }
 .zero-clean p { margin: 0 auto; max-width: 40rem; color: var(--ink-secondary); }
 
+.findings-start-here {
+  margin: 0.2rem 0 0.5rem;
+  font-size: 0.95rem;
+  color: var(--ink-secondary);
+}
+
+.action-step-box--primary {
+  background: rgba(212, 163, 89, 0.1);
+  border: 1px solid var(--primary);
+  border-left: 5px solid var(--primary);
+}
+
+.uncertainty-box {
+  margin: 0.75rem 0 0.5rem;
+  padding: 0.65rem 0.95rem;
+  background: var(--surface-elevated);
+  border-left: 3px solid var(--cat-undetermined, #d97706);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  color: var(--ink-secondary);
+  line-height: 1.5;
+}
+.uncertainty-box strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.finding__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.85rem;
+  padding-top: 0.65rem;
+  border-top: 1px solid var(--rule);
+}
+.finding__footer .guide-link {
+  font-size: 0.88rem;
+}
+
 /* ── Help Hub (P4 §8.1) ────────────────────────────────────────────── */
 .help-hub__header { margin-bottom: 2rem; }
 .help-hub__lead { font-size: 1.1rem; color: var(--ink-secondary); max-width: 48rem; line-height: 1.6; margin: 0.5rem 0 0; }

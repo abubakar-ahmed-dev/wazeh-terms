@@ -710,6 +710,10 @@ export function App() {
           <Findings
             report={report}
             issued={issued}
+            onOpenHelp={(slug, section) => {
+              const url = section ? `/help/${slug}#${section}` : `/help/${slug}`;
+              window.open(url, '_blank', 'noopener');
+            }}
             onReviewAnother={() => {
               journeyRef.current += 1;
               abortAll();
