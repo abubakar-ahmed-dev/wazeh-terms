@@ -189,25 +189,14 @@ export function Findings({
   return (
     <div className="view">
       <div className="view__inner view__inner--wide findings-view">
-        <div className="findings-overview">
-          <div className="findings-overview__top-bar">
-            <span className="eyebrow">Step 4 of 4 · Findings report</span>
-            <span className="chip chip--scenario">Pakistan → UAE Mainland Private</span>
-          </div>
-          <div className="findings-overview__header">
-            <div>
+        <div className={`findings-top-grid ${partial ? 'findings-top-grid--dual' : 'findings-top-grid--single'}`}>
+          <div className="findings-overview">
+            <div className="findings-overview__header">
+              <span className="eyebrow">Document review</span>
               <h1 tabIndex={-1} className="findings-overview__title">
                 Your document review
               </h1>
               <div className="findings-overview__meta">
-                <span
-                  className={`chip ${partial ? 'chip--state-unclear' : 'chip--state-found'}`}
-                  aria-describedby={undefined}
-                >
-                  {partial ? 'Partial review' : 'Complete review'}
-                </span>{' '}
-                <InfoTip label="What the status means" unit={unit('fnd.tip.status')} />
-                <span className="findings-overview__meta-sep">·</span>
                 <span>reviewed {formatDateTime(report.reviewedAsOf)}</span>
                 <span className="findings-overview__meta-sep">·</span>
                 <span>
@@ -218,51 +207,52 @@ export function Findings({
                       : 'none'}
                   </strong>
                 </span>
+                {!partial ? (
+                  <>
+                    <span className="findings-overview__meta-sep">·</span>
+                    <span className="chip chip--state-found">Complete review</span>
+                  </>
+                ) : null}
               </div>
             </div>
+            <StepIntro title={unit('fnd.intro').title}>
+              {unit('fnd.intro').body.map((paragraph) => (
+                <p key={paragraph.slice(0, 32)}>{paragraph}</p>
+              ))}
+            </StepIntro>
           </div>
-          <p className="findings-overview__route-note">
-            {report.scopeApplicability === 'supported'
-              ? 'Applicability for the Pakistan → UAE mainland private-sector route was checked. That checks the route, not the offer.'
-              : report.scopeApplicability === 'conflicting'
-                ? 'The documents contain wording that conflicts with the declared category, so category-specific rules were withheld.'
-                : 'The employment category could not be established, so category-specific rules were withheld.'}
-          </p>
-          <StepIntro title={unit('fnd.intro').title}>
-            {unit('fnd.intro').body.map((paragraph) => (
-              <p key={paragraph.slice(0, 32)}>{paragraph}</p>
-            ))}
-          </StepIntro>
-        </div>
 
-        {partial ? (
-          <div className="notice notice--incomplete partial-banner" role="status">
-            <div className="partial-banner__main">
-              <span className="notice__title">
-                <Icon name="alert" size={18} /> Partial review
-              </span>
-              <span className="partial-banner__divider" aria-hidden="true">—</span>
+          {partial ? (
+            <div className="notice notice--incomplete partial-banner" role="status">
+              <div className="partial-banner__header">
+                <span className="notice__title">
+                  <Icon name="alert" size={18} /> Partial review
+                </span>
+                <span className="chip chip--state-unclear">
+                  {report.limitations.length} limitation{report.limitations.length === 1 ? '' : 's'}
+                </span>
+              </div>
               <p className="partial-banner__summary">{report.summary}</p>
+              {report.limitations.map((limitation) => (
+                <p className="partial-banner__limitation" key={limitation}>
+                  {limitation}
+                </p>
+              ))}
+              <div className="partial-banner__action">
+                <a
+                  className="guide-link"
+                  href="#findings-coverage"
+                  onClick={(event) => {
+                    event.preventDefault();
+                    document.getElementById('findings-coverage')?.scrollIntoView({ block: 'start' });
+                  }}
+                >
+                  What was withheld, and what remains usable →
+                </a>
+              </div>
             </div>
-            {report.limitations.map((limitation) => (
-              <p className="partial-banner__limitation" key={limitation}>
-                {limitation}
-              </p>
-            ))}
-            <div className="partial-banner__action">
-              <a
-                className="guide-link"
-                href="#findings-coverage"
-                onClick={(event) => {
-                  event.preventDefault();
-                  document.getElementById('findings-coverage')?.scrollIntoView({ block: 'start' });
-                }}
-              >
-                What was withheld, and what remains usable →
-              </a>
-            </div>
-          </div>
-        ) : null}
+          ) : null}
+        </div>
 
         <section className="findings-attention" aria-label="Findings">
           <div className="findings-toolbar">
@@ -375,56 +365,71 @@ export function Findings({
           <summary className="group__summary">
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
               <Icon name="chevron" size={18} />
-              <strong>What we checked</strong>
+              <strong style={{ fontSize: '1.18rem', fontWeight: 700 }}>What we checked</strong>
             </div>
             <span className="chip">{Object.keys(report.stages).length} stages</span>
           </summary>
-          <div className="fieldcard">
-            <p style={{ margin: '0 0 0.75rem', color: 'var(--ink-secondary)' }}>
+          <div className="coverage-body">
+            <p className="coverage-intro">
               {unit('fnd.coverage.intro').body[0]}
             </p>
-            <h4 style={{ margin: '0 0 0.5rem', fontSize: '0.95rem' }}>Processing stages</h4>
+            <h4 className="coverage-section__title">Processing stages</h4>
             <div className="stage-grid">
-              {Object.entries(report.stages).map(([stage, status]) => (
-                <div key={stage} className="stage-item">
-                  <span className="stage-item__name">{STAGE_LABELS[stage] ?? stage}</span>
-                  <span className="stage-item__status">
-                    {status === 'not_applicable' && stage === 'comparison'
-                      ? 'Not applicable — only one document supplied.'
-                      : status.replace(/_/g, ' ')}
-                  </span>
+              {Object.entries(report.stages).map(([stage, status], index) => (
+                <div key={stage} className={`stage-card stage-card--${status}`}>
+                  <div className="stage-card__header">
+                    <span className="stage-card__num">0{index + 1}</span>
+                    <span className={`chip chip--sm ${status === 'completed' ? 'chip--state-found' : status === 'not_applicable' ? 'chip--state-found' : 'chip--state-unclear'}`}>
+                      {status === 'completed' ? 'completed' : status === 'not_applicable' ? 'not applicable' : status.replace(/_/g, ' ')}
+                    </span>
+                  </div>
+                  <div className="stage-card__content">
+                    <span className="stage-card__name">{STAGE_LABELS[stage] ?? stage}</span>
+                    {status === 'not_applicable' && stage === 'comparison' ? (
+                      <span className="stage-card__note">Single document supplied</span>
+                    ) : null}
+                  </div>
                 </div>
               ))}
             </div>
-            <p style={{ margin: '0.5rem 0' }}>
-              <strong>Fields checked: </strong>
-              <span style={{ color: 'var(--ink-secondary)' }}>
-                {report.coverage.checkedFieldKeys.map((key) => FIELD_LABELS[key] ?? key).join(', ')}
-              </span>
-            </p>
+
+            <div className="coverage-fields">
+              <strong className="coverage-fields__title">
+                Fields checked ({report.coverage.checkedFieldKeys.length})
+              </strong>
+              <div className="coverage-fields__tags">
+                {report.coverage.checkedFieldKeys.map((key) => (
+                  <span key={key} className="coverage-field-tag">
+                    {FIELD_LABELS[key] ?? key}
+                  </span>
+                ))}
+              </div>
+            </div>
+
             {report.coverage.unreadableFieldKeys.length > 0 ? (
-              <p style={{ margin: '0.5rem 0', color: 'var(--incomplete-ink)' }}>
+              <p style={{ margin: '0.85rem 0 0', color: 'var(--incomplete-ink)' }}>
                 <strong>Could not read: </strong>
                 {report.coverage.unreadableFieldKeys.map((key) => FIELD_LABELS[key] ?? key).join(', ')}
               </p>
             ) : null}
             {report.coverage.omittedChecks.map((omitted) => (
-              <p key={omitted} style={{ margin: '0.5rem 0', color: 'var(--incomplete-ink)' }}>
+              <p key={omitted} style={{ margin: '0.5rem 0 0', color: 'var(--incomplete-ink)' }}>
                 <strong>Omitted check: </strong>
                 {omitted}
               </p>
             ))}
+
             {report.limitations.length > 0 ? (
-              <div className="coverage-withheld" style={{ marginTop: '1.25rem', paddingTop: '0.85rem', borderTop: '1px solid var(--rule)' }}>
-                <h4 style={{ margin: '0 0 0.4rem', fontSize: '0.95rem', color: 'var(--incomplete-ink)' }}>
+              <div className="coverage-withheld">
+                <h4 className="coverage-withheld__title">
                   Withheld official-source concerns ({report.limitations.length})
                 </h4>
-                <p style={{ fontSize: '0.88rem', color: 'var(--ink-secondary)', margin: '0 0 0.5rem' }}>
+                <p className="coverage-withheld__desc">
                   The following candidate concerns could not be verified to the required standard and were withheld from the report:
                 </p>
-                <ul style={{ margin: 0, paddingLeft: '1.25rem', color: 'var(--ink-secondary)', fontSize: '0.9rem' }}>
+                <ul className="coverage-withheld__list">
                   {report.limitations.map((limitation, i) => (
-                    <li key={i} style={{ marginBottom: '0.35rem' }}>
+                    <li key={i}>
                       {limitation}
                     </li>
                   ))}
