@@ -805,52 +805,89 @@ export function App() {
 
       <footer className="app-footer">
         <div className="app-footer__inner">
-          <div className="footer-copy">
-            <p>
-              <strong>WazehTerms</strong> reviews written employment terms before signing. It does not verify employers,
-              visas, or documents, and it is not legal advice — official help may still be needed. Findings cite
-              approved official sources where they apply.
-            </p>
+          <div className="app-footer__main">
+            <div className="footer-brand">
+              <span className="footer-brand__title">WazehTerms</span>
+              <p className="footer-brand__copy">
+                Reviews written employment terms before signing. It does not verify employers,
+                visas, or documents, and it is not legal advice — official help may still be needed.
+                Findings cite approved official sources where they apply.
+              </p>
+            </div>
+
+            <nav className="footer-nav" aria-label="Footer navigation">
+              <div className="footer-nav__col">
+                <span className="footer-nav__heading">Guidance</span>
+                <div className="footer-nav__list">
+                  <button
+                    type="button"
+                    className="link-button"
+                    onClick={() => (inReviewFlow ? window.open('/help', '_blank', 'noopener') : navigate('doc'))}
+                  >
+                    Help hub
+                  </button>
+                  <button
+                    type="button"
+                    className="link-button"
+                    onClick={() => (inReviewFlow ? window.open('/help/glossary', '_blank', 'noopener') : navigate('doc', 'glossary'))}
+                  >
+                    Glossary
+                  </button>
+                  <button
+                    type="button"
+                    className="link-button"
+                    onClick={() => (inReviewFlow ? window.open('/help/scope-and-privacy', '_blank', 'noopener') : navigate('doc', 'scope-and-privacy'))}
+                  >
+                    Privacy and scope
+                  </button>
+                </div>
+              </div>
+
+              <div className="footer-nav__col">
+                <span className="footer-nav__heading">Architecture</span>
+                <div className="footer-nav__list">
+                  <button
+                    type="button"
+                    className="link-button"
+                    onClick={() => (inReviewFlow ? window.open('/how-it-works', '_blank', 'noopener') : navigate('technical'))}
+                  >
+                    How it works
+                  </button>
+                  <button
+                    type="button"
+                    className="link-button"
+                    onClick={() => (inReviewFlow ? window.open('/about', '_blank', 'noopener') : navigate('about'))}
+                  >
+                    About
+                  </button>
+                  <a
+                    href="https://ai.google.dev/gemini-api/terms"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="footer-external-link"
+                  >
+                    Gemini API terms (opens elsewhere)
+                  </a>
+                </div>
+              </div>
+            </nav>
           </div>
-          <div className="footer-links">
-            <button
-              type="button"
-              className="link-button"
-              onClick={() => (inReviewFlow ? window.open('/help', '_blank', 'noopener') : navigate('doc'))}
-            >
-              Help hub
-            </button>
-            <button
-              type="button"
-              className="link-button"
-              onClick={() => (inReviewFlow ? window.open('/help/glossary', '_blank', 'noopener') : navigate('doc', 'glossary'))}
-            >
-              Glossary
-            </button>
-            <button
-              type="button"
-              className="link-button"
-              onClick={() => (inReviewFlow ? window.open('/how-it-works', '_blank', 'noopener') : navigate('technical'))}
-            >
-              How it works
-            </button>
-            <button
-              type="button"
-              className="link-button"
-              onClick={() => (inReviewFlow ? window.open('/about', '_blank', 'noopener') : navigate('about'))}
-            >
-              About
-            </button>
-            <button
-              type="button"
-              className="link-button"
-              onClick={() => (inReviewFlow ? window.open('/help/scope-and-privacy', '_blank', 'noopener') : navigate('doc', 'scope-and-privacy'))}
-            >
-              Privacy and scope
-            </button>
-            <a href="https://ai.google.dev/gemini-api/terms" target="_blank" rel="noreferrer">
-              Gemini API terms (opens elsewhere)
-            </a>
+
+          <div className="app-footer__bottom">
+            <span className="footer-bottom__left">
+              Pakistan → UAE mainland private-sector verification
+            </span>
+            <span className="footer-bottom__right">
+              Made with ❤️ in 🇵🇰 by{' '}
+              <a
+                href="https://github.com/abubakar-ahmed-dev"
+                target="_blank"
+                rel="noreferrer"
+                className="footer-author-link"
+              >
+                Abubakar
+              </a>
+            </span>
           </div>
         </div>
       </footer>
