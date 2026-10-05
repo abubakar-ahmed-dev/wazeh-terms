@@ -51,10 +51,12 @@ export function Samples({
   samples,
   onStart,
   busyCaseId,
+  onOpenHelp,
 }: {
   samples: SampleEntry[];
   onStart: (sampleCaseId: string) => void;
   busyCaseId: string | null;
+  onOpenHelp?: (slug: string) => void;
 }) {
   const [previewCase, setPreviewCase] = useState<string | null>(null);
 
@@ -64,7 +66,16 @@ export function Samples({
         <header style={{ marginBottom: '2rem' }}>
           <span className="eyebrow">Worked examples</span>
           <h1 tabIndex={-1}>Explore a fictional example</h1>
-          <p>{unit('smp.intro').body[0]}</p>
+          <p>
+            {unit('smp.intro').body[0]}{' '}
+            <button
+              type="button"
+              className="guide-link"
+              onClick={() => onOpenHelp?.('trying-samples')}
+            >
+              Read guide to trying samples →
+            </button>
+          </p>
         </header>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>

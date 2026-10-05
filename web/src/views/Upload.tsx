@@ -179,6 +179,15 @@ export function Upload({
         {error ? (
           <Notice kind="error" role="alert" title="Upload Notice">
             <p>{error}</p>
+            <p style={{ margin: '0.4rem 0 0', fontSize: '0.9rem' }}>
+              <button
+                type="button"
+                className="guide-link"
+                onClick={() => onOpenHelp?.('troubleshooting')}
+              >
+                Read troubleshooting guide →
+              </button>
+            </p>
           </Notice>
         ) : null}
 
@@ -217,7 +226,14 @@ export function Upload({
         <p className="upload-requirements">
           PDF only · up to {mb(maxBytesPerFile)} per file
           {maxTotalBytes ? ` · up to ${mb(maxTotalBytes)} combined` : ''} · up to {maxPagesPerPdf} pages · English ·
-          digital PDF with readable text (scans not reliably supported)
+          digital PDF with readable text (scans not reliably supported){' '}
+          <button
+            type="button"
+            className="guide-link"
+            onClick={() => onOpenHelp?.('uploading-documents')}
+          >
+            Requirements guide →
+          </button>
         </p>
 
         {exactlyOne ? (

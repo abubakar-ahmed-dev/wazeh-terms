@@ -1,6 +1,6 @@
 /**
- * Home (spec §4.1): promise → sample action → qualifiers, capabilities-aware.
- * Phase 12: Modern dark mode redesign with illustrative comparison preview and guided pipeline.
+ * Home (spec §4.1; P4 §2 rework): prominent sample CTA, illustrative example,
+ * connected 4-step workflow strip, and unified scope & limits panel.
  */
 import { Notice } from '../ui';
 
@@ -11,6 +11,7 @@ export function Home({
   onTrySample,
   onUploadClick,
   onRetryCapabilities,
+  onOpenHelp,
 }: {
   capabilityState: 'loading' | 'ready' | 'error';
   sampleModeEnabled: boolean | null;
@@ -18,6 +19,7 @@ export function Home({
   onTrySample: () => void;
   onUploadClick?: () => void;
   onRetryCapabilities: () => void;
+  onOpenHelp?: (slug: string) => void;
 }) {
   return (
     <div className="view">
@@ -39,32 +41,25 @@ export function Home({
                 <p>Please wait a moment.</p>
               </Notice>
             ) : capabilityState === 'ready' ? (
-              customUploadEnabled ? (
-                <>
-                  <button className="button" onClick={onUploadClick}>
-                    <span>Try with a fictional PDF</span>
-                    <span aria-hidden="true">→</span>
-                  </button>
-                  <button className="button button--secondary" onClick={onTrySample}>
-                    Try a sample review
-                  </button>
-                </>
-              ) : sampleModeEnabled ? (
+              sampleModeEnabled ? (
                 <>
                   <button className="button" onClick={onTrySample}>
                     <span>Try a sample review</span>
                     <span aria-hidden="true">→</span>
                   </button>
-                  <a
-                    className="button button--secondary"
-                    href="#how-it-works"
-                    onClick={(event) => {
-                      event.preventDefault();
-                      document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' });
-                    }}
-                  >
-                    See how it works
-                  </a>
+                  {customUploadEnabled ? (
+                    <button className="button button--secondary" onClick={onUploadClick}>
+                      Try with a fictional PDF
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      className="button button--secondary"
+                      onClick={() => onOpenHelp?.('getting-started')}
+                    >
+                      Read the short guide
+                    </button>
+                  )}
                 </>
               ) : (
                 <Notice kind="incomplete" role="status" title="Samples are not available right now.">
@@ -78,28 +73,40 @@ export function Home({
                     Try again
                   </button>
                 </p>
+                <p style={{ margin: '0.4rem 0 0', fontSize: '0.9rem' }}>
+                  <button
+                    type="button"
+                    className="guide-link"
+                    onClick={() => onOpenHelp?.('troubleshooting')}
+                  >
+                    Read troubleshooting guide →
+                  </button>
+                </p>
               </Notice>
             )}
           </div>
 
           <p className="hero__sub">
-            No account needed.
+            No account needed.{' '}
+            {customUploadEnabled ? (
+              <>Demo mode — try the review with a fictional PDF. Not for real job offers or contracts.</>
+            ) : (
+              <>Personal document upload is not available yet — this public demo works with fictional samples only.</>
+            )}{' '}
+            <button
+              type="button"
+              className="guide-link"
+              onClick={() => onOpenHelp?.('getting-started')}
+            >
+              First time? Read the short guide.
+            </button>
           </p>
-          {customUploadEnabled ? (
-            <p className="hero__sub">
-              Demo mode — try the review with a fictional PDF. Not for real job offers or contracts.
-            </p>
-          ) : (
-            <p className="hero__sub">
-              Personal document upload is not available yet — this public demo works with fictional samples only.
-            </p>
-          )}
 
-          {/* Interactive Offer vs Contract Preview Mockup */}
+          {/* Illustrative Example (P4 §2: Offer vs Contract comparison preview) */}
           <div className="hero-mockup" aria-label="Visual demonstration of offer versus contract comparison">
             <div className="hero-mockup__head">
-              <span><strong>Sample Case Demonstration</strong> · Gulf Horizon Facilities Services LLC</span>
-              <span className="chip chip--scenario">Salary Mismatch</span>
+              <span><strong>Illustrative example</strong> · Comparing offer and contract</span>
+              <span className="chip chip--scenario">Changed salary</span>
             </div>
             <div className="hero-mockup__grid">
               <div className="mockup-col mockup-col--offer">
@@ -112,86 +119,110 @@ export function Home({
               </div>
             </div>
             <div className="mockup-badge">
-              <span aria-hidden="true">⚠️</span>
               <span><strong>Different wording detected:</strong> Basic salary differs by AED 600.00 between offer and contract.</span>
             </div>
           </div>
         </section>
 
-        {/* 3-Step Guided Process Pipeline */}
-        <section id="how-it-works" className="stepper-section">
+        {/* 4-Step Connected Journey Stepper (P4 §2.1; HOME-2) */}
+        <section id="how-it-works" className="stepper-section" aria-labelledby="four-steps-heading">
           <div className="section-head">
-            <h2>How WazehTerms Works</h2>
-            <p>A deterministic, transparent review pipeline designed to protect workers before signing.</p>
+            <h2 id="four-steps-heading">The four steps</h2>
+            <p>How WazehTerms reads and compares documents before you sign.</p>
           </div>
 
-          <ol className="pipeline-grid">
-            <li className="pipeline-card">
-              <div className="pipeline-card__num" aria-hidden="true">1</div>
-              <h3>Choose a fictional sample or document.</h3>
-              <p>
-                Select from five realistic Pakistan-to-UAE cases: consistent terms, salary discrepancies, worker recruitment charges, or missing clauses.
-              </p>
+          <ol className="stepper-strip">
+            <li className="stepper-step">
+              <div className="stepper-step__head">
+                <div className="stepper-step__num" aria-hidden="true">1</div>
+                <h3>Choose documents</h3>
+              </div>
+              <p>Pick a fictional sample, or upload your own fictional PDFs (offer, contract, or both).</p>
+              <button
+                type="button"
+                className="guide-link"
+                onClick={() => onOpenHelp?.('trying-samples')}
+              >
+                Read sample guide →
+              </button>
             </li>
-            <li className="pipeline-card">
-              <div className="pipeline-card__num" aria-hidden="true">2</div>
-              <h3>Check the terms we extracted against the original pages.</h3>
-              <p>
-                Inspect verbatim passages and page citations for 33 material components across salary, dates, and benefits. Correct any misread value before analysis.
-              </p>
+
+            <li className="stepper-step">
+              <div className="stepper-step__head">
+                <div className="stepper-step__num" aria-hidden="true">2</div>
+                <h3>Read documents</h3>
+              </div>
+              <p>WazehTerms extracts the written terms from the pages, with original excerpts and page numbers.</p>
+              <button
+                type="button"
+                className="guide-link"
+                onClick={() => onOpenHelp?.('getting-started')}
+              >
+                Read workflow guide →
+              </button>
             </li>
-            <li className="pipeline-card">
-              <div className="pipeline-card__num" aria-hidden="true">3</div>
-              <h3>Read evidence-backed findings and questions.</h3>
-              <p>
-                Review side-by-side discrepancies, suggested questions for the recruiter or employer, and checked UAE MOHRE and Pakistan BEOE legal citations.
-              </p>
+
+            <li className="stepper-step">
+              <div className="stepper-step__head">
+                <div className="stepper-step__num" aria-hidden="true">3</div>
+                <h3>Verify terms</h3>
+              </div>
+              <p>You check each extracted value against the original pages across 12 groups, and correct anything wrong.</p>
+              <button
+                type="button"
+                className="guide-link"
+                onClick={() => onOpenHelp?.('checking-terms')}
+              >
+                Read checking guide →
+              </button>
+            </li>
+
+            <li className="stepper-step">
+              <div className="stepper-step__head">
+                <div className="stepper-step__num" aria-hidden="true">4</div>
+                <h3>Findings report</h3>
+              </div>
+              <p>Differences, missing terms, questions, and source-backed concerns, each supported by evidence.</p>
+              <button
+                type="button"
+                className="guide-link"
+                onClick={() => onOpenHelp?.('reading-findings')}
+              >
+                Read findings guide →
+              </button>
             </li>
           </ol>
         </section>
 
-        {/* 3 Core Trust Guarantees */}
-        <div className="features-grid">
-          <div className="feature-box">
-            <span className="feature-box__icon" aria-hidden="true">⚖️</span>
-            <h3>Deterministic Comparison</h3>
-            <p>
-              All salary, allowance, and date comparisons run in audited application code. Language models never invent numerical differences.
-            </p>
-          </div>
-          <div className="feature-box">
-            <span className="feature-box__icon" aria-hidden="true">📜</span>
-            <h3>Curated Official Rules</h3>
-            <p>
-              Rule claims cite exact verified pinpoints in UAE Federal Decree-Law No. 33 and Pakistan Emigration Rules, 1979.
-            </p>
-          </div>
-          <div className="feature-box">
-            <span className="feature-box__icon" aria-hidden="true">🔒</span>
-            <h3>Zero-Retention Privacy</h3>
-            <p>
-              Your review lives in temporary browser memory only. No worker accounts, no server databases, and no permanent document storage.
-            </p>
-          </div>
-        </div>
-
-        {/* Scope Boundaries */}
-        <div className="card">
-          <h2>What this does not check</h2>
-          <p>
-            WazehTerms does not verify employers, visas, or documents, and it does not give legal advice. A review
-            compares written terms and points to official sources — official help may still be needed. Processing uses
-            the Gemini API; see the privacy notice for what that means. Findings cite approved official sources only;
-            sources are listed with each concern.
-          </p>
-          <p>
-            <a href="https://console.cloud.google.com/terms/data-processing" target="_blank" rel="noreferrer">
-              Provider and privacy information (opens elsewhere)
-            </a>
-            {' · '}
-            <a href="https://www.sanity.io/docs" target="_blank" rel="noreferrer">
-              How sources are handled (opens elsewhere)
-            </a>
+        {/* Scope and Limits Boundaries (P4 §2 merged limits panel) */}
+        <div className="limits-card" aria-labelledby="limits-heading">
+          <h2 id="limits-heading">What this does not check</h2>
+          <ul>
+            <li>
+              <strong>Supported scope:</strong> Rule checks target one corridor: Pakistan to UAE mainland,
+              non-domestic private-sector employment.
+            </li>
+            <li>
+              <strong>No verification or legal advice:</strong> WazehTerms does not verify employers, visas, or
+              document authenticity, and does not provide legal advice.
+            </li>
+            <li>
+              <strong>No overall verdicts:</strong> It never issues a "safe", "compliant", or "clean" judgment —
+              the assessment remains yours.
+            </li>
+            <li>
+              <strong>Document limits:</strong> A single document cannot produce a comparison; unreadable pages
+              hide terms from every check.
+            </li>
+          </ul>
+          <p style={{ margin: '0.75rem 0 0' }}>
+            <button
+              type="button"
+              className="guide-link"
+              onClick={() => onOpenHelp?.('scope-and-privacy')}
+            >
+              Read the full scope and privacy guide →
+            </button>
           </p>
         </div>
       </div>
