@@ -1876,6 +1876,29 @@ select:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
 }
 .article-layout__main article li { margin-bottom: 0.4rem; }
 
+.article-figure {
+  margin: 1.5rem 0;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--surface-elevated);
+}
+.article-figure__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 480px;
+  object-fit: contain;
+  background: #000;
+}
+.article-figure__caption {
+  padding: 0.75rem 1rem;
+  font-size: 0.88rem;
+  color: var(--ink-secondary);
+  border-top: 1px solid var(--rule);
+  background: var(--surface);
+}
+
 .article-footer {
   margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--rule);
   display: flex; flex-direction: column; gap: 1.5rem;
@@ -2018,4 +2041,52 @@ select:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
   .help-card { transition: none; }
   .tech-article-item { transition: none; }
 }
+
+/* ── Print Styles (P10) ────────────────────────────────────────────── */
+@media print {
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  .app-header,
+  .workflow-bar,
+  .app-footer,
+  .article-layout__sidebar,
+  .button,
+  .link-button,
+  .dialog-overlay,
+  .nav-link,
+  .skip-link,
+  .guide-link {
+    display: none !important;
+  }
+
+  .article-layout {
+    display: block !important;
+  }
+
+  .article-layout__main {
+    max-width: 100% !important;
+  }
+
+  .card,
+  .finding,
+  .notice {
+    border: 1px solid #ccc !important;
+    background: #fff !important;
+    color: #000 !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+    margin-bottom: 1rem;
+  }
+
+  h1, h2, h3 {
+    color: #000 !important;
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+}
+
 

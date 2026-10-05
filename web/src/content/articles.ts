@@ -13,6 +13,12 @@ export type ArticleBlock =
       readonly type: 'table';
       readonly headers: readonly string[];
       readonly rows: readonly (readonly string[])[];
+    }
+  | {
+      readonly type: 'figure';
+      readonly src: string;
+      readonly alt: string;
+      readonly caption: string;
     };
 
 export interface ArticleSection {

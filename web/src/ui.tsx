@@ -349,6 +349,14 @@ function ArticleBlocks({ blocks }: { blocks: readonly ArticleBlock[] }) {
             </ul>
           );
         }
+        if (block.type === 'figure') {
+          return (
+            <figure key={index} className="article-figure">
+              <img src={block.src} alt={block.alt} className="article-figure__img" loading="lazy" />
+              <figcaption className="article-figure__caption">{block.caption}</figcaption>
+            </figure>
+          );
+        }
         return (
           <table key={index} className="article-table">
             <thead>
