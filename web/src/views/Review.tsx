@@ -1,10 +1,13 @@
 /**
- * Review (spec §4.5): 12 groups / all active components, three provenance
- * layers, per-kind correction editor, expiry warning, fields-first mobile with
- * a full-screen page panel and focus restoration.
- * Phase 12: Modern dark mode dual-pane workspace with refined visual hierarchy.
+ * Review (P4 §6 rework): navigator rail + single-group workspace + overlay
+ * document viewer. Drafts are hoisted to this component (R17/R18): opening
+ * help or switching groups never prompts and never loses an edit; Continue
+ * with a draft offers three explicit choices. Attention counts describe the
+ * ORIGINAL extraction (P4 §6.1; R22): a corrected field leaves the count and
+ * shows the ✎ chip. All contextual copy comes from content/guides; deep
+ * links open the in-panel detailed guide (R31).
  */
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { expiryLabel, formatValue, roleLabel, STATE_CHIP_CLASS, STATE_LABELS } from '../lib/format';
 import {
@@ -17,7 +20,18 @@ import {
   type IssuedExtraction,
   type NormalizedValue,
 } from '../lib/types';
-import { CorrectionQuote, EvidenceQuote, Notice } from '../ui';
+import { unit, groupTipId } from '../content/guides';
+import { ARTICLES } from '../content/articles';
+import {
+  ConfirmDialog,
+  EvidenceQuote,
+  HelpPanel,
+  ArticleBody,
+  Icon,
+  InfoTip,
+  EmptyMessage,
+  StepIntro,
+} from '../ui';
 
 interface ReviewProps {
   issued: IssuedExtraction;
@@ -29,7 +43,44 @@ interface ReviewProps {
   onReset: () => void;
 }
 
-const needsCheck = (field: ExtractedField): boolean => field.state === 'unclear' || field.state === 'unreadable';
+interface FieldEntry {
+  document: IssuedDocument;
+  field: ExtractedField;
+}
+
+type DraftState = ExtractedField['state'];
+
+interface Draft {
+  state: DraftState;
+  value: NormalizedValue | null;
+}
+
+/** Draft entry carries its own identity — instanceId may contain ':' (R-bug:
+ * round-tripping identity through the composite key truncated it, so saved
+ * corrections never matched their field). */
+interface DraftEntry extends Draft {
+  documentId: string;
+  fieldKey: string;
+  instanceId: string;
+}
+
+const needsCheckOriginal = (field: ExtractedField): boolean =>
+  field.state === 'unclear' || field.state === 'unreadable';
+
+const draftKey = (documentId: string, fieldKey: string, instanceId: string): string =>
+  `${documentId}:${fieldKey}:${instanceId}`;
+
+const MONEY_RE = /^\d+(\.\d+)?$/;
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+/** In-review guide link: opens the detailed guide in the help panel (R31). */
+function PanelLink({ label, section, onOpen }: { label: string; section?: string; onOpen: (section?: string) => void }) {
+  return (
+    <button type="button" className="guide-link" onClick={() => onOpen(section)}>
+      {label}
+    </button>
+  );
+}
 
 export function Review({ issued, previewUrls, corrections, onCorrect, onUndoCorrection, onContinue, onReset }: ReviewProps) {
   const [expiry, setExpiry] = useState(() => expiryLabel(issued.expiresAt));
@@ -39,364 +90,646 @@ export function Review({ issued, previewUrls, corrections, onCorrect, onUndoCorr
     return () => window.clearInterval(timer);
   }, [issued.expiresAt]);
 
-  const needsCount = issued.documents.reduce(
-    (count, document) => count + document.fields.filter(needsCheck).length,
-    0,
+  const [activeGroupKey, setActiveGroupKey] = useState<string>(() => {
+    const firstWithFields = FIELD_GROUPS.find((group) =>
+      issued.documents.some((document) =>
+        document.fields.some((field) => FIELD_GROUP_OF[field.fieldKey] === group.key),
+      ),
+    );
+    return firstWithFields?.key ?? FIELD_GROUPS[0]?.key ?? 'employer';
+  });
+  const [needsOnly, setNeedsOnly] = useState(false);
+
+  // Hoisted correction drafts (R17/R18)
+  const [drafts, setDrafts] = useState<Record<string, DraftEntry>>({});
+
+  // Overlays
+  const [helpOpen, setHelpOpen] = useState(false);
+  const [helpSection, setHelpSection] = useState<string | undefined>(undefined);
+  const [continueDialogOpen, setContinueDialogOpen] = useState(false);
+  const [viewer, setViewer] = useState<{ role: 'offer' | 'contract'; page: number } | null>(null);
+  const viewerTrigger = useRef<HTMLElement | null>(null);
+
+  const correctionFor = (documentId: string, fieldKey: string, instanceId: string): CorrectionDelta | undefined =>
+    corrections.find(
+      (delta) =>
+        delta.documentId === documentId && delta.fieldKey === fieldKey && delta.instanceId === instanceId,
+    );
+
+  const groupEntries = useMemo(
+    () =>
+      FIELD_GROUPS.map((group, index) => {
+        const fields: FieldEntry[] = issued.documents.flatMap((document) =>
+          document.fields
+            .filter((field) => FIELD_GROUP_OF[field.fieldKey] === group.key)
+            .map((field) => ({ document, field })),
+        );
+        const needs = fields.filter(
+          ({ field, document }) =>
+            needsCheckOriginal(field) && !correctionFor(document.documentId, field.fieldKey, field.instanceId),
+        ).length;
+        return { group, number: index + 1, fields, needs };
+      }),
+    [issued, corrections],
   );
-  const unreadablePages = issued.documents.flatMap((document) =>
-    document.unreadablePages.map((page) => `${roleLabel(document.role)} page ${page}`),
-  );
+
+  const totalNeeds = groupEntries.reduce((sum, entry) => sum + entry.needs, 0);
+  const visibleGroups = needsOnly ? groupEntries.filter((entry) => entry.needs > 0) : groupEntries;
+  const activeEntry = groupEntries.find((entry) => entry.group.key === activeGroupKey) ?? groupEntries[0];
+
+  const draftKeys = Object.keys(drafts);
+  const draftGroupLabel = (key: string): string => {
+    const fieldKey = key.split(':')[1] ?? '';
+    const groupKey = fieldKey ? FIELD_GROUP_OF[fieldKey] : undefined;
+    return FIELD_GROUPS.find((group) => group.key === groupKey)?.heading ?? fieldKey;
+  };
+
+  const saveDraft = (entry: DraftEntry) => {
+    onCorrect({
+      documentId: entry.documentId,
+      fieldKey: entry.fieldKey,
+      instanceId: entry.instanceId,
+      state: entry.state,
+      value: entry.state === 'present' ? entry.value : null,
+    });
+    setDrafts((existing) => {
+      const next = { ...existing };
+      delete next[`${entry.documentId}:${entry.fieldKey}:${entry.instanceId}`];
+      return next;
+    });
+  };
+
+  const dropDraft = (key: string) => {
+    setDrafts((existing) => {
+      const next = { ...existing };
+      delete next[key];
+      return next;
+    });
+  };
+
+  const openHelp = (sectionId?: string) => {
+    setHelpSection(sectionId);
+    setHelpOpen(true);
+  };
+
+  const openViewer = (role: 'offer' | 'contract', page: number | null, trigger: HTMLElement | null) => {
+    viewerTrigger.current = trigger;
+    setViewer({ role, page: page ?? 1 });
+  };
+
+  const closeViewer = () => {
+    setViewer(null);
+    window.setTimeout(() => viewerTrigger.current?.focus(), 0);
+  };
+
+  const handleContinue = () => {
+    if (draftKeys.length > 0) {
+      setContinueDialogOpen(true);
+      return;
+    }
+    onContinue();
+  };
 
   return (
     <div className="view">
       <div className="view__inner view__inner--wide">
         <header className="review-header-bar">
           <div>
-            <span className="eyebrow">Step 3 of 4: Document Verification</span>
+            <span className="eyebrow">Step 3 of 4 · Verify terms</span>
             <h1 tabIndex={-1}>Check what we read</h1>
-            <p style={{ margin: 0 }}>
-              Compare each value with the original page. Your changes remain labelled as yours.
-            </p>
+            <p style={{ margin: 0 }}>Compare each value with the original page. Your changes stay labelled as yours.</p>
           </div>
-
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
             <span className="chip" role="status">
-              <span aria-hidden="true">⏱️</span> {expiry}
+              <Icon name="clock" size={14} /> {expiry}
+              <InfoTip label="About the review window" unit={unit('rev.tip.expiry')} />
             </span>
-            {needsCount > 0 ? (
+            {totalNeeds > 0 ? (
               <span className="needs-check">
-                {needsCount} field{needsCount === 1 ? '' : 's'} need your check
+                {totalNeeds} field{totalNeeds === 1 ? '' : 's'}{' '}
+                {totalNeeds === 1 ? 'needs' : 'need'} your check
+                <InfoTip label="What need your check counts" unit={unit('rev.tip.needsCheck')} />
               </span>
             ) : (
               <span className="chip chip--state-found">
-                <span aria-hidden="true">✓</span> Clean extraction
+                <Icon name="check" size={14} /> Clean extraction
               </span>
             )}
+            {draftKeys.length > 0 ? (
+              <button
+                type="button"
+                className="chip chip--draft"
+                title={unit('rev.tip.draft').title}
+                onClick={() => {
+                  const fieldKey = draftKeys[0]?.split(':')[1] ?? '';
+                  const groupKey = fieldKey ? FIELD_GROUP_OF[fieldKey] : undefined;
+                  if (groupKey) setActiveGroupKey(groupKey);
+                }}
+              >
+                ✎ {draftKeys.length} unsaved edit{draftKeys.length === 1 ? '' : 's'} ·{' '}
+                {draftGroupLabel(draftKeys[0] ?? '')}
+              </button>
+            ) : null}
           </div>
         </header>
 
         {expired ? (
-          <Notice kind="error" role="alert" title="This review can no longer be continued.">
+          <div className="notice notice--error" role="alert">
+            <span className="notice__title">This review can no longer be continued.</span>
             <p>The time window for this extraction ended. Start again to get a fresh review.</p>
-            <button className="button" onClick={onReset}>
+            <button type="button" className="button" onClick={onReset}>
               Start over
             </button>
-          </Notice>
+          </div>
         ) : (
           <>
-            {needsCount > 0 ? (
-              <Notice kind="incomplete" role="status" title={`${needsCount} field${needsCount === 1 ? '' : 's'} need your check`}>
-                <p>
-                  Unclear or unreadable values are marked below; correcting them is optional but helps the comparison engine produce accurate findings.
-                </p>
-              </Notice>
-            ) : null}
-            {unreadablePages.length > 0 ? (
-              <Notice kind="incomplete" role="status" title="Some pages could not be read.">
-                <p>
-                  {unreadablePages.join(', ')} — fields on those pages may be incomplete.
-                </p>
-              </Notice>
-            ) : null}
+            <section className="review-guidance" aria-label="Review workspace guidance">
+              <div className="review-guidance__header">
+                <div className="review-guidance__title-group">
+                  <span className="review-guidance__badge">
+                    <Icon name="info" size={14} /> Review Guidance
+                  </span>
+                  <span className="review-guidance__hint">
+                    Check extracted terms against original document pages before continuing.
+                  </span>
+                </div>
+                {previewUrls.length > 0 ? (
+                  <div className="review-guidance__actions">
+                    {previewUrls.map((entry) => (
+                      <button
+                        key={entry.role}
+                        type="button"
+                        className="button button--secondary"
+                        onClick={(event) => openViewer(entry.role, null, event.currentTarget)}
+                      >
+                        <Icon name="doc" size={13} />
+                        <span>Open {roleLabel(entry.role).toLowerCase()} document</span>
+                      </button>
+                    ))}
+                  </div>
+                ) : null}
+              </div>
 
-            <ReviewBody
-              issued={issued}
-              previewUrls={previewUrls}
-              corrections={corrections}
-              onCorrect={onCorrect}
-              onUndoCorrection={onUndoCorrection}
-            />
+              <div className="review-guidance__grid">
+                <StepIntro title={unit('rev.intro').title}>
+                  {unit('rev.intro').body.map((paragraph) => (
+                    <p key={paragraph.slice(0, 32)}>{paragraph}</p>
+                  ))}
+                  {unit('rev.intro').links?.map(([label, href]) => (
+                    <PanelLink
+                      key={href}
+                      label={label}
+                      section={href.includes('#') ? href.split('#')[1] : undefined}
+                      onOpen={openHelp}
+                    />
+                  ))}
+                </StepIntro>
 
-            <div style={{ marginTop: '2.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem' }}>
-              <button className="button button--full" onClick={onContinue} style={{ maxWidth: '28rem' }}>
-                <span>Continue to findings</span>
-                <span aria-hidden="true">→</span>
-              </button>
-              <button className="link-button" onClick={onReset}>
-                Start over with a different document
-              </button>
+                <StepIntro title="What the chips mean">
+                  <div className="legend">
+                    {unit('rev.legend.states').body.map((line) => (
+                      <p key={line.slice(0, 24)}>{line}</p>
+                    ))}
+                    <PanelLink label="Field states in full" section="field-states" onOpen={openHelp} />
+                    <p className="legend__sub">{unit('rev.legend.evidence').body.join(' ')}</p>
+                    <PanelLink label="Evidence quality in full" section="evidence-quality" onOpen={openHelp} />
+                  </div>
+                </StepIntro>
+              </div>
+            </section>
+
+            <div className="review-layout">
+              <nav className="group-nav" aria-label="Field groups">
+                <div className="group-nav__toggle" role="group" aria-label="Group filter">
+                  <button
+                    type="button"
+                    className={`button ${!needsOnly ? 'button--secondary' : 'button--ghost'}`}
+                    aria-pressed={!needsOnly}
+                    onClick={() => setNeedsOnly(false)}
+                  >
+                    All groups
+                  </button>
+                  <button
+                    type="button"
+                    className={`button ${needsOnly ? 'button--secondary' : 'button--ghost'}`}
+                    aria-pressed={needsOnly}
+                    onClick={() => setNeedsOnly(true)}
+                    disabled={totalNeeds === 0}
+                  >
+                    Needs attention ({totalNeeds})
+                  </button>
+                </div>
+                <ol className="group-nav__list">
+                  {visibleGroups.map((entry) => (
+                    <li key={entry.group.key}>
+                      <button
+                        type="button"
+                        className={`group-nav__item ${entry.group.key === activeGroupKey ? 'group-nav__item--active' : ''}`}
+                        aria-current={entry.group.key === activeGroupKey || undefined}
+                        onClick={() => setActiveGroupKey(entry.group.key)}
+                      >
+                        <span className="group-nav__num">{entry.number}</span>
+                        <span className="group-nav__name">{entry.group.heading}</span>
+                        {entry.needs > 0 ? (
+                          <span className="needs-check">{entry.needs}</span>
+                        ) : (
+                          <span className="chip">{entry.fields.length}</span>
+                        )}
+                      </button>
+                    </li>
+                  ))}
+                  {visibleGroups.length === 0 ? <li className="group-nav__empty">No groups need attention.</li> : null}
+                </ol>
+              </nav>
+
+              <div className="review-workspace">
+                {activeEntry ? (
+                  <>
+                    <div className="review-workspace__head">
+                      <h2>
+                        Group {activeEntry.number} of {FIELD_GROUPS.length} — {activeEntry.group.heading}
+                      </h2>
+                      <InfoTip
+                        label={`About ${activeEntry.group.heading}`}
+                        unit={unit(groupTipId(activeEntry.group.key))}
+                      />
+                      <PanelLink
+                        label="Detailed guide"
+                        section={groupAnchor(activeEntry.group.key)}
+                        onOpen={openHelp}
+                      />
+                    </div>
+                    {activeEntry.fields.length === 0 ? (
+                      <EmptyMessage message={unit('rev.empty.absent').body[0] ?? ''} />
+                    ) : (
+                      activeEntry.fields.map(({ document, field }, index) => {
+                        const key = draftKey(document.documentId, field.fieldKey, field.instanceId);
+                        return (
+                          <FieldCard
+                            key={`${document.documentId}:${field.instanceId}`}
+                            number={`${activeEntry.number}.${index + 1}`}
+                            field={field}
+                            document={document}
+                            corrected={correctionFor(document.documentId, field.fieldKey, field.instanceId)}
+                            draft={drafts[key]}
+                            onDraft={(draft) =>
+                              setDrafts((existing) => ({
+                                ...existing,
+                                [key]: { ...draft, documentId: document.documentId, fieldKey: field.fieldKey, instanceId: field.instanceId },
+                              }))
+                            }
+                            onDraftCancel={() => dropDraft(key)}
+                            onSaveDraft={(draft) => saveDraft({ ...draft, documentId: document.documentId, fieldKey: field.fieldKey, instanceId: field.instanceId })}
+                            onUndo={() => onUndoCorrection(key)}
+                            onOpenPage={(page, trigger) => openViewer(document.role, page, trigger)}
+                          />
+                        );
+                      })
+                    )}
+                  </>
+                ) : null}
+
+                <div
+                  style={{
+                    marginTop: '2rem',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '0.75rem',
+                  }}
+                >
+                  <button
+                    type="button"
+                    className="button button--full"
+                    onClick={handleContinue}
+                    style={{ maxWidth: '28rem' }}
+                  >
+                    <span>Continue to findings</span>
+                    <span aria-hidden="true">→</span>
+                  </button>
+                  <button type="button" className="link-button" onClick={onReset}>
+                    Start over with a different document
+                  </button>
+                </div>
+              </div>
             </div>
           </>
         )}
       </div>
-    </div>
-  );
-}
 
-function ReviewBody({
-  issued,
-  previewUrls,
-  corrections,
-  onCorrect,
-  onUndoCorrection,
-}: {
-  issued: IssuedExtraction;
-  previewUrls: ReadonlyArray<{ role: 'offer' | 'contract'; url: string }>;
-  corrections: ReadonlyArray<CorrectionDelta>;
-  onCorrect: (delta: CorrectionDelta) => void;
-  onUndoCorrection: (key: string) => void;
-}) {
-  const [activeRole, setActiveRole] = useState<'offer' | 'contract'>(previewUrls[0]?.role ?? 'offer');
-  const [pageNumber, setPageNumber] = useState(1);
-  const [paneOpen, setPaneOpen] = useState(false);
-  const paneTrigger = useRef<HTMLButtonElement | null>(null);
-  const paneClose = useRef<HTMLButtonElement | null>(null);
-
-  const openPage = (page: number) => {
-    setPageNumber(page);
-    setPaneOpen(true);
-  };
-
-  const closePane = () => {
-    setPaneOpen(false);
-    window.setTimeout(() => paneTrigger.current?.focus(), 0);
-  };
-
-  useEffect(() => {
-    if (paneOpen) paneClose.current?.focus();
-  }, [paneOpen]);
-
-  const preview = previewUrls.find((entry) => entry.role === activeRole);
-  const urlWithPage = preview ? `${preview.url}#page=${pageNumber}` : '';
-
-  return (
-    <div className="review-layout">
-      {/* Left Pane: Sticky Document Viewer */}
-      <div className="doc-pane" hidden={!paneOpen}>
-        <div className="doc-pane__toolbar">
-          <div style={{ display: 'flex', gap: '0.4rem' }}>
-            {previewUrls.map((entry) => (
-              <button
-                key={entry.role}
-                className={`button ${activeRole === entry.role ? 'button--secondary' : 'button--ghost'}`}
-                style={{ padding: '0.35rem 0.8rem', minHeight: '38px', fontSize: '0.88rem' }}
-                aria-pressed={activeRole === entry.role}
-                onClick={() => {
-                  setActiveRole(entry.role);
-                  setPageNumber(1);
-                }}
-              >
-                {roleLabel(entry.role)}
-              </button>
-            ))}
-          </div>
-
-          <span className="chip" style={{ marginLeft: 'auto' }}>Page {pageNumber}</span>
-
-          <button className="link-button" onClick={closePane} ref={paneClose} style={{ fontSize: '0.85rem' }}>
-            Close viewer
-          </button>
-        </div>
-        {urlWithPage ? (
-          <iframe
-            title={`${roleLabel(activeRole)} document, page ${pageNumber}`}
-            src={urlWithPage}
-          />
-        ) : null}
-      </div>
-
-      {!paneOpen ? (
-        <div className="doc-pane" style={{ textAlign: 'center', padding: '2rem 1.5rem' }}>
-          <span style={{ fontSize: '2rem', display: 'block', marginBottom: '0.5rem' }} aria-hidden="true">📄</span>
-          <h3 style={{ margin: '0 0 0.5rem', color: 'var(--ink)' }}>Original Document View</h3>
-          <p style={{ fontSize: '0.92rem', marginBottom: '1.25rem' }}>
-            Original wording lives one click away: click any field's “View page” control, or open a document below.
-          </p>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-            {previewUrls.map((entry) => (
-              <button
-                key={entry.role}
-                ref={entry.role === previewUrls[0]?.role ? paneTrigger : undefined}
-                className="button button--secondary"
-                onClick={() => {
-                  setActiveRole(entry.role);
-                  setPaneOpen(true);
-                }}
-              >
-                View {roleLabel(entry.role).toLowerCase()} document
-              </button>
-            ))}
-          </div>
-        </div>
-      ) : null}
-
-      {/* Right Pane: Extracted Fields by Group */}
-      <div className="review-layout__fields">
-        {FIELD_GROUPS.map((group, index) => {
-          const groupFields = issued.documents.flatMap((document) =>
-            document.fields
-              .filter((field) => FIELD_GROUP_OF[field.fieldKey] === group.key)
-              .map((field) => ({ document, field })),
-          );
-          if (groupFields.length === 0) return null;
-          const groupNeeds = groupFields.filter(({ field }) => needsCheck(field)).length;
-          return (
-            <details key={group.key} className="group" open={index === 0}>
-              <summary className="group__summary">
-                <span>
-                  <strong>{group.heading}</strong>{' '}
-                  <span className="sr-only">— {groupFields.length} fields</span>
-                </span>
-                {groupNeeds > 0 ? (
-                  <span className="needs-check">{groupNeeds} need your check</span>
-                ) : (
-                  <span className="chip">{groupFields.length}</span>
-                )}
-              </summary>
-              {groupFields.map(({ document, field }) => (
-                <FieldCard
-                  key={`${document.documentId}:${field.instanceId}`}
-                  field={field}
-                  document={document}
-                  correctedKey={corrections.find(
-                    (delta) =>
-                      delta.documentId === document.documentId &&
-                      delta.fieldKey === field.fieldKey &&
-                      delta.instanceId === field.instanceId,
-                  )}
-                  onViewPage={openPage}
-                  onCorrect={onCorrect}
-                  onUndoCorrection={onUndoCorrection}
-                />
+      {viewer ? (
+        <div className="doc-viewer" role="dialog" aria-modal={false} aria-label="Original document">
+          <div className="doc-viewer__toolbar">
+            <div style={{ display: 'flex', gap: '0.4rem' }}>
+              {previewUrls.map((entry) => (
+                <button
+                  key={entry.role}
+                  type="button"
+                  className={`button ${viewer.role === entry.role ? 'button--secondary' : 'button--ghost'}`}
+                  aria-pressed={viewer.role === entry.role}
+                  onClick={() => setViewer({ role: entry.role, page: 1 })}
+                >
+                  {roleLabel(entry.role)}
+                </button>
               ))}
-            </details>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-function FieldCard({
-  field,
-  document,
-  correctedKey,
-  onViewPage,
-  onCorrect,
-  onUndoCorrection,
-}: {
-  field: ExtractedField;
-  document: IssuedDocument;
-  correctedKey?: CorrectionDelta;
-  onViewPage: (page: number) => void;
-  onCorrect: (delta: CorrectionDelta) => void;
-  onUndoCorrection: (key: string) => void;
-}) {
-  const [editing, setEditing] = useState(false);
-  const firstPage = field.evidence[0]?.page;
-  const label = FIELD_LABELS[field.fieldKey] ?? field.fieldKey;
-
-  return (
-    <div className="fieldcard">
-      <div className="fieldcard__head">
-        <span className="fieldcard__name">
-          {label}
-          {field.instanceId !== `${field.fieldKey}:0` ? ` (${field.instanceId.split(':')[1] ?? ''})` : ''}
-        </span>
-        <span className={STATE_CHIP_CLASS[field.state]}>{STATE_LABELS[field.state]}</span>
-      </div>
-
-      <div style={{ marginBottom: '0.4rem' }}>
-        <span className={`chip ${document.role === 'offer' ? 'chip--offer' : 'chip--contract'}`}>
-          {roleLabel(document.role)}
-        </span>
-      </div>
-
-      {field.rawText ? (
-        <p className="typed-value">
-          <strong>Original wording: </strong> {field.rawText}
-        </p>
+            </div>
+            <span className="chip" style={{ marginLeft: 'auto' }}>
+              Page {viewer.page}
+            </span>
+            <button type="button" className="link-button" autoFocus onClick={closeViewer} style={{ fontSize: '0.85rem' }}>
+              Close viewer
+            </button>
+          </div>
+          <iframe
+            title={`${roleLabel(viewer.role)} document, page ${viewer.page}`}
+            src={`${previewUrls.find((entry) => entry.role === viewer.role)?.url ?? ''}#page=${viewer.page}`}
+          />
+        </div>
       ) : null}
 
-      {field.value && field.state === 'present' ? (
-        <p className="typed-value">
-          <strong>What we read: </strong> {formatValue(field.value)}
-        </p>
-      ) : null}
+      <HelpPanel open={helpOpen} title="Checking terms — detailed guide" onClose={() => setHelpOpen(false)}>
+        <ArticleBody article={ARTICLES['checking-terms'] ?? ARTICLES['reading-findings']!} focusSection={helpSection} />
+      </HelpPanel>
 
-      {correctedKey ? (
-        <CorrectionQuote>
-          {correctedKey.value ? formatValue(correctedKey.value) : STATE_LABELS[correctedKey.state]}{' '}
-          <button
-            className="link-button"
-            onClick={() => onUndoCorrection(`${correctedKey.documentId}:${correctedKey.fieldKey}:${correctedKey.instanceId}`)}
-          >
-            Remove correction
-          </button>
-        </CorrectionQuote>
-      ) : null}
-
-      {field.evidence.map((evidence) => (
-        <EvidenceQuote key={`${evidence.documentId}:${evidence.page}:${evidence.quote.slice(0, 12)}`} evidence={evidence} />
-      ))}
-
-      {field.qualityNotes.length > 0 ? (
-        <p className="evidence__label" style={{ color: 'var(--incomplete-ink)' }}>
-          Notes: {field.qualityNotes.join(', ')}
-        </p>
-      ) : null}
-
-      <div className="doc-pane__toolbar" style={{ marginTop: '0.75rem' }}>
-        {firstPage ? (
-          <button className="link-button" onClick={() => onViewPage(firstPage)}>
-            <span aria-hidden="true">🔍</span> View page {firstPage}
-          </button>
-        ) : null}
-        {!correctedKey && field.state !== 'unreadable' ? (
-          <button className="link-button" aria-expanded={editing} onClick={() => setEditing(!editing)}>
-            {editing ? 'Close editor' : 'Correct value'}
-          </button>
-        ) : null}
-      </div>
-
-      {editing ? (
-        <CorrectionEditor
-          field={field}
-          documentId={document.documentId}
-          onCancel={() => setEditing(false)}
-          onSave={(delta) => {
-            onCorrect(delta);
-            setEditing(false);
-          }}
+      {continueDialogOpen ? (
+        <ConfirmDialog
+          title={unit('dialog.continueDraft').title}
+          body={`${unit('dialog.continueDraft').body[0]} (${draftKeys.length} unsaved edit${draftKeys.length === 1 ? '' : 's'})`}
+          safeIndex={0}
+          actions={[
+            { label: 'Keep editing', kind: 'primary', onChoose: () => setContinueDialogOpen(false) },
+            {
+              label: 'Save correction and continue',
+              kind: 'secondary',
+              onChoose: () => {
+                for (const key of draftKeys) {
+                  const draft = drafts[key];
+                  if (draft) saveDraft(draft);
+                }
+                setContinueDialogOpen(false);
+                onContinue();
+              },
+            },
+            {
+              label: 'Continue without saving',
+              kind: 'danger',
+              onChoose: () => {
+                for (const key of draftKeys) dropDraft(key);
+                setContinueDialogOpen(false);
+                onContinue();
+              },
+            },
+          ]}
         />
       ) : null}
     </div>
   );
 }
 
-function CorrectionEditor({
-  field,
-  documentId,
-  onSave,
-  onCancel,
-}: {
+/** U4 anchor id for a group key (articles.ts section ids). */
+function groupAnchor(groupKey: string): string {
+  const map: Record<string, string> = {
+    employer: 'group-employer',
+    occupation: 'group-occupation',
+    location: 'group-location',
+    pay: 'group-pay',
+    term: 'group-term',
+    probation: 'group-probation',
+    working_time: 'group-working-time',
+    ending_terms: 'group-ending-terms',
+    deductions: 'group-deductions',
+    recruitment_and_travel_costs: 'group-recruitment-travel',
+    benefits: 'group-benefits',
+    document_details: 'group-document-details',
+  };
+  return map[groupKey] ?? 'the-workspace';
+}
+
+interface FieldCardProps {
+  number: string;
   field: ExtractedField;
-  documentId: string;
-  onSave: (delta: CorrectionDelta) => void;
+  document: IssuedDocument;
+  corrected?: CorrectionDelta;
+  draft?: Draft;
+  onDraft: (draft: Draft) => void;
+  onDraftCancel: () => void;
+  onSaveDraft: (draft: Draft) => void;
+  onUndo: () => void;
+  onOpenPage: (page: number, trigger: HTMLElement | null) => void;
+}
+
+function FieldCard({
+  number,
+  field,
+  document,
+  corrected,
+  draft,
+  onDraft,
+  onDraftCancel,
+  onSaveDraft,
+  onUndo,
+  onOpenPage,
+}: FieldCardProps) {
+  const [editing, setEditing] = useState(false);
+  const label = FIELD_LABELS[field.fieldKey] ?? field.fieldKey;
+  const firstPage = field.evidence[0]?.page;
+
+  if (corrected) {
+    return (
+      <article className="fieldcard fieldcard--corrected">
+        <div className="fieldcard__head">
+          <div className="fieldcard__title-group">
+            <span className="fieldcard__num">{number}</span>
+            <span className="fieldcard__name">{label}</span>
+          </div>
+          <div className="fieldcard__badge-group">
+            <span className="chip chip--corrected">✎ Corrected by you</span>
+            <span className={`chip ${document.role === 'offer' ? 'chip--offer' : 'chip--contract'}`}>
+              {roleLabel(document.role)}
+            </span>
+          </div>
+        </div>
+        <div className="fieldcard__body">
+          <p className="typed-value typed-value--effective">
+            <strong>Your correction — used for analysis: </strong>
+            {corrected.value ? formatValue(corrected.value) : STATE_LABELS[corrected.state]}
+          </p>
+          <div className="fieldcard__original">
+            <p className="typed-value">
+              <strong>Read as: </strong>
+              {field.value && field.state === 'present' ? formatValue(field.value) : '—'}
+            </p>
+            {field.rawText ? (
+              <p className="typed-value">
+                <strong>As written: </strong>
+                {field.rawText}
+              </p>
+            ) : null}
+            {field.evidence.map((evidence) => (
+              <EvidenceQuote key={`${evidence.page}:${evidence.quote.slice(0, 12)}`} evidence={evidence} />
+            ))}
+          </div>
+          <div className="doc-pane__toolbar">
+            <button type="button" className="link-button" onClick={onUndo}>
+              Remove correction
+            </button>
+          </div>
+        </div>
+      </article>
+    );
+  }
+
+  const editorOpen = editing || draft !== undefined;
+  const isAbsent = field.state === 'absent' && !editorOpen;
+
+  return (
+    <article className={`fieldcard ${isAbsent ? 'fieldcard--absent' : ''}`}>
+      <div className="fieldcard__head">
+        <div className="fieldcard__title-group">
+          <span className="fieldcard__num">{number}</span>
+          <span className="fieldcard__name">{label}</span>
+        </div>
+        <div className="fieldcard__badge-group">
+          <span className={STATE_CHIP_CLASS[field.state]}>{STATE_LABELS[field.state]}</span>
+          <span className={`chip ${document.role === 'offer' ? 'chip--offer' : 'chip--contract'}`}>
+            {roleLabel(document.role)}
+          </span>
+        </div>
+      </div>
+
+      <div className="fieldcard__body">
+        {isAbsent ? (
+          <>
+            <p className="fieldcard__hint">{unit('rev.empty.absentCard').body[0] ?? ''}</p>
+            <div className="doc-pane__toolbar">
+              {firstPage ? (
+                <button
+                  type="button"
+                  className="link-button"
+                  onClick={(event) => onOpenPage(firstPage, event.currentTarget)}
+                >
+                  <Icon name="search" size={14} /> View page {firstPage}
+                </button>
+              ) : null}
+              <button type="button" className="link-button" onClick={() => setEditing(true)}>
+                Correct value
+              </button>
+            </div>
+          </>
+        ) : (
+          <>
+            {field.rawText ? (
+              <p className="typed-value">
+                <strong>As written: </strong>
+                {field.rawText}
+              </p>
+            ) : null}
+            {field.value && field.state === 'present' ? (
+              <p className="typed-value typed-value--primary">
+                <strong>Read as: </strong>
+                {formatValue(field.value)}
+              </p>
+            ) : null}
+            {field.state === 'unreadable' ? <p className="fieldcard__hint">{unit('rev.unreadableNote').body[0] ?? ''}</p> : null}
+            {field.evidence.map((evidence) => (
+              <EvidenceQuote key={`${evidence.page}:${evidence.quote.slice(0, 12)}`} evidence={evidence} />
+            ))}
+            {field.qualityNotes.length > 0 ? (
+              <p className="evidence__label" style={{ color: 'var(--incomplete-ink)' }}>
+                Notes: {field.qualityNotes.join(', ')}
+              </p>
+            ) : null}
+            <div className="doc-pane__toolbar">
+              {firstPage ? (
+                <button type="button" className="link-button" onClick={(event) => onOpenPage(firstPage, event.currentTarget)}>
+                  <Icon name="search" size={14} /> View page {firstPage}
+                </button>
+              ) : null}
+              {field.state !== 'unreadable' ? (
+                <button
+                  type="button"
+                  className="link-button"
+                  aria-expanded={editorOpen}
+                  onClick={() => {
+                    if (draft !== undefined && editing) {
+                      onDraftCancel();
+                    }
+                    setEditing(!editing);
+                  }}
+                >
+                  {editorOpen ? 'Close editor' : 'Correct value'}
+                </button>
+              ) : null}
+            </div>
+            {editorOpen ? (
+              <CorrectionEditor
+                field={field}
+                draft={draft}
+                onDraft={onDraft}
+                onCancel={() => {
+                  onDraftCancel();
+                  setEditing(false);
+                }}
+                onSave={(saved) => {
+                  onSaveDraft(saved);
+                  setEditing(false);
+                }}
+              />
+            ) : null}
+          </>
+        )}
+      </div>
+    </article>
+  );
+}
+
+interface CorrectionEditorProps {
+  field: ExtractedField;
+  draft?: Draft;
+  onDraft: (draft: Draft) => void;
   onCancel: () => void;
-}) {
-  const [state, setState] = useState<ExtractedField['state']>(field.state === 'present' ? 'present' : 'present');
-  const [value, setValue] = useState<NormalizedValue | null>(field.value);
+  onSave: (draft: Draft) => void;
+}
+
+function CorrectionEditor({ field, draft, onDraft, onCancel, onSave }: CorrectionEditorProps) {
+  const [state, setState] = useState<DraftState>(
+    draft?.state ?? (field.state === 'absent' ? 'absent' : 'present'),
+  );
+  const [value, setValue] = useState<NormalizedValue | null>(draft?.value ?? field.value);
+  const [error, setError] = useState<string | null>(null);
+
+  const changeState = (nextState: DraftState) => {
+    setState(nextState);
+    onDraft({ state: nextState, value: nextState === 'present' ? value : null });
+  };
+
+  const changeValue = (nextValue: NormalizedValue | null) => {
+    setValue(nextValue);
+    onDraft({ state, value: nextValue });
+  };
 
   const save = () => {
-    onSave({
-      documentId,
-      fieldKey: field.fieldKey,
-      instanceId: field.instanceId,
-      state,
-      value: state === 'present' ? value : null,
-    });
+    if (state === 'present') {
+      if (!value) {
+        setError('This field had no typed value to edit — choose a different corrected state.');
+        return;
+      }
+      if (value.kind === 'money' && !MONEY_RE.test(value.amount)) {
+        setError('Enter the amount as a decimal number, for example 2500.00.');
+        return;
+      }
+      if (value.kind === 'date' && !DATE_RE.test(value.date)) {
+        setError('Enter the date as YYYY-MM-DD.');
+        return;
+      }
+    }
+    setError(null);
+    onSave({ state, value: state === 'present' ? value : null });
   };
 
   return (
     <form
-      style={{
-        marginTop: '0.85rem',
-        padding: '1rem',
-        background: 'var(--surface-elevated)',
-        borderRadius: 'var(--radius-sm)',
-        border: '1px solid var(--rule)',
-      }}
+      className="correction-editor"
       onSubmit={(event) => {
         event.preventDefault();
         save();
@@ -404,37 +737,59 @@ function CorrectionEditor({
     >
       <label className="field">
         <span className="field__label">Corrected state</span>
-        <select className="select" value={state} onChange={(event) => setState(event.target.value as ExtractedField['state'])}>
+        <select className="select" value={state} onChange={(event) => changeState(event.target.value as DraftState)}>
           <option value="present">Present (I know the correct value)</option>
           <option value="absent">Not in the document</option>
           <option value="unclear">Unclear to me too</option>
         </select>
       </label>
-      {state === 'present' ? <ValueEditor value={value} onChange={setValue} /> : null}
-      <div className="doc-pane__toolbar" style={{ marginTop: '0.75rem' }}>
-        <button className="button" type="submit" style={{ minHeight: '38px', padding: '0.4rem 1rem' }}>
+      {state === 'present' ? <ValueEditor value={value} onChange={changeValue} /> : null}
+      {error ? (
+        <p className="field-error" role="alert">
+          {error}
+        </p>
+      ) : null}
+      <div className="doc-pane__toolbar">
+        <button type="submit" className="button" style={{ minHeight: '38px', padding: '0.4rem 1rem' }}>
           Save correction
         </button>
-        <button className="button button--secondary" type="button" onClick={onCancel} style={{ minHeight: '38px', padding: '0.4rem 1rem' }}>
+        <button
+          type="button"
+          className="button button--secondary"
+          onClick={onCancel}
+          style={{ minHeight: '38px', padding: '0.4rem 1rem' }}
+        >
           Cancel
         </button>
       </div>
       <p className="evidence__label" style={{ marginTop: '0.5rem', marginBottom: 0 }}>
-        Saved separately from the original. The page evidence above stays as extracted.
+        Saved separately from the original. The page evidence above stays as extracted. Your edit stays open while you
+        browse other groups or read help.
       </p>
     </form>
   );
 }
 
-function ValueEditor({ value, onChange }: { value: NormalizedValue | null; onChange: (value: NormalizedValue | null) => void }) {
-  if (!value) return <p className="evidence__label">This field had no typed value to edit.</p>;
+function ValueEditor({
+  value,
+  onChange,
+}: {
+  value: NormalizedValue | null;
+  onChange: (value: NormalizedValue | null) => void;
+}) {
+  if (!value)
+    return <p className="evidence__label">This field had no typed value to edit — choose a different corrected state.</p>;
   switch (value.kind) {
     case 'text':
     case 'reference_text':
       return (
         <label className="field">
           <span className="field__label">Corrected text</span>
-          <input className="input" value={value.text} onChange={(event) => onChange({ ...value, text: event.target.value })} />
+          <input
+            className="input"
+            value={value.text}
+            onChange={(event) => onChange({ ...value, text: event.target.value })}
+          />
         </label>
       );
     case 'money':
@@ -462,7 +817,9 @@ function ValueEditor({ value, onChange }: { value: NormalizedValue | null; onCha
             <select
               className="select"
               value={value.frequency ?? ''}
-              onChange={(event) => onChange({ ...value, frequency: (event.target.value || null) as typeof value.frequency })}
+              onChange={(event) =>
+                onChange({ ...value, frequency: (event.target.value || null) as typeof value.frequency })
+              }
             >
               <option value="">Not stated</option>
               <option value="hourly">Hourly</option>
@@ -485,7 +842,11 @@ function ValueEditor({ value, onChange }: { value: NormalizedValue | null; onCha
       return (
         <label className="field">
           <span className="field__label">Amount</span>
-          <input className="input" value={value.amount} onChange={(event) => onChange({ ...value, amount: event.target.value })} />
+          <input
+            className="input"
+            value={value.amount}
+            onChange={(event) => onChange({ ...value, amount: event.target.value })}
+          />
         </label>
       );
     case 'benefit_state':

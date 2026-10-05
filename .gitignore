@@ -41,3 +41,15 @@ sources/captures/
 # OS noise
 .DS_Store
 Thumbs.db
+
+# screenshots
+public/screenshots/
+p6-*.png
+
+# submission materials and working drafts (usability-guides)
+plans/challenge-submission/
+plans/usability-guides/do-not-commit/
+plans/usability-guides/drafts/
+plans/usability-guides/WazehTerms-Usability-Guidance-and-UI-UX-Plan.md
+plans/usability-guides/challenge-evidence-map.md
+
