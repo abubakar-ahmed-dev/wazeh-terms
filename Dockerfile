@@ -5,7 +5,7 @@
 # enforces this; the policy check in plans/phase-14 verifies it).
 
 # --- build: full toolchain (dev deps included) for both workspaces ---
-FROM node:22-bookworm-slim AS build
+FROM node:22-bookworm AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
 COPY api/package.json api/
@@ -16,7 +16,7 @@ COPY web/ web/
 RUN npm run build --workspace api && npm run build --workspace web
 
 # --- runtime-deps: production dependencies of the api workspace only ---
-FROM node:22-bookworm-slim AS runtime-deps
+FROM node:22-bookworm AS runtime-deps
 WORKDIR /app
 ENV NODE_ENV=production
 COPY package.json package-lock.json ./
@@ -24,7 +24,7 @@ COPY api/package.json api/
 RUN npm ci --omit=dev --workspace api && npm cache clean --force
 
 # --- runtime: non-root, Cloud Run PORT contract ---
-FROM node:22-bookworm-slim AS runtime
+FROM node:22-bookworm AS runtime
 WORKDIR /app/api
 ENV NODE_ENV=production
 # Cloud Run injects PORT; 8080 is only the local fallback.

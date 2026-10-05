@@ -86,13 +86,13 @@ In the event of an operational anomaly, broken statutory rule, or unexpected reg
 1. **Immediate Traffic Reversion (Fast Rollback):**
    ```bash
    # Revert Cloud Run traffic immediately to previous known stable revision
-   gcloud run services update-traffic wazeh-terms \
+   gcloud run services update-traffic wazehterms \
      --to-revisions=PREVIOUS_REVISION_NAME=100 \
-     --region=me-central1
+     --region=asia-south1
    ```
 2. **Container Build Rollback:**
    - If deploying via container image tags, re-deploy the previous tag sha:
-     `gcloud run deploy wazeh-terms --image=IMAGE_REPO@PREVIOUS_STABLE_SHA`
+     `gcloud run deploy wazehterms --region=asia-south1 --image=IMAGE_REPO@PREVIOUS_STABLE_SHA`
 3. **Git Tag Reference:**
    - Stable baseline commit prior to P7–P12 usability upgrade: `44eaee9` (feat: core verification and comparison pipeline).
    - Usability upgrade release candidate commit: HEAD of `usability-upgrade`.

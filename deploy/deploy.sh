@@ -30,7 +30,7 @@ gcloud run deploy "${SERVICE}" \
   --image "${IMAGE}" \
   --service-account "${RUNTIME_SA}" \
   --env-vars-file deploy/env.staging.yaml \
-  --update-secrets "GEMINI_API_KEY=gemini-api-key:1,SANITY_ORGANIZATION_TOKEN=sanity-organization-token:1,REVIEW_HMAC_SECRET=review-hmac-secret:1,SANITY_READ_TOKEN=sanity-read-token:1" \
+  --update-secrets "GEMINI_API_KEY=gemini-api-key:2,SANITY_ORGANIZATION_TOKEN=sanity-organization-token:1,REVIEW_HMAC_SECRET=review-hmac-secret:1,SANITY_READ_TOKEN=sanity-read-token:1" \
   --allow-unauthenticated \
   --no-traffic \
   --tag staging \
