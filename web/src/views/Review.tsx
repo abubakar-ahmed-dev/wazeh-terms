@@ -55,6 +55,15 @@ interface Draft {
   value: NormalizedValue | null;
 }
 
+/** Draft entry carries its own identity — instanceId may contain ':' (R-bug:
+ * round-tripping identity through the composite key truncated it, so saved
+ * corrections never matched their field). */
+interface DraftEntry extends Draft {
+  documentId: string;
+  fieldKey: string;
+  instanceId: string;
+}
+
 const needsCheckOriginal = (field: ExtractedField): boolean =>
   field.state === 'unclear' || field.state === 'unreadable';
 
@@ -92,7 +101,7 @@ export function Review({ issued, previewUrls, corrections, onCorrect, onUndoCorr
   const [needsOnly, setNeedsOnly] = useState(false);
 
   // Hoisted correction drafts (R17/R18)
-  const [drafts, setDrafts] = useState<Record<string, Draft>>({});
+  const [drafts, setDrafts] = useState<Record<string, DraftEntry>>({});
 
   // Overlays
   const [helpOpen, setHelpOpen] = useState(false);
@@ -135,12 +144,17 @@ export function Review({ issued, previewUrls, corrections, onCorrect, onUndoCorr
     return FIELD_GROUPS.find((group) => group.key === groupKey)?.heading ?? fieldKey;
   };
 
-  const saveDraft = (key: string, draft: Draft) => {
-    const [documentId = '', fieldKey = '', instanceId = ''] = key.split(':');
-    onCorrect({ documentId, fieldKey, instanceId, state: draft.state, value: draft.state === 'present' ? draft.value : null });
+  const saveDraft = (entry: DraftEntry) => {
+    onCorrect({
+      documentId: entry.documentId,
+      fieldKey: entry.fieldKey,
+      instanceId: entry.instanceId,
+      state: entry.state,
+      value: entry.state === 'present' ? entry.value : null,
+    });
     setDrafts((existing) => {
       const next = { ...existing };
-      delete next[key];
+      delete next[`${entry.documentId}:${entry.fieldKey}:${entry.instanceId}`];
       return next;
     });
   };
@@ -350,11 +364,11 @@ export function Review({ issued, previewUrls, corrections, onCorrect, onUndoCorr
                             onDraft={(draft) =>
                               setDrafts((existing) => ({
                                 ...existing,
-                                [key]: draft,
+                                [key]: { ...draft, documentId: document.documentId, fieldKey: field.fieldKey, instanceId: field.instanceId },
                               }))
                             }
                             onDraftCancel={() => dropDraft(key)}
-                            onSaveDraft={(draft) => saveDraft(key, draft)}
+                            onSaveDraft={(draft) => saveDraft({ ...draft, documentId: document.documentId, fieldKey: field.fieldKey, instanceId: field.instanceId })}
                             onUndo={() => onUndoCorrection(key)}
                             onOpenPage={(page, trigger) => openViewer(document.role, page, trigger)}
                           />
@@ -439,7 +453,7 @@ export function Review({ issued, previewUrls, corrections, onCorrect, onUndoCorr
               onChoose: () => {
                 for (const key of draftKeys) {
                   const draft = drafts[key];
-                  if (draft) saveDraft(key, draft);
+                  if (draft) saveDraft(draft);
                 }
                 setContinueDialogOpen(false);
                 onContinue();

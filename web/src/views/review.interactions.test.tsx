@@ -157,6 +157,10 @@ describe('Review preservation (R17)', () => {
 
     await user.click(within(dialog).getByRole('button', { name: 'Save correction and continue' }));
     expect(onCorrect).toHaveBeenCalledTimes(1);
+    // Identity must survive the draft round-trip (instanceId contains ':').
+    expect(onCorrect).toHaveBeenCalledWith(
+      expect.objectContaining({ documentId: 'doc-offer', fieldKey: 'basic_salary', instanceId: 'basic_salary:0', state: 'present' }),
+    );
     expect(onContinue).toHaveBeenCalledTimes(1);
   });
 
