@@ -1,27 +1,49 @@
 /**
- * Sample chooser (spec §4.2): manifest-driven cards, fixed same-origin previews.
- * Phase 12: Elevated dark scenario cards with clear categorization chips and preview drawers.
+ * Sample chooser (spec §4.2, P4 §3 rework): manifest-driven cards; scenario
+ * badges in plain words with an InfoTip each (P3 U2); case ids demoted to the
+ * preview disclosure; jargon removed (issue 19).
  */
 import { useState } from 'react';
 
 import type { SampleEntry } from '../lib/types';
+import { unit } from '../content/guides';
+import { Icon, InfoTip } from '../ui';
 
 function scenarioTag(caseId: string): string {
   switch (caseId) {
     case 'TC-001':
-      return 'Consistent Terms';
+      return 'Consistent terms';
     case 'TC-002':
-      return 'Salary Discrepancy';
+      return 'Changed salary';
     case 'TC-012':
-      return 'Worker Recruitment Charge';
+      return 'Worker recruitment charge';
     case 'TC-013':
-      return 'Missing Notice Clause';
+      return 'Missing notice clause';
     case 'TC-014':
-      return 'Single Contract / Abstention';
+      return 'Single contract (abstention)';
     case 'TC-015':
-      return 'Adversarial Instructions';
+      return 'Adversarial instructions';
     default:
-      return 'Document Scenario';
+      return 'Document scenario';
+  }
+}
+
+function scenarioTipId(caseId: string): string {
+  switch (caseId) {
+    case 'TC-001':
+      return 'smp.scenario.consistent';
+    case 'TC-002':
+      return 'smp.scenario.salary';
+    case 'TC-012':
+      return 'smp.scenario.charge';
+    case 'TC-013':
+      return 'smp.scenario.missing';
+    case 'TC-014':
+      return 'smp.scenario.single';
+    case 'TC-015':
+      return 'smp.scenario.adversarial';
+    default:
+      return 'smp.intro';
   }
 }
 
@@ -40,12 +62,9 @@ export function Samples({
     <div className="view">
       <div className="view__inner">
         <header style={{ marginBottom: '2rem' }}>
-          <span className="eyebrow">Interactive Testing Scenarios</span>
-          <h1>Explore a fictional example</h1>
-          <p>
-            Every name, employer, and amount below is invented. Choosing a sample sends its fictional documents for
-            extraction, then shows what we read for you to check.
-          </p>
+          <span className="eyebrow">Worked examples</span>
+          <h1 tabIndex={-1}>Explore a fictional example</h1>
+          <p>{unit('smp.intro').body[0]}</p>
         </header>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
@@ -54,12 +73,21 @@ export function Samples({
             const isPreviewOpen = previewCase === sample.sampleCaseId;
             return (
               <article key={sample.sampleCaseId} className="card">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <span className="chip">Fictional sample</span>
-                    <span className="chip chip--scenario">{sample.sampleCaseId}</span>
-                  </div>
-                  <span className="brand-badge">{scenarioTag(sample.sampleCaseId)}</span>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    flexWrap: 'wrap',
+                    gap: '0.5rem',
+                    marginBottom: '0.5rem',
+                  }}
+                >
+                  <span className="chip">Fictional sample</span>
+                  <span className="brand-badge">
+                    {scenarioTag(sample.sampleCaseId)}
+                    <InfoTip label={`About the ${scenarioTag(sample.sampleCaseId)} scenario`} unit={unit(scenarioTipId(sample.sampleCaseId))} />
+                  </span>
                 </div>
 
                 <h2>{sample.title}</h2>
@@ -70,7 +98,7 @@ export function Samples({
                       key={document.role}
                       className={`chip ${document.role === 'offer' ? 'chip--offer' : 'chip--contract'}`}
                     >
-                      <span aria-hidden="true">📄</span>
+                      <Icon name="doc" size={13} />
                       {document.role === 'offer' ? 'Job offer (PDF)' : 'Employment contract (PDF)'}
                     </span>
                   ))}
@@ -106,15 +134,28 @@ export function Samples({
                 </div>
 
                 {isPreviewOpen ? (
-                  <div style={{ marginTop: '1rem', padding: '1rem', background: 'var(--surface-elevated)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--rule)' }}>
-                    <p style={{ margin: '0 0 0.5rem', fontWeight: 600, color: 'var(--ink)' }}>
-                      Downloadable Fictional Fixtures:
+                  <div
+                    style={{
+                      marginTop: '1rem',
+                      padding: '1rem',
+                      background: 'var(--surface-elevated)',
+                      borderRadius: 'var(--radius-sm)',
+                      border: '1px solid var(--rule)',
+                    }}
+                  >
+                    <p style={{ margin: '0 0 0.25rem', fontWeight: 600, color: 'var(--ink)' }}>
+                      Sample files — the actual PDFs this review reads
+                    </p>
+                    <p style={{ margin: '0 0 0.5rem', fontSize: '0.85rem', color: 'var(--ink-muted)' }}>
+                      Sample set {sample.sampleCaseId} · {unit('smp.preview').body[0]}
                     </p>
                     <ul style={{ margin: 0, paddingLeft: '1.25rem' }}>
                       {sample.documents.map((document) => (
                         <li key={document.previewUrl} style={{ marginBottom: '0.25rem' }}>
                           <a href={document.previewUrl} target="_blank" rel="noreferrer">
-                            {document.role === 'offer' ? 'Offer (PDF, opens elsewhere)' : 'Contract (PDF, opens elsewhere)'}
+                            {document.role === 'offer'
+                              ? 'Offer (PDF, opens elsewhere)'
+                              : 'Contract (PDF, opens elsewhere)'}
                           </a>
                         </li>
                       ))}
