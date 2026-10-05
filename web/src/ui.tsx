@@ -113,7 +113,7 @@ export function DocumentIcon({ className, size = 22 }: { className?: string; siz
 // ── P6 guidance primitives ───────────────────────────────────────────────
 
 /** Minimal stroke icon set (P5 §3.14) — replaces emoji in labels. */
-export function Icon({ name, size = 16 }: { name: 'info' | 'close' | 'chevron' | 'external' | 'alert' | 'clock' | 'check' | 'search' | 'doc'; size?: number }) {
+export function Icon({ name, size = 16 }: { name: 'info' | 'close' | 'chevron' | 'chevron-down' | 'external' | 'alert' | 'clock' | 'check' | 'search' | 'doc'; size?: number }) {
   const common = {
     width: size,
     height: size,
@@ -145,6 +145,12 @@ export function Icon({ name, size = 16 }: { name: 'info' | 'close' | 'chevron' |
       return (
         <svg {...common}>
           <polyline points="9 18 15 12 9 6" />
+        </svg>
+      );
+    case 'chevron-down':
+      return (
+        <svg {...common}>
+          <polyline points="6 9 12 15 18 9" />
         </svg>
       );
     case 'external':
@@ -276,10 +282,15 @@ export function InfoTip({ label, unit: guideUnit, newTabLinks = false }: { label
 
 /** Collapsible section orientation block (P4 StepIntro). */
 export function StepIntro({ title, children }: { title: string; children: ReactNode }) {
+  const [open, setOpen] = useState(false);
   return (
-    <details className="step-intro">
+    <details
+      className="step-intro"
+      open={open}
+      onToggle={(event) => setOpen(event.currentTarget.open)}
+    >
       <summary className="step-intro__summary">
-        <Icon name="chevron" size={14} />
+        <Icon name={open ? 'chevron-down' : 'chevron'} size={14} />
         <span>{title}</span>
       </summary>
       <div className="step-intro__content">{children}</div>
