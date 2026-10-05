@@ -308,7 +308,7 @@ describe('P8 findings report experience (P4 §7, plan §8.11–§8.13)', () => {
     setup({ onOpenHelp });
 
     await user.click(screen.getByRole('button', { name: 'How to evaluate different wording →' }));
-    expect(onOpenHelp).toHaveBeenCalledWith('reading-findings', 'different-wording');
+    expect(onOpenHelp).toHaveBeenCalledWith('reading-findings', 'document-differences');
 
     await user.click(screen.getByRole('button', { name: 'About official sources and rules →' }));
     expect(onOpenHelp).toHaveBeenCalledWith('evidence-and-sources');

@@ -504,7 +504,7 @@ function FindingCard({
             <button
               type="button"
               className="guide-link"
-              onClick={() => onOpenHelp?.('reading-findings', 'different-wording')}
+              onClick={() => onOpenHelp?.('reading-findings', 'document-differences')}
             >
               How to evaluate different wording →
             </button>
@@ -606,7 +606,7 @@ function FindingCard({
             <button
               type="button"
               className="guide-link"
-              onClick={() => onOpenHelp?.('reading-findings', 'needs-clarification')}
+              onClick={() => onOpenHelp?.('reading-findings', 'questions-to-clarify')}
             >
               Clarifying terms with your employer →
             </button>
@@ -638,7 +638,7 @@ function FindingCard({
             <button
               type="button"
               className="guide-link"
-              onClick={() => onOpenHelp?.('reading-findings', 'unresolved')}
+              onClick={() => onOpenHelp?.('reading-findings', 'could-not-determine')}
             >
               Why some checks cannot be determined →
             </button>
