@@ -33,8 +33,21 @@ import { ARTICLES } from './content/articles';
 import { JOURNEY_STEPS, unit } from './content/guides';
 import { ConfirmDialog, ErrorPanel, Icon, Notice } from './ui';
 import { ArticlePage, GlossaryPage, HelpHub } from './views/Help';
+import { TECHNICAL_ARTICLES } from './content/technical';
+import { AboutPage, TechnicalArticlePage, TechnicalHub } from './views/Technical';
 
-type View = 'home' | 'examples' | 'upload' | 'start' | 'extracting' | 'review' | 'analyzing' | 'result' | 'doc';
+type View =
+  | 'home'
+  | 'examples'
+  | 'upload'
+  | 'start'
+  | 'extracting'
+  | 'review'
+  | 'analyzing'
+  | 'result'
+  | 'doc'
+  | 'technical'
+  | 'about';
 
 const RELOAD_COPY = 'A reload cannot restore an in-progress review — private case data is never saved.';
 
@@ -46,6 +59,9 @@ function parsePath(): { view: View; docSlug: string | null } {
   if (path === '/result') return { view: 'result', docSlug: null };
   if (path === '/help') return { view: 'doc', docSlug: null };
   if (path.startsWith('/help/')) return { view: 'doc', docSlug: path.slice('/help/'.length) };
+  if (path === '/how-it-works') return { view: 'technical', docSlug: null };
+  if (path.startsWith('/how-it-works/')) return { view: 'technical', docSlug: path.slice('/how-it-works/'.length) };
+  if (path === '/about') return { view: 'about', docSlug: null };
   return { view: 'home', docSlug: null };
 }
 
@@ -80,7 +96,11 @@ export function App() {
   const analysisAbortRef = useRef<AbortController | null>(null);
 
   const navigate = useCallback((next: View, nextDocSlug: string | null = null) => {
-    const path = next === 'home' ? '/' : next === 'doc' ? `/help${nextDocSlug ? `/${nextDocSlug}` : ''}` : `/${next}`;
+    let path = `/${next}`;
+    if (next === 'home') path = '/';
+    else if (next === 'doc') path = `/help${nextDocSlug ? `/${nextDocSlug}` : ''}`;
+    else if (next === 'technical') path = `/how-it-works${nextDocSlug ? `/${nextDocSlug}` : ''}`;
+    else if (next === 'about') path = '/about';
     window.history.pushState({}, '', path);
     setView(next);
     setDocSlug(nextDocSlug);
@@ -477,6 +497,7 @@ export function App() {
             onUploadClick={() => navigate('upload')}
             onRetryCapabilities={loadCapabilities}
             onOpenHelp={(slug) => navigate('doc', slug)}
+            onOpenTechnical={() => navigate('technical')}
           />
         ) : null}
 
@@ -531,6 +552,41 @@ export function App() {
               </div>
             </div>
           )
+        ) : null}
+
+        {view === 'technical' ? (
+          docSlug && TECHNICAL_ARTICLES[docSlug] ? (
+            <TechnicalArticlePage
+              article={TECHNICAL_ARTICLES[docSlug]}
+              onBackToHub={() => navigate('technical')}
+              onNavigateSlug={(slug) => navigate('technical', slug)}
+            />
+          ) : !docSlug ? (
+            <TechnicalHub
+              onOpenArticle={(slug) => navigate('technical', slug)}
+              onOpenAbout={() => navigate('about')}
+              onOpenHelp={() => navigate('doc')}
+            />
+          ) : (
+            <div className="view">
+              <div className="view__inner">
+                <Notice kind="incomplete" role="status" title="Technical article not found">
+                  <p>The requested technical article could not be found.</p>
+                  <button type="button" className="button button--secondary" onClick={() => navigate('technical')}>
+                    ← Back to How WazehTerms works
+                  </button>
+                </Notice>
+              </div>
+            </div>
+          )
+        ) : null}
+
+        {view === 'about' ? (
+          <AboutPage
+            onOpenTechnicalHub={() => navigate('technical')}
+            onOpenHelp={() => navigate('doc')}
+            onTrySample={() => navigate('examples')}
+          />
         ) : null}
 
         {view === 'extracting' ? (
@@ -770,6 +826,20 @@ export function App() {
               onClick={() => (inReviewFlow ? window.open('/help/glossary', '_blank', 'noopener') : navigate('doc', 'glossary'))}
             >
               Glossary
+            </button>
+            <button
+              type="button"
+              className="link-button"
+              onClick={() => (inReviewFlow ? window.open('/how-it-works', '_blank', 'noopener') : navigate('technical'))}
+            >
+              How it works
+            </button>
+            <button
+              type="button"
+              className="link-button"
+              onClick={() => (inReviewFlow ? window.open('/about', '_blank', 'noopener') : navigate('about'))}
+            >
+              About
             </button>
             <button
               type="button"

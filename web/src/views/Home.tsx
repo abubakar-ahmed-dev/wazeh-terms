@@ -12,6 +12,7 @@ export function Home({
   onUploadClick,
   onRetryCapabilities,
   onOpenHelp,
+  onOpenTechnical,
 }: {
   capabilityState: 'loading' | 'ready' | 'error';
   sampleModeEnabled: boolean | null;
@@ -20,6 +21,7 @@ export function Home({
   onUploadClick?: () => void;
   onRetryCapabilities: () => void;
   onOpenHelp?: (slug: string) => void;
+  onOpenTechnical?: () => void;
 }) {
   return (
     <div className="view">
@@ -224,6 +226,18 @@ export function Home({
               Read the full scope and privacy guide →
             </button>
           </p>
+        </div>
+
+        {/* Engineering and Project Discovery */}
+        <div style={{ marginTop: '1.5rem', textAlign: 'center', color: 'var(--ink-secondary)', fontSize: '0.92rem' }}>
+          <span>Want to inspect the architecture? </span>
+          <button
+            type="button"
+            className="guide-link"
+            onClick={onOpenTechnical}
+          >
+            How WazehTerms works inside →
+          </button>
         </div>
       </div>
     </div>

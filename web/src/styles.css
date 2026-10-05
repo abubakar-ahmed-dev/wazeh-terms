@@ -1897,7 +1897,125 @@ select:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
 .glossary-term-anchor:hover { color: var(--primary); text-decoration: underline; }
 .glossary-definition { margin: 0; color: var(--ink-secondary); font-size: 0.95rem; line-height: 1.55; }
 
+/* ── Technical Hub & Articles (P9) ─────────────────────────────────── */
+.tech-reading-order {
+  margin-top: 2.5rem;
+}
+
+.tech-article-list {
+  list-style: none;
+  margin: 1.25rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.tech-article-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.25rem;
+  padding: 1.25rem;
+  transition: border-color 140ms ease;
+}
+
+.tech-article-item:hover {
+  border-color: var(--primary);
+}
+
+.tech-article-item__num {
+  font-family: var(--font-mono, monospace);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--primary);
+  background: rgba(14, 165, 233, 0.1);
+  padding: 0.35rem 0.65rem;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+
+.tech-article-item__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.tech-article-item__title {
+  margin: 0 0 0.4rem;
+  font-size: 1.1rem;
+}
+
+.tech-article-item__link {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+  text-align: left;
+}
+
+.tech-article-item__link:hover {
+  color: var(--primary);
+  text-decoration: underline;
+}
+
+.tech-article-item__desc {
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--ink-secondary);
+  line-height: 1.5;
+}
+
+/* ── About View (P9) ────────────────────────────────────────────────── */
+.about-view {
+  max-width: 56rem;
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.25rem;
+}
+
+.about-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 1.25rem;
+}
+
+.about-box__head {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--primary);
+}
+
+.about-box__head h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  color: var(--ink);
+}
+
+.about-box p {
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--ink-secondary);
+  line-height: 1.55;
+}
+
+.about-actions-card {
+  margin-top: 1rem;
+  padding: 1.5rem;
+}
+
+.about-actions-card h2 {
+  margin-top: 0;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .help-card { transition: none; }
+  .tech-article-item { transition: none; }
 }
 
